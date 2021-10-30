@@ -52,7 +52,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             Navigator.push(context, MaterialPageRoute(builder: (_) =>
-            EmailActivationScreen(email: state.email)));
+            EmailActivationScreen(email: state.email, isActivateEmail: true)));
           });
           return layout();
         }
