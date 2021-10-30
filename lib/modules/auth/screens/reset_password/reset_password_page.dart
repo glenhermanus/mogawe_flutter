@@ -6,6 +6,7 @@ import 'package:mogawe/core/data/request/reset_password_request.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_extension.dart';
+import 'package:mogawe/modules/auth/screens/new_password_activation/new_password_activation.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   ResetPasswordPage({Key? key}) : super(key: key);
@@ -84,6 +85,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             if (state is ResetpasswordLoaded) {
               if (state.response.returnValue == '001') {
                 _showErrorDialog(state.response.message);
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => NewPasswordActivityPage(),
+                  ),
+                );
               }
             }
           },
