@@ -9,12 +9,12 @@ part of 'reset_password_request.dart';
 ResetPasswordRequest _$ResetPasswordRequestFromJson(Map<String, dynamic> json) {
   return ResetPasswordRequest()
     ..email = json['email'] as String?
-    ..password = json['password'] as String?;
+    ..newPassword = json['newPassword'] as String?;
 }
 
 Map<String, dynamic> _$ResetPasswordRequestToJson(
         ResetPasswordRequest instance) =>
     <String, dynamic>{
       'email': instance.email,
-      'password': instance.password,
+      'newPassword': instance.newPassword,
     };

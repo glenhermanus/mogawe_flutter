@@ -5,7 +5,7 @@ part 'reset_password_request.g.dart';
 @JsonSerializable()
 class ResetPasswordRequest {
   String? email;
-  String? password;
+  String? newPassword;
 
   ResetPasswordRequest();
 

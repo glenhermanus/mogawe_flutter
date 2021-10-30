@@ -231,7 +231,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   return null;
                 },
                 onSaved: (val) {
-                  data.password = val;
+                  data.newPassword = val;
                 },
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: !passwordVisibility!,
