@@ -1,12 +1,18 @@
-import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mogawe/modules/auth/screens/email_activation/email_activation_page.dart';
+import 'package:mogawe/utils/ui/widgets/app_util.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class RegistrationPage extends StatefulWidget {
-  RegistrationPage({Key? key}) : super(key: key);
+
+  final bool? loadingButton;
+  final Function(Map<String, String>? body)? onTapRegister;
+
+  RegistrationPage({Key? key, this.loadingButton, this.onTapRegister}) :
+        super(key: key);
 
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
@@ -17,10 +23,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
   TextEditingController? textController2;
   TextEditingController? textController3;
   bool? passwordVisibility;
-  TextEditingController? textController4;
-  bool? checkboxListTileValue;
-  bool _loadingButton = false;
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  late TextEditingController textController4;
+  bool? checkboxListTileValue = false;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -34,27 +39,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: FlutterFlowTheme.secondaryColor,
-        iconTheme: IconThemeData(color: FlutterFlowTheme.tertiaryColor),
-        automaticallyImplyLeading: true,
-        title: Text(
-          'Pendaftaran',
-          style: FlutterFlowTheme.subtitle1.override(
-            fontFamily: 'Poppins',
-          ),
-        ),
-        actions: [],
-        centerTitle: false,
-        elevation: 0,
-      ),
-      backgroundColor: FlutterFlowTheme.secondaryColor,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(24, 24, 24, 24),
-          child: SingleChildScrollView(
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsetsDirectional.fromSTEB(24, 24, 24, 24),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -73,6 +63,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       TextFormField(
                         controller: textController1,
                         obscureText: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Nama wajib diisi";
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           hintText: 'John Doe',
                           hintStyle: FlutterFlowTheme.bodyText1.override(
@@ -127,6 +123,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       TextFormField(
                         controller: textController2,
                         obscureText: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Email wajib diisi";
+                          } else if (!AppUtil.isEmailValidated(value)) {
+                            return "Format email salah";
+                          } return null;
+                        },
                         decoration: InputDecoration(
                           hintText: 'john.doe@email.com',
                           hintStyle: FlutterFlowTheme.bodyText1.override(
@@ -181,6 +184,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       TextFormField(
                         controller: textController3,
                         obscureText: !passwordVisibility!,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return "Password wajib diisi";
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           hintText: '******',
                           hintStyle: FlutterFlowTheme.bodyText1.override(
@@ -292,8 +301,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 48, 0, 0),
                   child: CheckboxListTile(
                     value: checkboxListTileValue ??= true,
-                    onChanged: (newValue) =>
-                        setState(() => checkboxListTileValue = newValue),
+                    onChanged: (newValue) {
+                      if (!checkboxListTileValue!) showToCWebView();
+                      setState(() => checkboxListTileValue = newValue);
+                    },
                     title: Text(
                       'Saya sudah membaca dan setuju dengan \"Perjanjian kerja sama  kemitraan MoGawe\"',
                       style: FlutterFlowTheme.subtitle2.override(
@@ -308,17 +319,29 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
                 FFButtonWidget(
-                  onPressed: () async {
-                    setState(() => _loadingButton = true);
-                    try {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EmailActivationPage(),
-                        ),
-                      );
-                    } finally {
-                      setState(() => _loadingButton = false);
+                  onPressed: () {
+                    if (_formKey.currentState!.validate() && checkboxListTileValue!) {
+                      var body = {
+                        "email": textController2!.text,
+                        "fullName": textController1!.text,
+                        "password": AppUtil.hashedPassword(textController3!.text),
+                        "refCode": textController4.text
+                      };
+                      widget.onTapRegister!(body);
+                    } else if (!checkboxListTileValue!) {
+                      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                            "Anda belum menyetujui \"Perjanjian kerja sama "
+                                " kemitraan Mogawe\"",
+                            style: FlutterFlowTheme.bodyText1.override(
+                                fontFamily: 'Poppins',
+                                color: Colors.white
+                            ),
+                          ),
+                          backgroundColor: Colors.red,
+                        ));
+                      });
                     }
                   },
                   text: 'Daftar',
@@ -336,7 +359,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ),
                     borderRadius: 12,
                   ),
-                  loading: _loadingButton,
+                  loading: widget.loadingButton,
                 )
               ],
             ),
@@ -344,5 +367,34 @@ class _RegistrationPageState extends State<RegistrationPage> {
         ),
       ),
     );
+  }
+
+  void showToCWebView() {
+    showModalBottomSheet(context: context, builder: (_) =>
+    Container(
+      padding: EdgeInsets.all(16),
+      height: MediaQuery.of(context).size.height / 1.05,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(height: 3, width: 150, color: Color(0xff999999)),
+          SizedBox(height: 16),
+          Expanded(child: WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            initialUrl: "https://mogawe.id/partnership.html",
+            gestureRecognizers: Set()
+              ..add(
+                Factory<VerticalDragGestureRecognizer>(
+                      () => VerticalDragGestureRecognizer(),
+                ), // or null
+              ),
+          ))
+        ],
+      ),
+    ), isScrollControlled: true, shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(28),
+        topRight: Radius.circular(28))
+    ));
   }
 }
