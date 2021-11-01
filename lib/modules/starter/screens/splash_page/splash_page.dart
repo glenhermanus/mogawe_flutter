@@ -122,7 +122,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _navigateToOnboarding() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => OnboardingPage(),
