@@ -111,6 +111,7 @@ class _EmailActivationScreenState extends State<EmailActivationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //Layout here
     return Scaffold(
       appBar: AppBar(
         backgroundColor: FlutterFlowTheme.secondaryColor,
