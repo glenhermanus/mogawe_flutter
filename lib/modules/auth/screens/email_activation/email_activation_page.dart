@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 
@@ -88,6 +89,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController1,
                                 obscureText: false,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(1),
+                                  ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).unfocus();
@@ -130,6 +134,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController2,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -172,6 +179,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController3,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -214,6 +224,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController4,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -256,6 +269,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController5,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -298,6 +314,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController6,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
