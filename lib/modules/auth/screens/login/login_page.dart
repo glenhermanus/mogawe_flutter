@@ -1,14 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:logger/logger.dart';
-import 'package:mogawe/core/data/response/user_login_response.dart';
-import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/reset_password/reset_password_page.dart';
-import 'package:mogawe/modules/auth/screens/registration/registration_page.dart';
-
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mogawe/modules/auth/screens/registration/registration_screen.dart';
 import 'package:mogawe/modules/home/home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,7 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final AuthRepository _authRepository = AuthRepository();
+  final AuthRepository _authRepository = AuthRepository.instance;
   final _formKey = new GlobalKey<FormState>();
   var logger = Logger(printer: PrettyPrinter());
 
@@ -340,7 +337,7 @@ class _LoginPageState extends State<LoginPage> {
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => RegistrationPage(),
+                            builder: (context) => RegistrationScreen(),
                           ),
                         );
                       } finally {
