@@ -1,7 +1,7 @@
-import 'dart:async';
 
 import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 
@@ -9,12 +9,14 @@ class EmailActivationPage extends StatefulWidget {
 
   final String? email;
   final bool? isLoading;
-  final int? isCounting;
+  final bool? isResendLoading;
+  final int? count;
   final Function(Map<String, String> code)? onActivateCode;
-  final Function(Map<String, String> resend)? onResendCode;
+  final Function()? onResendCode;
 
   EmailActivationPage({Key? key, this.email, this.isLoading,
-    this.isCounting, this.onActivateCode, this.onResendCode}) : super(key: key);
+    this.count, this.onActivateCode, this.isResendLoading, this.onResendCode})
+      : super(key: key);
 
   @override
   _EmailActivationPageState createState() => _EmailActivationPageState();
@@ -27,28 +29,7 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
   TextEditingController textController4 = TextEditingController();
   TextEditingController textController5 = TextEditingController();
   TextEditingController textController6 = TextEditingController();
-  bool _loadingButton2 = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  var count = 30;
-
-  @override
-  void initState() {
-    super.initState();
-    countDown();
-  }
-
-  void countDown() {
-    var sec = Duration(seconds: 1);
-    Timer.periodic(sec, (timer) {
-      setState(() {
-        if (count == 0) {
-          timer.cancel();
-        } else {
-          count--;
-        }
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +69,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController1,
                                 obscureText: false,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(1),
+                                  ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).unfocus();
@@ -130,6 +114,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController2,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -172,6 +159,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController3,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -214,6 +204,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController4,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -256,6 +249,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController5,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -298,6 +294,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                               child: TextFormField(
                                 controller: textController6,
                                 obscureText: false,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
                                 onChanged: (v) {
                                   if (v.isEmpty)
                                     FocusScope.of(context).previousFocus();
@@ -385,12 +384,10 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                 ),
               ),
               Visibility(
-                visible: widget.isCounting != null &&
-                widget.isCounting != 0 ||  count != 0,
+                visible: widget.count != 0,
                 child: Padding(padding: EdgeInsets.only(top: 16),
                     child: AutoSizeText(
-                      'Tunggu ${widget.isCounting != null &&
-                          widget.isCounting != 0? widget.isCounting: count} detik lagi',
+                      'Tunggu ${widget.count} detik lagi',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Poppins',
@@ -398,13 +395,9 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                     )),
               ),
               Visibility(
-                visible: widget.isCounting == 0 || widget.isCounting == null &&
-                    count == 0,
+                visible: widget.count == 0,
                 child: FFButtonWidget(
-                  onPressed: () {
-                    var body = {"email": widget.email ?? ""};
-                    widget.onResendCode!(body);
-                  },
+                  onPressed: () => widget.onResendCode!(),
                   text: 'Kirim Ulang',
                   options: FFButtonOptions(
                     width: double.infinity,
@@ -421,7 +414,7 @@ class _EmailActivationPageState extends State<EmailActivationPage> {
                     ),
                     borderRadius: 12,
                   ),
-                  loading: _loadingButton2,
+                  loading: widget.isResendLoading,
                 ),
               )
             ],

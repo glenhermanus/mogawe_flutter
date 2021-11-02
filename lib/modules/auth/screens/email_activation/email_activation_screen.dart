@@ -25,7 +25,8 @@ class _EmailActivationScreenState extends State<EmailActivationScreen> {
 
   late RegistrationBloc bloc;
   bool isLoading = false;
-  int? count;
+  bool isResendLoading = false;
+  int? count = 30;
 
   @override
   void initState() {
@@ -51,8 +52,17 @@ class _EmailActivationScreenState extends State<EmailActivationScreen> {
     return BlocBuilder(
       bloc: bloc,
       builder: (ctx, state) {
-        if (state is InitRegistrationState) return layout();
-        if (state is RegistrationStateChanged) return layout();
+        if (state is InitRegistrationState) {
+          countDown();
+          return layout();
+        }
+        if (state is RegistrationStateChanged) {
+          if (isResendLoading && count == 0) {
+            var body = {"email": widget.email ?? ""};
+            bloc.add(DoResendActivationEmailEvent(body));
+          }
+          return layout();
+        }
         if (state is ShowLoadingRegistrationState) {
           isLoading = true;
           return layout();
@@ -101,6 +111,7 @@ class _EmailActivationScreenState extends State<EmailActivationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //Layout here
     return Scaffold(
       appBar: AppBar(
         backgroundColor: FlutterFlowTheme.secondaryColor,
@@ -124,8 +135,12 @@ class _EmailActivationScreenState extends State<EmailActivationScreen> {
   Widget layout() => EmailActivationPage(
     email: widget.email,
     isLoading: isLoading,
-    isCounting: count,
-    onResendCode: (v) => bloc.add(DoResendActivationEmailEvent(v)),
+    count: count,
+    isResendLoading: isResendLoading,
+    onResendCode: () {
+      isResendLoading = true;
+      bloc.add(ChangeRegistrationStateEvent());
+    },
     onActivateCode: (v) {
       if (widget.isActivateEmail!) bloc.add(DoActivateMailEvent(v));
       else bloc.add(DoActivateNewPasswordEvent(v));
@@ -141,6 +156,7 @@ class _EmailActivationScreenState extends State<EmailActivationScreen> {
     Timer.periodic(sec, (timer) {
       if (count == 0) {
         timer.cancel();
+        isResendLoading = false;
       } else {
         count = count!-1;
       }
