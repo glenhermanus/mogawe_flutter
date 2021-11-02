@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/screens/login/login_page.dart';
-import 'package:mogawe/modules/auth/screens/registration/registration_page.dart';
+import 'package:mogawe/modules/auth/screens/registration/registration_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -254,7 +254,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                RegistrationPage(),
+                                                RegistrationScreen(),
                                           ),
                                         );
                                       } finally {
