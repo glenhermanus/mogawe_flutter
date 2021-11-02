@@ -1,3 +1,5 @@
+import 'package:mogawe/core/data/request/reset_password_request.dart';
+import 'package:mogawe/core/data/response/reset_password_response.dart';
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/response/register/email_activation_response.dart';
 import 'package:mogawe/core/data/response/register/register_response.dart';
@@ -25,6 +27,10 @@ class AuthRepository extends NetworkService {
     return _apiService.loginUser(email, password);
   }
 
+  Future<ResetPasswordResponse> resetPassword(ResetPasswordRequest request) {
+    return _apiService.resetPassword(request);
+  }
+  
   Future<RegisterResponse> submitRegister(Map<String, String> body) async {
     var header = {contentType: applicationJson};
     var map = await postMethod("$BASE_URL/api/mogawers/registration",

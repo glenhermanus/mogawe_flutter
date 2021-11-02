@@ -4,8 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
-import 'package:mogawe/modules/auth/reset_password/reset_password_page.dart';
 import 'package:mogawe/modules/auth/screens/registration/registration_screen.dart';
+import 'package:mogawe/modules/auth/screens/reset_password/reset_password_page.dart';
 import 'package:mogawe/modules/home/home_page.dart';
 
 class LoginPage extends StatefulWidget {

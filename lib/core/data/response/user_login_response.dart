@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'user_login_response.g.dart';
 
 UserLoginResponse userLoginResponseFromJson(String str) =>
     UserLoginResponse.fromJson(json.decode(str));
@@ -6,8 +9,17 @@ UserLoginResponse userLoginResponseFromJson(String str) =>
 String userLoginResponseToJson(UserLoginResponse data) =>
     json.encode(data.toJson());
 
+
+@JsonSerializable()
 class UserLoginResponse {
-  UserLoginResponse({
+  String returnValue;
+  String message;
+  dynamic uuid;
+  String token;
+  dynamic type;
+  dynamic object;
+
+   UserLoginResponse({
     required this.returnValue,
     required this.message,
     required this.uuid,
@@ -16,29 +28,8 @@ class UserLoginResponse {
     required this.object,
   });
 
-  String returnValue;
-  String message;
-  dynamic uuid;
-  String token;
-  dynamic type;
-  dynamic object;
-
   factory UserLoginResponse.fromJson(Map<String, dynamic> json) =>
-      UserLoginResponse(
-        returnValue: json["returnValue"],
-        message: json["message"],
-        uuid: json["uuid"],
-        token: json["token"],
-        type: json["type"],
-        object: json["object"],
-      );
+      _$UserLoginResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        "returnValue": returnValue,
-        "message": message,
-        "uuid": uuid,
-        "token": token,
-        "type": type,
-        "object": object,
-      };
+  Map<String, dynamic> toJson() => _$UserLoginResponseToJson(this);
 }
