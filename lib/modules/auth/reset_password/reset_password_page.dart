@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
-import 'package:mogawe/modules/auth/screens/email_activation/email_activation_screen.dart';
+import 'package:mogawe/modules/auth/screens/new_password_activation/new_password_activation_screen.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   ResetPasswordPage({Key? key}) : super(key: key);
@@ -180,10 +180,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EmailActivationScreen(
-                              email: textController1!.text,
-                              isActivateEmail: false,
-                            ),
+                            builder: (context) => NewPasswordActivationScreen(
+                              email: textController1!.text),
                           ),
                         );
                       } finally {
