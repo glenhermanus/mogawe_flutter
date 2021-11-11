@@ -36,10 +36,10 @@
 @import url_launcher;
 #endif
 
-#if __has_include(<webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>)
-#import <webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>
+#if __has_include(<webview_flutter/FLTWebViewFlutterPlugin.h>)
+#import <webview_flutter/FLTWebViewFlutterPlugin.h>
 #else
-@import webview_flutter_wkwebview;
+@import webview_flutter;
 #endif
 
 @implementation GeneratedPluginRegistrant

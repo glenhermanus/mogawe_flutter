@@ -9,6 +9,9 @@ import 'package:mogawe/core/data/sources/network/network_service.dart';
 import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 
 class AuthRepository extends NetworkService {
+
+  AuthRepository();
+
   AuthRepository._privateConstructor();
   static final AuthRepository _instance = AuthRepository._privateConstructor();
   static AuthRepository get instance => _instance;
@@ -58,4 +61,6 @@ class AuthRepository extends NetworkService {
         headers: header, body: body);
     return RegisterResponse.fromJsonMap(map);
   }
+
+
 }
