@@ -6,7 +6,7 @@ import 'package:mogawe/core/data/request/reset_password_request.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_extension.dart';
-import 'package:mogawe/modules/auth/screens/new_password_activation/new_password_activation.dart';
+import 'package:mogawe/modules/auth/screens/new_password_activation/new_password_activation_page.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   ResetPasswordPage({Key? key}) : super(key: key);
@@ -89,7 +89,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => NewPasswordActivityPage(),
+                    builder: (_) => NewPasswordActivationPage(email: data.email),
                   ),
                 );
               }

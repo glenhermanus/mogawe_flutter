@@ -9,17 +9,17 @@ import 'package:mogawe/modules/auth/screens/registration/bloc/registration_bloc.
 import 'package:mogawe/modules/auth/screens/registration/bloc/registration_event.dart';
 import 'package:mogawe/modules/auth/screens/registration/bloc/registration_state.dart';
 
-class NewPasswordActivationScreen extends StatefulWidget {
+class NewPasswordActivationPage extends StatefulWidget {
 
   final String? email;
 
-  const NewPasswordActivationScreen({Key? key, this.email}) : super(key: key);
+  const NewPasswordActivationPage({Key? key, this.email}) : super(key: key);
 
   @override
-  _NewPasswordActivationScreenState createState() => _NewPasswordActivationScreenState();
+  _NewPasswordActivationPageState createState() => _NewPasswordActivationPageState();
 }
 
-class _NewPasswordActivationScreenState extends State<NewPasswordActivationScreen> {
+class _NewPasswordActivationPageState extends State<NewPasswordActivationPage> {
 
   late RegistrationBloc bloc;
   bool isLoading = false;
