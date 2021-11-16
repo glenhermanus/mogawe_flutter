@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mogawe/modules/profile/profile_page.dart';
-import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/starter/screens/splash_page/splash_page.dart';
 
 void main() {
@@ -24,21 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      // home: SplashPage(),
-      home: Scaffold(
-        body: Builder(
-          builder: (context) {
-            return Center(child: MaterialButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) =>
-              ProfileScreen())),
-              child: Text("Go To Profile"),
-              height: 52,
-              minWidth: double.infinity,
-              color: Colors.blue,
-            ));
-          }
-        ),
-      )
+      home: SplashPage(),
     );
   }
 }
