@@ -19,7 +19,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         var data = await _repo.getProfile();
         yield ShowProfileData(data.object!);
       } catch(ex) {
-        yield ShowErrorProfileState("$ex");
+        yield ShowErrorGetProfileState("$ex");
       }
     }
     if (event is DoUpdateProfileEvent) {
@@ -39,7 +39,44 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         var data = await _repo.getProfile();
         yield SuccessUpdateTargetRevenueState(msg.message, data.object!);
       } catch(ex) {
-        print("Error $ex ");
+        yield ShowErrorProfileState("$ex");
+      }
+    }
+    if (event is DoUpdatePhotoProfileEvent) {
+      yield ShowLoadingProfileState();
+      try {
+        var msg = await _repo.updatePhotoProfile(event.file);
+        var data = await _repo.getProfile();
+        yield SuccessUpdatePhotoProfileState(msg.message, data.object!);
+      } catch(ex) {
+        yield ShowErrorProfileState("$ex");
+      }
+    }
+    if (event is GetProfileHistoryEvent) {
+      try {
+        var list = await _repo.getProfileHistory();
+        yield ShowProfileHistoryDataState(list);
+      } catch(ex) {
+        yield ShowErrorProfileState("$ex");
+      }
+    }
+    if (event is FilterProfileHistoryEvent) {
+      yield ShowLoadingProfileState();
+      try {
+        var list = await _repo.getProfileHistory(periode: event.periode, page: "1");
+        yield ShowProfileHistoryDataState(list);
+      } catch(ex) {
+        yield ShowErrorProfileState("$ex");
+      }
+    }
+    if (event is PaginateProfileHistoryEvent) {
+      try {
+        var list = await _repo.getProfileHistory(
+          periode: event.periode,
+          page: event.page
+        );
+        yield ShowPaginateProfileHistoryDataState(list);
+      } catch(ex) {
         yield ShowErrorProfileState("$ex");
       }
     }

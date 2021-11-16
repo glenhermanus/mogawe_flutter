@@ -34,14 +34,14 @@ abstract class NetworkService {
       var uri = Uri.parse(endpoint);
       var request = http.MultipartRequest("POST", uri);
 
-      if (files != null) {
+      if (files!.isNotEmpty) {
         files.forEach((key, value) async{
           request.files.add(await http.MultipartFile.fromPath(key, value.path));
         });
       }
 
       request.headers.addAll(header!);
-      request.fields.addAll(body!);
+      if (body != null) request.fields.addAll(body);
 
       var response = await request.send().then(http.Response.fromStream);
       var res = jsonDecode(response.body);

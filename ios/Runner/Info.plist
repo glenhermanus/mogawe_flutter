@@ -41,5 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>MoGawe needs to access your photos</string>
+    <key>NSCameraUsageDescription</key>
+    <string>MoGawe needs to access your camera</string>
 </dict>
 </plist>

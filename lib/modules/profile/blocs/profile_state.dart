@@ -1,3 +1,4 @@
+import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 
 abstract class ProfileState {}
@@ -12,6 +13,18 @@ class ShowProfileData extends ProfileState {
   ShowProfileData(this.data);
 }
 
+class ShowProfileHistoryDataState extends ProfileState {
+  List<ProfileHistoryData> list;
+
+  ShowProfileHistoryDataState(this.list);
+}
+
+class ShowPaginateProfileHistoryDataState extends ProfileState {
+  List<ProfileHistoryData> list;
+
+  ShowPaginateProfileHistoryDataState(this.list);
+}
+
 class SuccessUpdateProfileState extends ProfileState {
   String message;
   ObjectData data;
@@ -24,6 +37,19 @@ class SuccessUpdateTargetRevenueState extends ProfileState {
   ObjectData data;
 
   SuccessUpdateTargetRevenueState(this.message, this.data);
+}
+
+class SuccessUpdatePhotoProfileState extends ProfileState {
+  String message;
+  ObjectData data;
+
+  SuccessUpdatePhotoProfileState(this.message, this.data);
+}
+
+class ShowErrorGetProfileState extends ProfileState {
+  String message;
+
+  ShowErrorGetProfileState(this.message);
 }
 
 class ShowErrorProfileState extends ProfileState {

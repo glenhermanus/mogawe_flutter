@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/modules/profile/id_card_profile.dart';
 import 'package:mogawe/modules/profile/tab_widgets/history_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/personal_tab.dart';
@@ -13,11 +19,16 @@ import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 class ProfilePage extends StatefulWidget {
 
   final ObjectData? data;
+  final List<ProfileHistoryData>? histories;
   final Function(Map<String, String> map)? updateProfile;
   final Function(Map<String, dynamic> map)? updateTarget;
+  final Function(File photo)? onFotoChanged;
+  final Function(int p)? historyPageListen;
+  final Function(String f)? filter;
 
   ProfilePage({Key? key, this.data, this.updateProfile,
-    this.updateTarget}) : super(key: key);
+    this.updateTarget, this.onFotoChanged, this.histories,
+  this.historyPageListen, this.filter}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -27,6 +38,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   
   late TabController tabController;
   int currTab = 0;
+  final picker = ImagePicker();
+  File? photo;
+  String? path;
 
   @override
   void initState() {
@@ -46,6 +60,28 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         tabController.index != tabController.previousIndex) {
       currTab = tabController.index;
       setState(() {});
+    }
+  }
+
+  Future getImageGallery() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      photo = File(pickedFile.path);
+      path = photo!.path.split('/').last;
+      widget.onFotoChanged!(photo!);
+    } else {
+      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
+    }
+  }
+
+  Future getImageCamera() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      photo = File(pickedFile.path);
+      path = photo!.path.split('/').last;
+      widget.onFotoChanged!(photo!);
+    } else {
+      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
     }
   }
 
@@ -72,15 +108,18 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               children: [
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: widget.data == null? Container(): Image.network(
-                      widget.data!.profilePicture!,
+                  child: GestureDetector(
+                    onTap: () => chooseImage(),
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: widget.data == null? Container(): Image.network(
+                        widget.data!.profilePicture!,
+                      ),
                     ),
                   ),
                 ),
@@ -128,7 +167,23 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       size: 30,
                     ),
                     onPressed: () {
-                      print('IconButton pressed ...');
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Material(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: IdCardProfile(data: widget.data!),
+                              ),
+                            ),
+                          ),
+                        )
+                      );
                     },
                   ),
                 )
@@ -173,7 +228,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           updateProfile: widget.updateProfile!,
                           updateTarget: widget.updateTarget!,
                         ),
-                        HistoryTab(),
+                        HistoryTab(
+                          histories: widget.histories!,
+                          historyPageListen: widget.historyPageListen,
+                          filter: widget.filter,
+                        ),
                         MerchantTab(),
                         SettingTab()
                       ],
@@ -214,6 +273,50 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           fontSize: 10
         ))
       ]),
+    );
+  }
+
+  void chooseImage() {
+    showDialog(
+      context: context,
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Material(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  onTap: () => getImageCamera(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(children: [
+                      Icon(Icons.photo_camera, size: 24, color: Colors.black),
+                      SizedBox(width: 16),
+                      Text("Ambil Foto", style: TextStyle(
+                          fontSize: 16
+                      ))
+                    ]),
+                  ),
+                ),
+                InkWell(
+                  onTap: () => getImageGallery(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(children: [
+                      Icon(Icons.image, size: 24, color: Colors.black),
+                      SizedBox(width: 16),
+                      Text("Dari Galeri", style: TextStyle(
+                        fontSize: 16
+                      ))
+                    ]),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      )
     );
   }
 }

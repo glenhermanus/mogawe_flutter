@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/auth/screens/login/login_page.dart';
@@ -23,12 +25,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ObjectData? data;
   bool isLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  List<ProfileHistoryData> histories = [];
+  String? periode;
 
   @override
   void initState() {
     super.initState();
     bloc = ProfileBloc();
     bloc.add(GetProfileEvent());
+    bloc.add(GetProfileHistoryEvent());
   }
 
   @override
@@ -60,6 +65,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (state is ShowProfileData) {
           checkLoading();
           data = state.data;
+          return layout();
+        }
+        if (state is ShowProfileHistoryDataState) {
+          checkLoading();
+          histories = state.list;
+          return layout();
+        }
+        if (state is ShowPaginateProfileHistoryDataState) {
+          histories.addAll(state.list);
           return layout();
         }
         if (state is SuccessUpdateProfileState) {
@@ -94,11 +108,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
           });
           return layout();
         }
-        if (state is ShowErrorProfileState) {
+        if (state is SuccessUpdatePhotoProfileState) {
+          checkLoading();
+          data = state.data;
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.message,
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white
+                ),
+              ),
+            ));
+          });
+          return layout();
+        }
+        if (state is ShowErrorGetProfileState) {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) { 
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>
             LoginPage()), (route) => false);
+          });
+          return layout();
+        }
+        if (state is ShowErrorProfileState) {
+          checkLoading();
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.message,
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white
+                ),
+              ),
+              backgroundColor: FlutterFlowTheme.primaryColor,
+            ));
           });
           return layout();
         }
@@ -131,8 +177,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget layout() => ProfilePage(
     data: data,
+    histories: histories,
     updateProfile: (map) => bloc.add(DoUpdateProfileEvent(map)),
     updateTarget: (map) => bloc.add(DoUpdateTargetRevenueEvent(map)),
+    onFotoChanged: (v) {
+      var map = {
+        "profilePicture": v
+      };
+      Navigator.pop(context);
+      bloc.add(DoUpdatePhotoProfileEvent(map));
+    },
+    historyPageListen: (p) => bloc.add(PaginateProfileHistoryEvent(periode, "$p")),
+    filter: (f) {
+      periode = f;
+      bloc.add(FilterProfileHistoryEvent(periode!));
+    },
   );
 
   void checkLoading() {
