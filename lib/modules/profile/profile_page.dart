@@ -25,10 +25,15 @@ class ProfilePage extends StatefulWidget {
   final Function(File photo)? onFotoChanged;
   final Function(int p)? historyPageListen;
   final Function(String f)? filter;
+  final TextEditingController? targetCtrl;
+  final TextEditingController? namaCtrl;
+  final TextEditingController? emailCtrl;
+  final TextEditingController? phoneCtrl;
 
   ProfilePage({Key? key, this.data, this.updateProfile,
     this.updateTarget, this.onFotoChanged, this.histories,
-  this.historyPageListen, this.filter}) : super(key: key);
+  this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
+    this.emailCtrl, this.phoneCtrl}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -223,10 +228,16 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     child: TabBarView(
                       controller: tabController,
                       children: [
-                        PersonalTab(
-                          data: widget.data,
-                          updateProfile: widget.updateProfile!,
-                          updateTarget: widget.updateTarget!,
+                        SingleChildScrollView(
+                          child: PersonalTab(
+                            data: widget.data,
+                            updateProfile: widget.updateProfile!,
+                            updateTarget: widget.updateTarget!,
+                              targetCtrl: widget.targetCtrl,
+                              namaCtrl: widget.namaCtrl,
+                              emailCtrl: widget.emailCtrl,
+                              phoneCtrl: widget.phoneCtrl,
+                          ),
                         ),
                         HistoryTab(
                           histories: widget.histories!,
@@ -265,7 +276,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         borderRadius: BorderRadius.circular(16)
       ),
       child: Row(children: [
-        Icon(icon, size: 12, color: colText),
+        Icon(icon, size: 11, color: colText),
         SizedBox(width: 8),
         Text(title, style: TextStyle(
           color: colText,
@@ -283,13 +294,14 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Material(
+            borderRadius: BorderRadius.circular(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 InkWell(
                   onTap: () => getImageCamera(),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: Row(children: [
                       Icon(Icons.photo_camera, size: 24, color: Colors.black),
                       SizedBox(width: 16),
@@ -302,7 +314,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 InkWell(
                   onTap: () => getImageGallery(),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: Row(children: [
                       Icon(Icons.image, size: 24, color: Colors.black),
                       SizedBox(width: 16),

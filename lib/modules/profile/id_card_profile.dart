@@ -150,26 +150,24 @@ class _IdCardProfileState extends State<IdCardProfile> {
                 ),
               ),
               SizedBox(height: 8),
-              Padding(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Image.asset("assets/images/img.png", height: 48),
-                  SizedBox(width: 16),
-                  Column(children: [
-                    Text(mogawe, style: TextStyle(
-                        color: Color(0xff999999),
-                        fontWeight: FontWeight.w700,
-                      fontSize: 12
-                    )),
-                    SizedBox(height: 4),
-                    Text(address, style: TextStyle(
-                        color: Color(0xff999999),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 10
-                    )),
-                  ])
-                ]),
-              )
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Image.asset("assets/images/img.png", height: 48),
+                SizedBox(width: 16),
+                Column(children: [
+                  Text(mogawe, style: TextStyle(
+                      color: Color(0xff999999),
+                      fontWeight: FontWeight.w700,
+                    fontSize: 12
+                  )),
+                  SizedBox(height: 4),
+                  Text(address, style: TextStyle(
+                      color: Color(0xff999999),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10
+                  )),
+                ])
+              ]),
+              SizedBox(height: 16)
             ],
           )
         ],

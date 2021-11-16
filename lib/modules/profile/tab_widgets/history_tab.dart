@@ -55,9 +55,10 @@ class _HistoryTabState extends State<HistoryTab> {
           padding: EdgeInsetsDirectional.fromSTEB(
               16, 16, 16, 0),
           child: Row(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
+                flex: 1,
                 child: TextFormField(
                   controller: textController1,
                   obscureText: false,
@@ -97,26 +98,21 @@ class _HistoryTabState extends State<HistoryTab> {
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(
-                      16, 0, 0, 0),
-                  child: DropdownButton(
-                    items: Const.historyFilter.map((e) {
-                      return DropdownMenuItem<String>(
-                        value: e,
-                        child: Text(e.split(",")[0]),
-                      );
-                    }).toList(),
-                    value: currValue,
-                    onChanged: (v) {
-                      currValue = v.toString();
-                      filter = currValue.split(",")[1];
-                      setState(() {});
-                      widget.filter!(filter!);
-                    },
-                  ),
-                ),
+              SizedBox(width: 16),
+              DropdownButton(
+                items: Const.historyFilter.map((e) {
+                  return DropdownMenuItem<String>(
+                    value: e,
+                    child: Text(e.split(",")[0]),
+                  );
+                }).toList(),
+                value: currValue,
+                onChanged: (v) {
+                  currValue = v.toString();
+                  filter = currValue.split(",")[1];
+                  setState(() {});
+                  widget.filter!(filter!);
+                },
               )
             ],
           ),

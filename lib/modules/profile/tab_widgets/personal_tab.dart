@@ -9,9 +9,14 @@ class PersonalTab extends StatefulWidget {
   final ObjectData? data;
   final Function(Map<String, String> map)? updateProfile;
   final Function(Map<String, dynamic> map)? updateTarget;
+  final TextEditingController? targetCtrl;
+  final TextEditingController? namaCtrl;
+  final TextEditingController? emailCtrl;
+  final TextEditingController? phoneCtrl;
 
   const PersonalTab({Key? key, this.data, this.updateProfile,
-    this.updateTarget}) : super(key: key);
+    this.updateTarget, this.targetCtrl, this.namaCtrl,
+    this.emailCtrl, this.phoneCtrl}) : super(key: key);
 
   @override
   _PersonalTabState createState() => _PersonalTabState();
@@ -90,7 +95,8 @@ class _PersonalTabState extends State<PersonalTab> {
                       title: "Masukkan Target Harian: ",
                     type: TextInputType.number,
                     field: "targetRevenue",
-                    value: targetHarian
+                    value: targetHarian,
+                    ctrl: widget.targetCtrl
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
@@ -151,6 +157,7 @@ class _PersonalTabState extends State<PersonalTab> {
                     title: "Masukkan Nama Lengkap : ",
                     value: nama,
                     field: "fullName",
+                    ctrl: widget.namaCtrl,
                     onChanged: (v) {
                       nama = v;
                       if (v.isEmpty) nama = null;
@@ -195,6 +202,7 @@ class _PersonalTabState extends State<PersonalTab> {
                     title: "Masukkan Email :",
                     value: email,
                     field: "email",
+                    ctrl: widget.emailCtrl,
                     type: TextInputType.emailAddress,
                   ),
                   child: Row(
@@ -236,6 +244,7 @@ class _PersonalTabState extends State<PersonalTab> {
                     type: TextInputType.number,
                     value: phone,
                     field: "phone",
+                    ctrl: widget.phoneCtrl,
                     onChanged: (v) {
                       phone = v;
                       if (v.isEmpty) phone = null;
@@ -356,7 +365,7 @@ class _PersonalTabState extends State<PersonalTab> {
 
   void showEditDialog(BuildContext ctx,
       {String? title, Function(String v)? onChanged, TextInputType? type,
-        String? value, bool isGender = false, String? field}) {
+        String? value, bool isGender = false, String? field, TextEditingController? ctrl}) {
     showDialog(
         context: ctx,
         builder: (ctx) => AlertDialog(
@@ -404,6 +413,7 @@ class _PersonalTabState extends State<PersonalTab> {
                     setState(() {});
                   },
                   keyboardType: type ?? TextInputType.text,
+                  controller: ctrl,
                 ),
               )
             ],

@@ -27,6 +27,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<ProfileHistoryData> histories = [];
   String? periode;
+  TextEditingController? targetCtrl = TextEditingController();
+  TextEditingController? namaCtrl = TextEditingController();
+  TextEditingController? emailCtrl = TextEditingController();
+  TextEditingController? phoneCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -65,6 +69,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (state is ShowProfileData) {
           checkLoading();
           data = state.data;
+          targetCtrl!.text = data!.config!.targetRevenue!.toInt().toString();
+          namaCtrl!.text = data!.fullName!;
+          emailCtrl!.text = data!.email!;
+          phoneCtrl!.text = data!.phone!;
           return layout();
         }
         if (state is ShowProfileHistoryDataState) {
@@ -180,6 +188,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     histories: histories,
     updateProfile: (map) => bloc.add(DoUpdateProfileEvent(map)),
     updateTarget: (map) => bloc.add(DoUpdateTargetRevenueEvent(map)),
+      targetCtrl: targetCtrl,
+      namaCtrl: namaCtrl,
+      emailCtrl: emailCtrl,
+      phoneCtrl: phoneCtrl,
     onFotoChanged: (v) {
       var map = {
         "profilePicture": v
