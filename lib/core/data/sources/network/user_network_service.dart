@@ -4,6 +4,7 @@ import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/request/reset_password_request.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
 import 'package:mogawe/core/data/response/user_login_response.dart';
+import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/data/response/user_response.dart';
 
 class UserNetworkService {
@@ -26,6 +27,41 @@ class UserNetworkService {
       body: jsonEncode(<String, String>{'email': email, 'password': password}),
     );
     return UserLoginResponse.fromJson(json.decode(response.body));
+  }
+
+  Future<UserLoginResponse> loginUserFacebook(String email, String id, String nama) async {
+    final response = await http.post(
+      Uri.parse("$BASE_URL/api/mogawers/logInSocMed"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{'fullName': nama, 'email': email, 'idFacebook': id}),
+    );
+    return UserLoginResponse.fromJson(json.decode(response.body));
+  }
+
+  Future<UserLoginResponse> loginUserTwitter(String email, String id, String nama) async {
+    final response = await http.post(
+      Uri.parse("$BASE_URL/api/mogawers/logInSocMed"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{'fullName': nama, 'email': email, 'idTwitter': id}),
+    );
+    return UserLoginResponse.fromJson(json.decode(response.body));
+  }
+
+  Future<UserProfileResponse> profileUser(String token) async {
+    print('kucing');
+    print(token);
+    final response = await http.post(
+      Uri.parse("$BASE_URL/api/mogawers/v2/getProfile"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+      body: jsonEncode(<String, String>{'token': token}),
+    );
+    return UserProfileResponse.fromJson(json.decode(response.body));
   }
 
   Future<ResetPasswordResponse> resetPassword(

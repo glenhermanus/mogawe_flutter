@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mogawe/core/data/response/user_profile_response.dart';
+import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/inbox/inbox_page.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 import 'package:mogawe/modules/profile/profile_page.dart';
@@ -10,7 +13,6 @@ import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import '../hire_me/hire_me_page.dart';
 
 class HomePageWidget extends StatefulWidget {
-  HomePageWidget({Key? key}) : super(key: key);
 
   @override
   _HomePageWidgetState createState() => _HomePageWidgetState();
@@ -24,9 +26,29 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   bool _loadingButton5 = false;
   bool _loadingButton6 = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  var token;
+  UserProfileResponse? userProfileResponse;
+
+  void getToken() async{
+    AuthRepository().readSecureData('token').then((value)async{
+      token = value;
+      var res = await AuthRepository().getProfile(token);
+      userProfileResponse = res;
+    } );
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getToken();
+
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(userProfileResponse?.full_name);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -45,17 +67,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                padding: const EdgeInsets.only(left: 16),
                 child: Icon(
                   Icons.account_balance_wallet,
                   color: FlutterFlowTheme.secondaryColor,
-                  size: 20,
+                  size: 18,
                 ),
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                 child: Text(
-                  'Rp.350.000',
+                  '${this.userProfileResponse?.balance}',
                   style: FlutterFlowTheme.title2.override(
                     fontFamily: 'Poppins',
                     color: FlutterFlowTheme.secondaryColor,
@@ -165,7 +187,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                         child: Text(
-                          '200pts',
+                          '${this.userProfileResponse?.points}pts',
                           style: FlutterFlowTheme.bodyText1.override(
                             fontFamily: 'Poppins',
                             color: FlutterFlowTheme.secondaryColor,
@@ -228,7 +250,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           width: double.infinity,
@@ -258,7 +280,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             Expanded(
                               child: Padding(
                                 padding:
-                                    EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                                EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +288,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     Text(
                                       'Kejar sisa target hari ini:',
                                       style:
-                                          FlutterFlowTheme.bodyText1.override(
+                                      FlutterFlowTheme.bodyText1.override(
                                         fontFamily: 'Poppins',
                                         fontSize: 12,
                                       ),
@@ -283,14 +305,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 .override(
                                               fontFamily: 'Poppins',
                                               color:
-                                                  FlutterFlowTheme.primaryColor,
+                                              FlutterFlowTheme.primaryColor,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8, 0, 0, 0),
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                8, 0, 0, 0),
                                             child: Icon(
                                               Icons.edit_rounded,
                                               color: FlutterFlowTheme
@@ -307,7 +329,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       child: FFButtonWidget(
                                         onPressed: () async {
                                           setState(
-                                              () => _loadingButton1 = true);
+                                                  () => _loadingButton1 = true);
                                           try {
                                             await Navigator.push(
                                               context,
@@ -318,7 +340,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             );
                                           } finally {
                                             setState(
-                                                () => _loadingButton1 = false);
+                                                    () => _loadingButton1 = false);
                                           }
                                         },
                                         text: 'Tambah Gawean',
@@ -347,7 +369,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       child: Text(
                                         'Pesonamu:',
                                         style:
-                                            FlutterFlowTheme.bodyText1.override(
+                                        FlutterFlowTheme.bodyText1.override(
                                           fontFamily: 'Poppins',
                                           fontSize: 12,
                                         ),
@@ -370,12 +392,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               )
                                             ],
                                             borderRadius:
-                                                BorderRadius.circular(20),
+                                            BorderRadius.circular(20),
                                           ),
                                           child: Icon(
                                             Icons.calculate,
                                             color:
-                                                FlutterFlowTheme.secondaryColor,
+                                            FlutterFlowTheme.secondaryColor,
                                             size: 24,
                                           ),
                                         ),
@@ -393,11 +415,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               )
                                             ],
                                             borderRadius:
-                                                BorderRadius.circular(20),
+                                            BorderRadius.circular(20),
                                           ),
                                           child: Align(
                                             alignment:
-                                                AlignmentDirectional(0, 0),
+                                            AlignmentDirectional(0, 0),
                                             child: FaIcon(
                                               FontAwesomeIcons.instagram,
                                               color: FlutterFlowTheme
@@ -420,19 +442,19 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               )
                                             ],
                                             borderRadius:
-                                                BorderRadius.circular(20),
+                                            BorderRadius.circular(20),
                                           ),
                                           child: Icon(
                                             Icons.delivery_dining,
                                             color:
-                                                FlutterFlowTheme.secondaryColor,
+                                            FlutterFlowTheme.secondaryColor,
                                             size: 24,
                                           ),
                                         ),
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  4, 0, 0, 0),
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              4, 0, 0, 0),
                                           child: Text(
                                             '+12',
                                             style: FlutterFlowTheme.subtitle1
@@ -730,7 +752,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
                                                 'Teknisi Mesin EDC',
@@ -750,8 +772,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 8, 0, 0),
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0, 8, 0, 0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -779,8 +801,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 8, 0, 0),
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0, 8, 0, 0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -809,7 +831,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           Row(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               Expanded(
                                                 child: Padding(
@@ -817,7 +839,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
                                                     mainAxisSize:
-                                                        MainAxisSize.max,
+                                                    MainAxisSize.max,
                                                     children: [
                                                       Icon(
                                                         Icons.location_on,
@@ -826,17 +848,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    8, 0, 0, 0),
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8, 0, 0, 0),
                                                         child: Text(
                                                           'Cilandak ...',
                                                           style:
-                                                              FlutterFlowTheme
-                                                                  .bodyText2
-                                                                  .override(
+                                                          FlutterFlowTheme
+                                                              .bodyText2
+                                                              .override(
                                                             fontFamily:
-                                                                'Poppins',
+                                                            'Poppins',
                                                             color: Color(
                                                                 0xFF8C8C8C),
                                                             fontSize: 12,
@@ -917,7 +939,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
                                                 'Teknisi Mesin EDC',
@@ -937,8 +959,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 8, 0, 0),
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0, 8, 0, 0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -966,8 +988,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 8, 0, 0),
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0, 8, 0, 0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -996,7 +1018,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           Row(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               Expanded(
                                                 child: Padding(
@@ -1004,7 +1026,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
                                                     mainAxisSize:
-                                                        MainAxisSize.max,
+                                                    MainAxisSize.max,
                                                     children: [
                                                       Icon(
                                                         Icons.location_on,
@@ -1013,17 +1035,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    8, 0, 0, 0),
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8, 0, 0, 0),
                                                         child: Text(
                                                           'Cilandak ...',
                                                           style:
-                                                              FlutterFlowTheme
-                                                                  .bodyText2
-                                                                  .override(
+                                                          FlutterFlowTheme
+                                                              .bodyText2
+                                                              .override(
                                                             fontFamily:
-                                                                'Poppins',
+                                                            'Poppins',
                                                             color: Color(
                                                                 0xFF8C8C8C),
                                                             fontSize: 12,
@@ -1104,7 +1126,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
                                                 'Teknisi Mesin EDC',
@@ -1124,8 +1146,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 8, 0, 0),
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0, 8, 0, 0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -1153,8 +1175,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ),
                                           Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 8, 0, 0),
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0, 8, 0, 0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -1183,7 +1205,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           Row(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               Expanded(
                                                 child: Padding(
@@ -1191,7 +1213,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
                                                     mainAxisSize:
-                                                        MainAxisSize.max,
+                                                    MainAxisSize.max,
                                                     children: [
                                                       Icon(
                                                         Icons.location_on,
@@ -1200,17 +1222,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    8, 0, 0, 0),
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8, 0, 0, 0),
                                                         child: Text(
                                                           'Cilandak ...',
                                                           style:
-                                                              FlutterFlowTheme
-                                                                  .bodyText2
-                                                                  .override(
+                                                          FlutterFlowTheme
+                                                              .bodyText2
+                                                              .override(
                                                             fontFamily:
-                                                                'Poppins',
+                                                            'Poppins',
                                                             color: Color(
                                                                 0xFF8C8C8C),
                                                             fontSize: 12,

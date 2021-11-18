@@ -1,12 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:logger/logger.dart';
+import 'package:mogawe/core/data/response/user_login_response.dart';
+import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/screens/registration/registration_screen.dart';
 import 'package:mogawe/modules/auth/screens/reset_password/reset_password_page.dart';
 import 'package:mogawe/modules/home/home_page.dart';
+import 'package:twitter_login/twitter_login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -29,6 +35,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _loadingButton2 = false;
   bool _loadingButton3 = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  Map? fbcoba;
+  UserLoginResponse? userLoginResponse;
 
   @override
   void initState() {
@@ -166,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           suffixIcon: InkWell(
                             onTap: () => setState(
-                              () => passwordVisibility = !passwordVisibility!,
+                                  () => passwordVisibility = !passwordVisibility!,
                             ),
                             child: Icon(
                               passwordVisibility!
@@ -265,54 +273,69 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF1F3C95),
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        child: Align(
-                          alignment: AlignmentDirectional(0, 0),
-                          child: FaIcon(
-                            FontAwesomeIcons.facebookF,
-                            color: FlutterFlowTheme.secondaryColor,
-                            size: 32,
+                      InkWell(
+                        onTap: () async{
+                          await loginfb();
+                        },
+                        child: Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF1F3C95),
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: Align(
+                            alignment: AlignmentDirectional(0, 0),
+                            child: FaIcon(
+                              FontAwesomeIcons.facebookF,
+                              color: FlutterFlowTheme.secondaryColor,
+                              size: 32,
+                            ),
                           ),
                         ),
                       ),
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme.secondaryColor,
-                          borderRadius: BorderRadius.circular(40),
-                          border: Border.all(
-                            color: FlutterFlowTheme.primaryColor,
+                      InkWell(
+                        onTap: ()async{
+                          await loginGoogle();
+                        },
+                        child: Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.secondaryColor,
+                            borderRadius: BorderRadius.circular(40),
+                            border: Border.all(
+                              color: FlutterFlowTheme.primaryColor,
+                            ),
                           ),
-                        ),
-                        child: Align(
-                          alignment: AlignmentDirectional(0, 0),
-                          child: FaIcon(
-                            FontAwesomeIcons.google,
-                            color: FlutterFlowTheme.primaryColor,
-                            size: 32,
+                          child: Align(
+                            alignment: AlignmentDirectional(0, 0),
+                            child: FaIcon(
+                              FontAwesomeIcons.google,
+                              color: FlutterFlowTheme.primaryColor,
+                              size: 32,
+                            ),
                           ),
                         ),
                       ),
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF4DC0FA),
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        child: Align(
-                          alignment: AlignmentDirectional(0, 0),
-                          child: FaIcon(
-                            FontAwesomeIcons.twitter,
-                            color: FlutterFlowTheme.secondaryColor,
-                            size: 32,
+                      InkWell(
+                        onTap: ()async{
+                          await loginTwitter();
+                        },
+                        child: Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF4DC0FA),
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: Align(
+                            alignment: AlignmentDirectional(0, 0),
+                            child: FaIcon(
+                              FontAwesomeIcons.twitter,
+                              color: FlutterFlowTheme.secondaryColor,
+                              size: 32,
+                            ),
                           ),
                         ),
                       )
@@ -398,4 +421,90 @@ class _LoginPageState extends State<LoginPage> {
       }
     } else {}
   }
+
+  Future<void> loginfb() async{
+    final result = await  FacebookAuth.instance.login(
+        permissions: ["public_profile", "email"]
+    );
+    if(result.status == LoginStatus.success){
+      final req = await FacebookAuth.instance.getUserData(fields: "email, id, name");
+
+      fbcoba = req;
+      var responses = await AuthRepository().LoginFacebook(fbcoba!['name'], fbcoba!['email'], fbcoba!['id']);
+      if (responses.returnValue == "000") {
+        logger.d("Success Login");
+        userLoginResponse = responses;
+        setState(() => _loadingButton2 = true);
+        try {
+          AuthRepository().writeSecureData('token', userLoginResponse!.token);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePageWidget(),
+            ),
+          );
+        } finally {
+          setState(() => _loadingButton2 = false);
+        }
+      }
+      print(responses.token);
+
+      print(fbcoba!['email']);
+
+    }
+  }
+
+  Future<void> gettoken(token)async{
+    var responseses = await UserNetworkService().profileUser(token);
+
+  }
+
+  Future<void> loginTwitter() async{
+    final twitterLogin = TwitterLogin(
+        apiKey: 'bJdoHHY9aH8V2RoxLuffg0InR',
+        apiSecretKey: 'u5HJcyYgD85d7UPYfrnRcZY4kgfbZBJg4I5ZWXW7NRR1xYyaF6',
+        redirectURI: 'twittersdk://'
+    );
+
+    final authResult = await twitterLogin.login(forceLogin: true);
+    logger.d(authResult.status);
+    switch (authResult.status) {
+      case TwitterLoginStatus.loggedIn:
+      // success
+        print('====== Login success ======');
+        break;
+      case TwitterLoginStatus.cancelledByUser:
+      // cancel
+        print('====== Login cancel ======');
+        break;
+      case TwitterLoginStatus.error:
+      case null:
+      // error
+        print('====== Login error ======');
+        break;
+    }
+
+  }
+
+  Future<void> loginGoogle()async{
+    var id;
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+      await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+      await googleSignInAccount!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+      await _auth.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      throw e;
+    }
+  }
+
 }
