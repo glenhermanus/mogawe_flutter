@@ -30,10 +30,11 @@ class ProfileRepository extends NetworkService {
   }
 
   Future<List<ProfileHistoryData>> getProfileHistory({String? realToken,
-    String? page, String? periode}) async {
+    String? page, String? periode, String? q}) async {
     var header = { token: userToken }; //Use realToken when implement get from original token
     var map = await getMethod("${BASE_URL}api/fieldresult/history?"
-        "page=${page ?? "1"}&offset=20&periode=${periode ?? "all"}", header);
+        "page=${page ?? "1"}&offset=20&periode=${periode ?? "all"}"
+        "&q=${q ?? ""}", header);
     return ProfileHistoryResponse.fromJsonMap(map).object;
   }
 

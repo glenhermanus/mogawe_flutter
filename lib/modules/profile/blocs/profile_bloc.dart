@@ -63,7 +63,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is FilterProfileHistoryEvent) {
       yield ShowLoadingProfileState();
       try {
-        var list = await _repo.getProfileHistory(periode: event.periode, page: "1");
+        var list = await _repo.getProfileHistory(periode: event.periode,
+            page: "1", q: event.q);
         yield ShowProfileHistoryDataState(list);
       } catch(ex) {
         yield ShowErrorProfileState("$ex");
@@ -73,9 +74,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       try {
         var list = await _repo.getProfileHistory(
           periode: event.periode,
-          page: event.page
+          page: event.page,
+          q: event.q
         );
         yield ShowPaginateProfileHistoryDataState(list);
+      } catch(ex) {
+        yield ShowErrorProfileState("$ex");
+      }
+    }
+    if (event is SearchProfileHistoryEvent) {
+      yield ShowLoadingProfileState();
+      try {
+        var list = await _repo.getProfileHistory(
+          q: event.q,
+          page: "1",
+          periode: event.periode
+        );
+        yield ShowProfileHistoryDataState(list);
       } catch(ex) {
         yield ShowErrorProfileState("$ex");
       }

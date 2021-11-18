@@ -23,8 +23,9 @@ class ProfilePage extends StatefulWidget {
   final Function(Map<String, String> map)? updateProfile;
   final Function(Map<String, dynamic> map)? updateTarget;
   final Function(File photo)? onFotoChanged;
-  final Function(int p)? historyPageListen;
-  final Function(String f)? filter;
+  final Function(int p, String q)? historyPageListen;
+  final Function(String f, String q)? filter;
+  final Function(String q)? searchListen;
   final TextEditingController? targetCtrl;
   final TextEditingController? namaCtrl;
   final TextEditingController? emailCtrl;
@@ -33,7 +34,7 @@ class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key, this.data, this.updateProfile,
     this.updateTarget, this.onFotoChanged, this.histories,
   this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
-    this.emailCtrl, this.phoneCtrl}) : super(key: key);
+    this.emailCtrl, this.phoneCtrl, this.searchListen}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -243,6 +244,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           histories: widget.histories!,
                           historyPageListen: widget.historyPageListen,
                           filter: widget.filter,
+                          searchListen: widget.searchListen,
                         ),
                         MerchantTab(),
                         SettingTab()
