@@ -48,7 +48,7 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   flutter_facebook_auth: ^3.5.6
   twitter_login: ^4.0.1
-  google_sign_in: ^5.2.1
+  google_sign_in:
   flutter_secure_storage:
   firebase_core:
   firebase_auth:
