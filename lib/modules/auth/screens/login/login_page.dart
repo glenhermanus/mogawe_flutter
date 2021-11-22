@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = new GlobalKey<FormState>();
   var logger = Logger(printer: PrettyPrinter());
 
-  late String _email, _password;
+  String _email = "", _password = "";
 
   TextEditingController? _emailInputController;
   TextEditingController? _passwordInputController;
@@ -397,29 +397,37 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _handleSubmitLogin(String email, String password) async {
     final FormState? form = _formKey.currentState;
-    if (form!.validate()) {
-      form.save();
+    // if (form!.validate()) {
+    //   form.save();
+    //
+    //
+    // } else {}
 
-      //! delete after done
-      String staticPassword =
-          "0f68c787320dc0f532da41c6c35e235f08a37306d57ae89a747db1e746ebc975";
 
-      var response = await _authRepository.submitLogin(email, staticPassword);
-      if (response.returnValue != "000") {
-        logger.d("Success Login");
-        setState(() => _loadingButton2 = true);
-        try {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePageWidget(),
-            ),
-          );
-        } finally {
-          setState(() => _loadingButton2 = false);
-        }
+    //! delete after done
+    String email = "gellaps@gmail.com";
+    String staticPassword =
+        "ec7481d891314c11f10406d8bea73a2086a9e727a624f23de1694341016d055c";
+
+    var response = await _authRepository.submitLogin(email, staticPassword);
+    if (response.returnValue == "000") {
+      logger.d("Success Login");
+      setState(() => _loadingButton2 = true);
+      try {
+
+        await AuthRepository().writeSecureData("token", response.token);
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
+
+
+      } finally {
+        setState(() => _loadingButton2 = false);
       }
-    } else {}
+    }
   }
 
   Future<void> loginfb() async{
@@ -441,7 +449,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => HomePageWidget(),
+              builder: (context) => HomePage(),
             ),
           );
         } finally {
