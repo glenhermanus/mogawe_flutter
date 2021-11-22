@@ -1042,7 +1042,7 @@ class _HireMeBundlePageState extends State<HireMeBundlePage> {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomePageWidget(),
+                          builder: (context) => HomePage(),
                         ),
                       );
                     } finally {

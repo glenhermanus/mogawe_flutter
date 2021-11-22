@@ -65,7 +65,7 @@ class _EmailActivationSuccessPageState
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HomePageWidget(),
+                              builder: (context) => HomePage(),
                             ),
                           );
                         } finally {

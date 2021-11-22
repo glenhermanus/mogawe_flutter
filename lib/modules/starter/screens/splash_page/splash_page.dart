@@ -6,6 +6,7 @@ import 'package:mogawe/constant/app_const_value.dart';
 import 'package:mogawe/core/data/response/user_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/modules/home/home_page.dart';
 import 'package:mogawe/modules/starter/screens/onboarding/onboarding_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -121,13 +122,27 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 
-  void _navigateToOnboarding() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OnboardingPage(),
-      ),
-    );
+  void _navigateToOnboarding() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var isLoggedIn = prefs.getBool("isLoggedIn");
+    if(isLoggedIn == null) isLoggedIn = false;
+    if(isLoggedIn == false){
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OnboardingPage(),
+        ),
+      );
+    }else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    }
+
   }
 
   Future<void> _buildDialogForUpdateToNewestVersion() async {

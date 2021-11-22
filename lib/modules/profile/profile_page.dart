@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/modules/auth/screens/login/login_page.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 
@@ -1787,24 +1789,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 16, 0, 0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          'Keluar',
-                                          style: FlutterFlowTheme.bodyText1
-                                              .override(
-                                            fontFamily: 'Poppins',
-                                            color:
-                                                FlutterFlowTheme.primaryColor,
+                                GestureDetector(
+                                  onTap:() async{
+
+                                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                                    await prefs.clear();
+
+                                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>
+                                        LoginPage()), (route) => false);
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0, 16, 0, 0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Keluar',
+                                            style: FlutterFlowTheme.bodyText1
+                                                .override(
+                                              fontFamily: 'Poppins',
+                                              color:
+                                                  FlutterFlowTheme.primaryColor,
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Padding(

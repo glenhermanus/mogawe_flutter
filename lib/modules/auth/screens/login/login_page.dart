@@ -7,6 +7,8 @@ import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/screens/registration/registration_screen.dart';
 import 'package:mogawe/modules/auth/screens/reset_password/reset_password_page.dart';
 import 'package:mogawe/modules/home/home_page.dart';
+import 'package:mogawe/utils/ui/widgets/app_util.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -20,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = new GlobalKey<FormState>();
   var logger = Logger(printer: PrettyPrinter());
 
-  late String _email, _password;
+  String _email = "", _password = "";
 
   TextEditingController? _emailInputController;
   TextEditingController? _passwordInputController;
@@ -74,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                         validator: (value) => value == null || value.isEmpty
                             ? "Masukkan email mu"
                             : null,
-                        onSaved: (value) => _email = value!,
+                        onChanged: (value) => _email = value,
                         decoration: InputDecoration(
                           hintText: 'john.doe@email.com',
                           hintStyle: FlutterFlowTheme.bodyText1.override(
@@ -132,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                         validator: (value) => value == null || value.isEmpty
                             ? "Masukkan passwordmu"
                             : null,
-                        onSaved: (value) => _password = value!,
+                        onChanged: (value) => _password = value,
                         decoration: InputDecoration(
                           hintText: '******',
                           hintStyle: FlutterFlowTheme.bodyText1.override(
@@ -373,29 +375,36 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleSubmitLogin(String email, String password) async {
-    final FormState? form = _formKey.currentState;
-    if (form!.validate()) {
-      form.save();
+    // final FormState? form = _formKey.currentState;
+    // if (form != null && form.validate()) {
+    //   form.save();
+    //
+    //
+    //
+    // } else {
+    //   print("OUT >> no");
+    // }
 
-      //! delete after done
-      String staticPassword =
-          "0f68c787320dc0f532da41c6c35e235f08a37306d57ae89a747db1e746ebc975";
 
-      var response = await _authRepository.submitLogin(email, staticPassword);
-      if (response.returnValue != "000") {
-        logger.d("Success Login");
-        setState(() => _loadingButton2 = true);
-        try {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePageWidget(),
-            ),
-          );
-        } finally {
-          setState(() => _loadingButton2 = false);
-        }
+    var response = await _authRepository.submitLogin(email, AppUtil.hashedPassword(password));
+    if (response.returnValue == "000") {
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', response.token);
+      await prefs.setBool('isLoggedIn', true);
+
+      logger.d("Success Login");
+      setState(() => _loadingButton2 = true);
+      try {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
+      } finally {
+        setState(() => _loadingButton2 = false);
       }
-    } else {}
+    }
   }
 }

@@ -9,14 +9,14 @@ import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import '../hire_me/hire_me_page.dart';
 
-class HomePageWidget extends StatefulWidget {
-  HomePageWidget({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  HomePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageWidgetState createState() => _HomePageWidgetState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageWidgetState extends State<HomePageWidget> {
+class _HomePageState extends State<HomePage> {
   bool _loadingButton1 = false;
   bool _loadingButton2 = false;
   bool _loadingButton3 = false;

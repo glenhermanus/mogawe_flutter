@@ -321,7 +321,7 @@ class _TransferBankPageState extends State<TransferBankPage> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HomePageWidget(),
+                                builder: (context) => HomePage(),
                               ),
                             );
                           } finally {
