@@ -45,7 +45,7 @@ class _HistoryTabState extends State<HistoryTab> {
   void scrollListener() {
     if (scrollController.position.maxScrollExtent == scrollController.offset) {
       page = page+1;
-      widget.historyPageListen!(page, q!);
+      widget.historyPageListen!(page, q ?? "");
     }
   }
 
@@ -118,7 +118,7 @@ class _HistoryTabState extends State<HistoryTab> {
                   currValue = v.toString();
                   filter = currValue.split(",")[1];
                   setState(() {});
-                  widget.filter!(filter!, q!);
+                  widget.filter!(filter ?? "", q ?? "");
                 },
               )
             ],

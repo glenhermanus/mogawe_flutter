@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
-import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/inbox/inbox_page.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
-import 'package:mogawe/modules/profile/profile_page.dart';
+import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
+
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import '../hire_me/hire_me_page.dart';
 
@@ -136,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(),
+                    builder: (context) => ProfileScreen(),
                   ),
                 );
               },
