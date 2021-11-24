@@ -9,6 +9,7 @@ abstract class NetworkService {
       print("Endpoint : $endPoint");
       final response = await http.get(Uri.parse(endPoint), headers: headers);
       var res = json.decode(response.body);
+      print(res);
       if (res["returnValue"] == "000") return res;
       else throw Exception(res["message"]);
     } on SocketException {
@@ -21,6 +22,7 @@ abstract class NetworkService {
       final response = await http.post(Uri.parse(endpoint), body: json.encode(body),
           headers: headers);
       var res = json.decode(response.body);
+      print(res);
       if (res["returnValue"] == "000") return res;
       else throw Exception(res["message"]);
     } on SocketException {

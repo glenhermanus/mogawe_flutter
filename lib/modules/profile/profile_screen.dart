@@ -27,6 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<ProfileHistoryData> histories = [];
   String? periode;
+  String? q;
   TextEditingController? targetCtrl = TextEditingController();
   TextEditingController? namaCtrl = TextEditingController();
   TextEditingController? emailCtrl = TextEditingController();
@@ -199,11 +200,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.pop(context);
       bloc.add(DoUpdatePhotoProfileEvent(map));
     },
-    historyPageListen: (p) => bloc.add(PaginateProfileHistoryEvent(periode, "$p")),
-    filter: (f) {
-      periode = f;
-      bloc.add(FilterProfileHistoryEvent(periode!));
+    historyPageListen: (p, q) {
+      this.q = q;
+      bloc.add(PaginateProfileHistoryEvent(q, periode, "$p"));
     },
+    filter: (f, q) {
+      periode = f;
+      this.q = q;
+      bloc.add(FilterProfileHistoryEvent(periode!, q));
+    },
+    searchListen: (q) => bloc.add(SearchProfileHistoryEvent(q, periode)),
   );
 
   void checkLoading() {

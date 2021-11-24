@@ -7,11 +7,12 @@ import 'package:mogawe/utils/ui/widgets/app_util.dart';
 class HistoryTab extends StatefulWidget {
 
   final List<ProfileHistoryData>? histories;
-  final Function(int p)? historyPageListen;
-  final Function(String f)? filter;
+  final Function(String q)? searchListen;
+  final Function(int p, String q)? historyPageListen;
+  final Function(String f, String q)? filter;
 
   const HistoryTab({Key? key, this.histories, this.historyPageListen,
-  this.filter}) : super(key: key);
+  this.filter, this.searchListen}) : super(key: key);
 
   @override
   _HistoryTabState createState() => _HistoryTabState();
@@ -25,6 +26,7 @@ class _HistoryTabState extends State<HistoryTab> {
   int page = 0;
   String currValue = Const.historyFilter.first;
   String? filter;
+  String? q;
 
   @override
   void initState() {
@@ -43,7 +45,7 @@ class _HistoryTabState extends State<HistoryTab> {
   void scrollListener() {
     if (scrollController.position.maxScrollExtent == scrollController.offset) {
       page = page+1;
-      widget.historyPageListen!(page);
+      widget.historyPageListen!(page, q ?? "");
     }
   }
 
@@ -62,8 +64,13 @@ class _HistoryTabState extends State<HistoryTab> {
                 child: TextFormField(
                   controller: textController1,
                   obscureText: false,
+                  onFieldSubmitted: (v) {
+                    q = v;
+                    if (v.isEmpty) q = null;
+                    widget.searchListen!(q ?? "");
+                  },
                   decoration: InputDecoration(
-                    hintText: 'search',
+                    hintText: 'Search',
                     hintStyle: FlutterFlowTheme.bodyText1
                         .override(
                       fontFamily: 'Poppins',
@@ -111,7 +118,7 @@ class _HistoryTabState extends State<HistoryTab> {
                   currValue = v.toString();
                   filter = currValue.split(",")[1];
                   setState(() {});
-                  widget.filter!(filter!);
+                  widget.filter!(filter ?? "", q ?? "");
                 },
               )
             ],

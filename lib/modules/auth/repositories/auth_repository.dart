@@ -1,5 +1,4 @@
 import 'package:mogawe/core/data/request/reset_password_request.dart';
-import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/response/register/email_activation_response.dart';
@@ -76,10 +75,6 @@ class AuthRepository extends NetworkService {
 
   Future<UserLoginResponse> LoginTwitter(nama, email, id)async{
     return _apiService.loginUserTwitter(nama, email, id);
-  }
-
-  Future<PesonaResponses> pesonadata(token)async{
-    return _apiService.pesonaresponse(token);
   }
 
   Future writeSecureData(String key, String value) async {
