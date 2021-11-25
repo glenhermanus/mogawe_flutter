@@ -38,6 +38,12 @@ class FlutterFlowTheme {
         fontSize: 18,
       );
   static TextStyle get subtitle2 => GoogleFonts.getFont(
+    'Poppins',
+    color: Color(0xFF757575),
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+  );
+  static TextStyle get subtitle3 => GoogleFonts.getFont(
         'Poppins',
         color: Color(0xFF616161),
         fontWeight: FontWeight.normal,
@@ -55,6 +61,12 @@ class FlutterFlowTheme {
         fontWeight: FontWeight.normal,
         fontSize: 14,
       );
+  static TextStyle get bodyText3 => GoogleFonts.getFont(
+    'Poppins',
+    color: Color(0xFF424242),
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+  );
 }
 
 extension TextStyleHelper on TextStyle {

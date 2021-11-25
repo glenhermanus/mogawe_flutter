@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/request/reset_password_request.dart';
+import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
 import 'package:mogawe/core/data/response/user_login_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
@@ -52,8 +53,6 @@ class UserNetworkService {
   }
 
   Future<UserProfileResponse> profileUser(String token) async {
-    print('kucing');
-    print(token);
     final response = await http.post(
       Uri.parse("$BASE_URL/api/mogawers/v2/getProfile"),
       headers: <String, String>{
@@ -75,4 +74,37 @@ class UserNetworkService {
     );
     return ResetPasswordResponse.fromJson(json.decode(response.body));
   }
+  //
+  // Future<PesonaResponses> pesonaresponse(String token) async {
+  //   final response = await http.post(
+  //     Uri.parse("$BASE_URL/api/mogawers/certificate/mine"),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+  //     },
+  //     body: jsonEncode(<String, String>{'token': token}),
+  //   );
+  //   return PesonaResponses.fromJson(json.decode(response.body));
+  // }
+
+  Future<PesonaResponses> pesonaresponse(token) async {
+    print('kucing');
+    print(token);
+    final requestUrl = '$BASE_URL/api/mogawers/certificate/mine';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+
+    );
+
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return PesonaResponses.fromJson(maps);
+    }
+
+    else {
+      throw Exception('not found');
+    }
+  }
+
 }

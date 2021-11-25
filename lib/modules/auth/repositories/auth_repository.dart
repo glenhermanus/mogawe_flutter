@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:mogawe/core/data/request/reset_password_request.dart';
-import 'package:mogawe/core/data/response/login_response.dart';
+import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/response/register/email_activation_response.dart';
@@ -32,11 +30,8 @@ class AuthRepository extends NetworkService {
     return _apiService.fetchVersion(versionNumber);
   }
 
-  Future<LoginResponse> submitLogin(String email, String password) async {
-    var header = {contentType: applicationJson};
-    var map = await postMethod("$BASE_URL/api/mogawers/logIn",
-        body: {'email': email, 'password': password}, headers: header);
-    return LoginResponse.fromJsonMap(map);
+  Future<UserLoginResponse> submitLogin(String email, String password) async {
+    return _apiService.loginUser(email, password);
   }
 
   Future<ResetPasswordResponse> resetPassword(ResetPasswordRequest request) {
@@ -71,6 +66,10 @@ class AuthRepository extends NetworkService {
     return RegisterResponse.fromJsonMap(map);
   }
 
+  Future<PesonaResponses> pesonadata(token)async{
+    return _apiService.pesonaresponse(token);
+  }
+
   Future<UserLoginResponse> LoginFacebook(nama, email, id)async{
     return _apiService.loginUserFacebook(nama, email, id);
   }
@@ -99,5 +98,7 @@ class AuthRepository extends NetworkService {
 
     return deleteData;
   }
+
+
 
 }
