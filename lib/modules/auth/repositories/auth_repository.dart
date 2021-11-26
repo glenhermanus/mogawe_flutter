@@ -82,19 +82,19 @@ class AuthRepository extends NetworkService {
     return _apiService.loginUserTwitter(nama, email, id);
   }
 
-  Future writeSecureData(String key, String value) async {
-    var writeData = await storage.write(key: key, value: value);
+  Object writeSecureData(String key, String value) {
+    var writeData = storage.write(key: key, value: value);
     return writeData;
   }
 
-  Future readSecureData(String key) async {
-    var readData = await storage.read(key: key);
+  Object readSecureData(String key) {
+    var readData = storage.read(key: key);
 
     return readData;
   }
 
-  Future deleteSecureData(String key) async {
-    var deleteData = await storage.delete(key: key);
+  Object deleteSecureData(String key) {
+    var deleteData = storage.delete(key: key);
 
     return deleteData;
   }

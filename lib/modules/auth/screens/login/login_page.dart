@@ -11,6 +11,7 @@ import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/screens/registration/registration_screen.dart';
 import 'package:mogawe/modules/auth/screens/reset_password/reset_password_page.dart';
 import 'package:mogawe/modules/home/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_login/twitter_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -414,6 +415,9 @@ class _LoginPageState extends State<LoginPage> {
       logger.d("Success Login");
       setState(() => _loadingButton2 = true);
       try {
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', response.token);
 
         await AuthRepository().writeSecureData("token", response.token);
         await Navigator.push(

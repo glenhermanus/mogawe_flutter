@@ -54,16 +54,16 @@
 @import image_picker;
 #endif
 
-#if __has_include(<path_provider_ios/FLTPathProviderPlugin.h>)
-#import <path_provider_ios/FLTPathProviderPlugin.h>
+#if __has_include(<path_provider/FLTPathProviderPlugin.h>)
+#import <path_provider/FLTPathProviderPlugin.h>
 #else
-@import path_provider_ios;
+@import path_provider;
 #endif
 
-#if __has_include(<shared_preferences_ios/FLTSharedPreferencesPlugin.h>)
-#import <shared_preferences_ios/FLTSharedPreferencesPlugin.h>
+#if __has_include(<shared_preferences/FLTSharedPreferencesPlugin.h>)
+#import <shared_preferences/FLTSharedPreferencesPlugin.h>
 #else
-@import shared_preferences_ios;
+@import shared_preferences;
 #endif
 
 #if __has_include(<sqflite/SqflitePlugin.h>)
@@ -84,10 +84,10 @@
 @import url_launcher;
 #endif
 
-#if __has_include(<webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>)
-#import <webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>
+#if __has_include(<webview_flutter/FLTWebViewFlutterPlugin.h>)
+#import <webview_flutter/FLTWebViewFlutterPlugin.h>
 #else
-@import webview_flutter_wkwebview;
+@import webview_flutter;
 #endif
 
 @implementation GeneratedPluginRegistrant
