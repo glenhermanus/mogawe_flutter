@@ -1,11 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/blocs/profile_event.dart';
 import 'package:mogawe/modules/profile/blocs/profile_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   late ProfileRepository _repo;
+  late String _userToken;
 
   ProfileBloc() : super(InitProfileState()) {
     _repo = ProfileRepository.instance;
@@ -13,10 +16,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async*{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _userToken = prefs.getString('token') ?? "";
+
+
     if (event is GetProfileEvent) {
       yield ShowLoadingProfileState();
       try {
-        var data = await _repo.getProfile();
+        var data = await _repo.getProfile(realToken: _userToken);
         yield ShowProfileData(data.object!);
       } catch(ex) {
         yield ShowErrorGetProfileState("$ex");
@@ -25,8 +32,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is DoUpdateProfileEvent) {
       yield ShowLoadingProfileState();
       try {
-        var msg = await _repo.updateProfile(event.map);
-        var data = await _repo.getProfile();
+        var msg = await _repo.updateProfile(event.map,realToken: _userToken);
+        var data = await _repo.getProfile(realToken: _userToken);
         yield SuccessUpdateProfileState(msg.message, data.object!);
       } catch(ex) {
         yield ShowErrorProfileState("$ex");
@@ -35,8 +42,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is DoUpdateTargetRevenueEvent) {
       yield ShowLoadingProfileState();
       try {
-        var msg = await _repo.updateTargetRevenue(event.map);
-        var data = await _repo.getProfile();
+        var msg = await _repo.updateTargetRevenue(event.map,realToken: _userToken);
+        var data = await _repo.getProfile(realToken: _userToken);
         yield SuccessUpdateTargetRevenueState(msg.message, data.object!);
       } catch(ex) {
         yield ShowErrorProfileState("$ex");
@@ -45,8 +52,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is DoUpdatePhotoProfileEvent) {
       yield ShowLoadingProfileState();
       try {
-        var msg = await _repo.updatePhotoProfile(event.file);
-        var data = await _repo.getProfile();
+        var msg = await _repo.updatePhotoProfile(event.file, realToken: _userToken);
+        var data = await _repo.getProfile(realToken: _userToken);
         yield SuccessUpdatePhotoProfileState(msg.message, data.object!);
       } catch(ex) {
         yield ShowErrorProfileState("$ex");
@@ -54,7 +61,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
     if (event is GetProfileHistoryEvent) {
       try {
-        var list = await _repo.getProfileHistory();
+        var list = await _repo.getProfileHistory(realToken: _userToken);
         yield ShowProfileHistoryDataState(list);
       } catch(ex) {
         yield ShowErrorProfileState("$ex");
@@ -63,7 +70,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is FilterProfileHistoryEvent) {
       yield ShowLoadingProfileState();
       try {
-        var list = await _repo.getProfileHistory(periode: event.periode,
+        var list = await _repo.getProfileHistory(realToken: _userToken, periode: event.periode,
             page: "1", q: event.q);
         yield ShowProfileHistoryDataState(list);
       } catch(ex) {
@@ -75,7 +82,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         var list = await _repo.getProfileHistory(
           periode: event.periode,
           page: event.page,
-          q: event.q
+          q: event.q,
+          realToken: _userToken
         );
         yield ShowPaginateProfileHistoryDataState(list);
       } catch(ex) {
@@ -88,7 +96,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         var list = await _repo.getProfileHistory(
           q: event.q,
           page: "1",
-          periode: event.periode
+          periode: event.periode,
+          realToken: _userToken,
         );
         yield ShowProfileHistoryDataState(list);
       } catch(ex) {
