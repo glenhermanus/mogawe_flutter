@@ -42,7 +42,7 @@ class _PesonaPageState extends State<PesonaPage> {
 
     });
 
-    token = AuthRepository().readSecureData('token');
+    token = await AuthRepository().readSecureData('token');
     pesonaResponses = await AuthRepository().pesonadata(token);
 
     setState(() {
