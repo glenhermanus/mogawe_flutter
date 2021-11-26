@@ -1,7 +1,7 @@
 class PesonaResponsesObject{
   String? uuidobj, uuidClient, uuidCategory, uuidJob, questName, howto, tutorial, jobpic,
       name, code, category, categroyname, desc, instruction, iconUrl, status, uuidquest;
-  int? potentialJob;
+  int? potentialJob, id;
   double? minimumjob;
 
   PesonaResponsesObject(

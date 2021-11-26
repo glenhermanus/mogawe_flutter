@@ -1,4 +1,5 @@
 
+import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -9,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/pesona/acreditation_page.dart';
+import 'package:mogawe/modules/pesona/detail_pesona_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PesonaPage extends StatefulWidget {
@@ -23,8 +25,10 @@ class _PesonaPageState extends State<PesonaPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
   var res;
+
   bool loading = false;
   PesonaResponses? pesonaResponses;
+  DetailPesonaResponses? detailPesonaResponses;
 
   void getToken() async{
 
@@ -441,8 +445,14 @@ class _PesonaPageState extends State<PesonaPage> {
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 28),
                   child: FFButtonWidget(
-                    onPressed: () {
-                      print('Button pressed ...');
+                    onPressed: ()async{
+                      detailPesonaResponses = await AuthRepository().detailpesonadata(token, list?.uuidJob);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailPesonaPage(detailPesonaResponses: detailPesonaResponses,),
+                        ),
+                      );
                     },
                     text: 'Mulai',
                     options: FFButtonOptions(
