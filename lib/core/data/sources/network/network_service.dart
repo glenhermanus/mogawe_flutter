@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 abstract class NetworkService {
 
@@ -38,7 +39,8 @@ abstract class NetworkService {
 
       if (files!.isNotEmpty) {
         files.forEach((key, value) async{
-          request.files.add(await http.MultipartFile.fromPath(key, value.path));
+          request.files.add(await http.MultipartFile.fromPath(key, value.path,
+              contentType: MediaType('image','*')));
         });
       }
 
