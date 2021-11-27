@@ -158,11 +158,6 @@ class _PersonalTabState extends State<PersonalTab> {
                     value: nama,
                     field: "fullName",
                     ctrl: widget.namaCtrl,
-                    onChanged: (v) {
-                      nama = v;
-                      if (v.isEmpty) nama = null;
-                      setState(() {});
-                    }
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
@@ -395,7 +390,6 @@ class _PersonalTabState extends State<PersonalTab> {
                       gender = genders[pos];
                       map["gender"] = gender == "Laki-laki"? "M": "F";
                       widget.updateProfile!(map);
-                      map.clear();
                       Navigator.pop(context);
                     },
                     child: Padding(
@@ -446,30 +440,32 @@ class _PersonalTabState extends State<PersonalTab> {
       initialDate: DateTime(DateTime.now().year-17),
     );
     if (datetime != null) {
+      map.clear();
       birthdate = AppUtil.formatDateTime(dateFormat: "yyyy-MM-dd",
           dateTime: datetime);
       map["birthdate"] = birthdate!;
       widget.updateProfile!(map);
-      map.clear();
     } else {
       Fluttertoast.showToast(msg: "No selected date");
     }
   }
 
   void save(String value, String field) {
-    if (field == "fullName") {
-      map["fullName"] = value;
-    } if (field == "gender") {
-      map["gender"] = gender == "Laki-laki"? "M": "F";
-    } if (field == "email") {
-      map["email"] = value;
-    } if (field == "targetRevenue") {
-      revenueMap["targetRevenue"] = int.parse(value);
-    }
-    if (field == "targetRevenue") {
-      widget.updateTarget!(revenueMap);
-    } else widget.updateProfile!(map);
+    revenueMap.clear();
     map.clear();
+    if (field == "targetRevenue") {
+      revenueMap["targetRevenue"] = int.parse(value);
+      widget.updateTarget!(revenueMap);
+    } else {
+      if (field == "fullName") {
+        map["fullName"] = value;
+      } if (field == "gender") {
+        map["gender"] = gender == "Laki-laki"? "M": "F";
+      } if (field == "email") {
+        map["email"] = value;
+      }
+      widget.updateProfile!(map);
+    }
   }
 }
 
