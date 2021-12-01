@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/modules/generator/function_form.dart';
 import 'package:mogawe/modules/pesona/acreditation_page.dart';
 import 'package:mogawe/modules/pesona/detail_pesona_page.dart';
 import 'package:shimmer/shimmer.dart';
@@ -111,27 +112,37 @@ class _PesonaPageState extends State<PesonaPage> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.moGaweGreen,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 2,
-                            color: Color(0x8F515151),
-                            offset: Offset(0, 2),
-                            spreadRadius: 0,
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Align(
-                        alignment: AlignmentDirectional(0, 0),
-                        child: FaIcon(
-                          FontAwesomeIcons.instagram,
-                          color: FlutterFlowTheme.secondaryColor,
-                          size: 24,
+                    InkWell(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FunctionForm(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.moGaweGreen,
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 2,
+                              color: Color(0x8F515151),
+                              offset: Offset(0, 2),
+                              spreadRadius: 0,
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Align(
+                          alignment: AlignmentDirectional(0, 0),
+                          child: FaIcon(
+                            FontAwesomeIcons.instagram,
+                            color: FlutterFlowTheme.secondaryColor,
+                            size: 24,
+                          ),
                         ),
                       ),
                     ),
