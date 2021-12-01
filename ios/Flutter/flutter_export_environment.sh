@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/akbarrm/Downloads/Development/flutter_206"
-export "FLUTTER_APPLICATION_PATH=/Users/akbarrm/Work/Secangkir Teknologi/mogawe_flutter"
+export "FLUTTER_ROOT=/Users/gellaps/SDK/SDK/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/gellaps/Library/Mobile Documents/com~apple~CloudDocs/Workspaces/Duty/MoGawe/Android/Flutter/public/mogawe_flutter"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"

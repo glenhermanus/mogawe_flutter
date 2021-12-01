@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/blocs/profile_event.dart';
 import 'package:mogawe/modules/profile/blocs/profile_state.dart';
@@ -18,6 +17,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Stream<ProfileState> mapEventToState(ProfileEvent event) async*{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _userToken = prefs.getString('token') ?? "";
+    _userToken = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJNTy00MjFCM0EiLCJpYXQiOjE2MzQ1MjkxMzEsInN1YiI6Im1vZ2F3ZXJzIiwiaXNzIjoibW9nYXdlIn0.6I3GpI_gB02jpicmXzotWg4webpBU_3kpwFhWAF57bU";
 
 
     if (event is GetProfileEvent) {
@@ -30,6 +30,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }
     if (event is DoUpdateProfileEvent) {
+      print("Map : ${event.map}");
       yield ShowLoadingProfileState();
       try {
         var msg = await _repo.updateProfile(event.map,realToken: _userToken);
