@@ -17,6 +17,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Stream<ProfileState> mapEventToState(ProfileEvent event) async*{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _userToken = prefs.getString('token') ?? "";
+    _userToken = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJNTy00MjFCM0EiLCJpYXQiOjE2MzQ1MjkxMzEsInN1YiI6Im1vZ2F3ZXJzIiwiaXNzIjoibW9nYXdlIn0.6I3GpI_gB02jpicmXzotWg4webpBU_3kpwFhWAF57bU";
 
 
     if (event is GetProfileEvent) {
