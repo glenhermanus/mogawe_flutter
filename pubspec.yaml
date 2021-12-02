@@ -61,6 +61,7 @@ dependencies:
   camera: ^0.8.1+3
   mime:
   full_screen_image_null_safe:
+  permission_handler: ^6.0.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

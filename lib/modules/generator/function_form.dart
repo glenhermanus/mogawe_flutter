@@ -6,6 +6,7 @@ import 'package:full_screen_image_null_safe/full_screen_image_null_safe.dart';
 import 'package:mime/mime.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/modules/generator/audio_record.dart';
 import 'package:mogawe/modules/generator/webview_flutter.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -27,7 +28,9 @@ class _FunctionFormState extends State<FunctionForm> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
-
+  final recorder = AudioRecordFunc();
+  bool isRecord = false;
+  bool isplay = false;
 
   Widget munculingambar(BuildContext context){
     var size = MediaQuery.of(context).size;
@@ -147,10 +150,10 @@ class _FunctionFormState extends State<FunctionForm> {
       // User canceled the picker
     }
     if (!mounted) return;
-    var data = files!.length;
+    var data = files.length;
     print('data: $data');
     setState(() {
-      files != null ? files!.map((e) => e.toString()).toString() : 'error';
+      files != null ? files.map((e) => e.toString()).toString() : 'error';
 
     });
   }
@@ -164,6 +167,79 @@ class _FunctionFormState extends State<FunctionForm> {
     });
   }
 
+  Widget buttonrecord(){
+
+    isRecord = recorder.isRecord;
+    final icon = isRecord ? Icons.stop : Icons.mic;
+    final text = isRecord ? 'Stop' : 'Start';
+
+    return Column(
+      children: [
+        Container(
+          width: 136,
+          height: 44,
+          child: RaisedButton(
+            onPressed: () async{
+              final isRecord = await recorder.switchrecord();
+              setState(() {
+                isRecord;
+              });
+            },
+            color: Colors.blue,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Icon(icon),
+                Text(
+                    text, style: FlutterFlowTheme.title3
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  Widget buttonPlay(){
+
+    isplay= recorder.isPlay;
+    final icon = isplay ? Icons.stop : Icons.not_started;
+    final text = isplay ? 'Stop' : 'Play Sound';
+
+    return Column(
+      children: [
+        Container(
+          width: 200,
+          height: 44,
+          child: RaisedButton(
+            onPressed: () async{
+              final isplay = await recorder.switchplay(whenfinished: ()=> setState(() {
+
+              }));
+              setState(() {
+                isRecord;
+                isplay;
+              });
+            },
+            color: Colors.blue,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Icon(icon),
+                Text(
+                    text, style: FlutterFlowTheme.title3
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   void reassemble() {
@@ -175,12 +251,17 @@ class _FunctionFormState extends State<FunctionForm> {
     }
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    recorder.init();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    recorder.dispose();
   }
 
   @override
@@ -259,6 +340,11 @@ class _FunctionFormState extends State<FunctionForm> {
                     loading: _loadingButton,
                   ),
                 ),
+                buttonrecord(),
+                isRecord ? Center(child: Text('Merekam ... ')) : Container(),
+                SizedBox(height: 20,),
+                buttonPlay(),
+                SizedBox(height: 20,),
                 Text('Qr'),
                 Container(
                   height: 300,
