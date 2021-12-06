@@ -1,14 +1,17 @@
 import 'dart:io';
 
+import 'package:chewie/chewie.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:full_screen_image_null_safe/full_screen_image_null_safe.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/generator/audio_record.dart';
 import 'package:mogawe/modules/generator/webview_flutter.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:video_player/video_player.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class FunctionForm extends StatefulWidget {
@@ -31,6 +34,8 @@ class _FunctionFormState extends State<FunctionForm> {
   final recorder = AudioRecordFunc();
   bool isRecord = false;
   bool isplay = false;
+  File? videofile;
+  final ImagePicker _picker = ImagePicker();
 
   Widget munculingambar(BuildContext context){
     var size = MediaQuery.of(context).size;
@@ -165,6 +170,18 @@ class _FunctionFormState extends State<FunctionForm> {
         result = scanData;
       });
     });
+  }
+
+  videoPick() async{
+    final XFile? video = await _picker.pickVideo(
+      source: ImageSource.camera
+    );
+    if(video != null){
+      setState(() {
+        File file = File( video.path );
+        videofile = file;
+      });
+    }
   }
 
   Widget buttonrecord(){
@@ -345,6 +362,43 @@ class _FunctionFormState extends State<FunctionForm> {
                 SizedBox(height: 20,),
                 buttonPlay(),
                 SizedBox(height: 20,),
+                InkWell(
+                  onTap: (){videoPick();},
+                  child: Column(
+                    children: [
+                      Container(
+                       width: 200,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.lightBlue,
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.video_call),
+                            Text(
+                                'Record Video', style: FlutterFlowTheme.title3
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                videofile != null ? Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 400,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: mounted ? Chewie(controller: ChewieController(
+                      videoPlayerController: VideoPlayerController.file(videofile!),
+                      aspectRatio: 3/2,
+                      autoPlay: true
+                    )
+                    ) : Container()
+                  ),
+                ) : Container(),
+                SizedBox(height: 20,),
                 Text('Qr'),
                 Container(
                   height: 300,
@@ -356,6 +410,7 @@ class _FunctionFormState extends State<FunctionForm> {
                     ),
                   ),
                 ),
+
               ],
             ),
           ),
