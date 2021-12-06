@@ -26,18 +26,27 @@ class _HomePageState extends State<HomePage> {
   bool _loadingButton4 = false;
   bool _loadingButton5 = false;
   bool _loadingButton6 = false;
+  bool loading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
   UserProfileResponse? userProfileResponse;
 
   void getToken() async{
-    token = AuthRepository().readSecureData('token');
+    setState(() {
+      loading = true;
+
+    });
+    token = await AuthRepository().readSecureData('token');
 
     print("OUT >> hey");
     print(token);
 
     var res = await AuthRepository().getProfile(token);
     userProfileResponse = res;
+    setState(() {
+      loading = false;
+
+    });
   }
 
 
@@ -80,7 +89,10 @@ class _HomePageState extends State<HomePage> {
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                child: Text(
+                child: loading ? Text('Loading ...', style: FlutterFlowTheme.bodyText1.override(
+                  fontFamily: 'Poppins',
+                  color: FlutterFlowTheme.secondaryColor,
+                ))  :Text(
                   '${this.userProfileResponse?.balance}',
                   style: FlutterFlowTheme.title2.override(
                     fontFamily: 'Poppins',
@@ -92,6 +104,25 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
+          FlutterFlowIconButton(
+            borderColor: Colors.transparent,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 44,
+            icon: Icon(
+              Icons.person_outline,
+              color: FlutterFlowTheme.secondaryColor,
+              size: 24,
+            ),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HireMePage(),
+                ),
+              );
+            },
+          ),
           FlutterFlowIconButton(
             borderColor: Colors.transparent,
             borderRadius: 30,

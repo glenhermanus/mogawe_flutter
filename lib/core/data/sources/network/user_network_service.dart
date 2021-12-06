@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/request/reset_password_request.dart';
+import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_response.dart';
+import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
@@ -88,7 +90,7 @@ class UserNetworkService {
   // }
 
   Future<PesonaResponses> pesonaresponse(token) async {
-    print('kucing');
+
     print(token);
     final requestUrl = '$BASE_URL/api/mogawers/certificate/mine';
     final response = await http.get(Uri.parse(requestUrl),
@@ -107,6 +109,49 @@ class UserNetworkService {
       throw Exception('not found');
     }
   }
+
+  Future<HireMeSalesResponses> hiremeSalesresponse(token) async {
+
+    print(token);
+    final requestUrl = '$BASE_URL/api/sales/product/get?page=1&offset=30';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+
+    );
+
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return HireMeSalesResponses.fromJson(maps);
+    }
+
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future<FavHireMeSalesResponses> favhiremeSalesresponse(token) async {
+
+    print(token);
+    final requestUrl = '$BASE_URL/api/sales/product/favorite/get?q=&page=1&offset=20';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+
+    );
+
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return FavHireMeSalesResponses.fromJson(maps);
+    }
+
+    else {
+      throw Exception('not found');
+    }
+  }
+
   Future<DetailPesonaResponses> detailpesonaresponse(token, uuidjob) async {
     final requestUrl = '$BASE_URL/api/fieldtask/job/get/$uuidjob';
     final response = await http.get(Uri.parse(requestUrl),

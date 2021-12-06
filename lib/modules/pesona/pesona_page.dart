@@ -31,12 +31,6 @@ class _PesonaPageState extends State<PesonaPage> {
   PesonaResponses? pesonaResponses;
   DetailPesonaResponses? detailPesonaResponses;
 
-  void getToken() async{
-
-
-
-  }
-
   Future getdata() async{
     setState(() {
       loading = true;
