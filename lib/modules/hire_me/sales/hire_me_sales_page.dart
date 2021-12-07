@@ -195,21 +195,38 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                               Padding(
                                 padding:
                                 EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.secondaryColor,
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  child: lista?.isFavorite != true ? Icon(
-                                    Icons.favorite,
-                                    color: Color(0xFF737373),
-                                    size: 24,
-                                  ) : Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                    size: 24,
+                                child: InkWell(
+                                  onTap:()async{
+
+                                    if(lista?.isFavorite != true){
+                                      var res = await AuthRepository().postfavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
+                                      setState(() {
+                                        lista?.isFavorite = true;
+                                      });
+                                    }else{
+                                      var del = await AuthRepository().deletefavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
+                                      setState(() {
+                                        lista?.isFavorite = false;
+                                      });
+                                    }
+
+                                  },
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.secondaryColor,
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                    child: lista?.isFavorite != true ? Icon(
+                                      Icons.favorite,
+                                      color: Color(0xFF737373),
+                                      size: 24,
+                                    ) : Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                               )

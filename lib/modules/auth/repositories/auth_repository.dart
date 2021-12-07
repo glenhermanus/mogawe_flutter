@@ -81,6 +81,14 @@ class AuthRepository extends NetworkService {
     return _apiService.favhiremeSalesresponse(token);
   }
 
+  Future<HireMeSalesResponses> postfavhiremeSalesdata(fav, token, uuid)async{
+    return _apiService.postFavHireMeSales(fav,token, uuid);
+  }
+
+  Future<HireMeSalesResponses> deletefavhiremeSalesdata(fav, token, uuid)async{
+    return _apiService.deleteFavHireMeSales(fav,token, uuid);
+  }
+
   Future<DetailPesonaResponses> detailpesonadata(token, uuidjob)async{
     return _apiService.detailpesonaresponse(token, uuidjob);
   }
