@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/request/reset_password_request.dart';
+import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
 import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
@@ -131,6 +132,27 @@ class UserNetworkService {
     }
   }
 
+  Future<HireMeSalesResponses> CategoryhiremeSalesresponse(token, uuid) async {
+
+    print(token);
+    final requestUrl = '$BASE_URL/api/sales/product/get?uuidCategory=$uuid&page=1&offset=30';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+
+    );
+
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return HireMeSalesResponses.fromJson(maps);
+    }
+
+    else {
+      throw Exception('not found');
+    }
+  }
+
   Future<FavHireMeSalesResponses> favhiremeSalesresponse(token) async {
 
     print(token);
@@ -170,4 +192,46 @@ class UserNetworkService {
       throw Exception('not found');
     }
   }
+
+  Future<HireMeSalesResponses> postFavHireMeSales(bool fav, String token, String uuid) async {
+    final response = await http.post(
+      Uri.parse("$BASE_URL/api/sales/product/favorite/$uuid"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
+      },
+      body: jsonEncode(<String, String>{'isFavorite': fav.toString()}),
+    );
+    return HireMeSalesResponses.fromJson(json.decode(response.body));
+  }
+
+  Future<HireMeSalesResponses> deleteFavHireMeSales(bool fav, String token, String uuid) async {
+    final response = await http.delete(
+      Uri.parse("$BASE_URL/api/sales/product/favorite/$uuid"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
+      },
+      body: jsonEncode(<String, String>{'isFavorite': fav.toString()}),
+    );
+    return HireMeSalesResponses.fromJson(json.decode(response.body));
+  }
+
+  Future<CategoryListResponse> getCategory(String token) async {
+    final requestUrl = '$BASE_URL/api/sales/product/category/get';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
+      },
+
+    );
+
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return CategoryListResponse.fromJson(maps);
+    }
+
+    else {
+      throw Exception('not found');
+    }
+  }
+
 }

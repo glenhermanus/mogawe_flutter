@@ -1,4 +1,7 @@
 
+import 'package:intl/intl.dart';
+import 'package:mogawe/core/data/response/hire_me/category_list_object.dart';
+import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_drop_down.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
@@ -21,9 +24,15 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
   TextEditingController? textController;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading =false;
+  bool loading_category = false;
   var token;
   HireMeSalesResponses? hireMeSalesResponses;
-
+  CategoryListResponse? category;
+  List<String> stringCategory =[];
+  List listcategory = [];
+  var nameCategory, uuidCategory, nameCategoryValue, uuidCategoryValue;
+  var value;
+  CategoryListObject? categoryListObject;
 
   Future getdata() async{
     setState(() {
@@ -39,11 +48,37 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
     });
   }
 
+  Future getCategory()async{
+    setState(() {
+      loading_category = true;
+
+    });
+
+    token = await AuthRepository().readSecureData('token');
+    category = await AuthRepository().getCategorydata(token);
+
+    setState(() {
+      loading_category = false;
+      for(var i=0; i <category!.object!.length; i++){
+
+        var listcategorya = [
+          {
+            'name' : category?.object?[i].name,
+            'uuid' : category?.object?[i].uuid,
+            'kategori' : 'Semua Kategori'
+          }
+        ];
+        listcategory.add(listcategorya);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     textController = TextEditingController();
     getdata();
+    getCategory();
   }
 
   @override
@@ -134,24 +169,60 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                       ),
                     ),
                   ),
-                  Padding(
+                  loading ? Container() : Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                    child: FlutterFlowDropDown(
-                      options: ['Semua Kategori'].toList(),
-                      onChanged: (val) => setState(() => dropDownValue = val),
+                    child: Container(
                       width: 160,
-                      height: 40,
-                      textStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                        color: Colors.black,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.fieldColor,
+                          borderRadius: BorderRadius.circular(8 ?? 28),
+                        border: Border.all(
+                          color:  Color(0x00515151),
+                          width: 0
+                        )
                       ),
-                      fillColor: FlutterFlowTheme.fieldColor,
-                      elevation: 2,
-                      borderColor: Color(0x00515151),
-                      borderWidth: 0,
-                      borderRadius: 8,
-                      margin: EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
-                      hidesUnderline: true,
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
+                        child: DropdownButtonHideUnderline(
+
+                          child: DropdownButton<List<Map<String, dynamic>>>(
+                            dropdownColor: FlutterFlowTheme.fieldColor,
+                            value: value,
+                            isExpanded: true,
+                            elevation: 2,
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              color: Colors.black,
+                            ),
+                            onChanged: (newValue) async{
+                              setState(() {
+                                value = newValue;
+                                for(var i=0; i< value.length; i++){
+                                  uuidCategory = value[i]['uuid'];
+                                }
+                                loading = true;
+                              });
+                              hireMeSalesResponses= await AuthRepository().CategoryhiremeSalesdata(token, uuidCategory);
+                              setState(() {
+                                loading = false;
+                              });
+                            },
+                            items: listcategory.map<DropdownMenuItem<List<Map<String, dynamic>>>>((value) {
+
+                              for(var i=0; i< value.length; i++){
+                                nameCategory = value[i]['name'];
+
+                              }
+
+                              return DropdownMenuItem<List<Map<String, dynamic>>>(
+                                value: value,
+                                child: Text(nameCategory),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
                     ),
                   )
                 ],
@@ -172,7 +243,9 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                   scrollDirection: Axis.vertical,
                   itemBuilder: (context, snap){
                     final lista = hireMeSalesResponses?.object[snap];
-
+                    var currencyFormatter = NumberFormat.currency(locale: 'ID');
+                    var price = currencyFormatter.format(lista?.price);
+                    var komisi = currencyFormatter.format(lista?.commission);
                     return Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       color: Color(0xFFF5F5F5),
@@ -195,21 +268,38 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                               Padding(
                                 padding:
                                 EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.secondaryColor,
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  child: lista?.isFavorite != true ? Icon(
-                                    Icons.favorite,
-                                    color: Color(0xFF737373),
-                                    size: 24,
-                                  ) : Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                    size: 24,
+                                child: InkWell(
+                                  onTap:()async{
+
+                                    if(lista?.isFavorite != true){
+                                      var res = await AuthRepository().postfavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
+                                      setState(() {
+                                        lista?.isFavorite = true;
+                                      });
+                                    }else{
+                                      var del = await AuthRepository().deletefavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
+                                      setState(() {
+                                        lista?.isFavorite = false;
+                                      });
+                                    }
+
+                                  },
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.secondaryColor,
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                    child: lista?.isFavorite != true ? Icon(
+                                      Icons.favorite,
+                                      color: Color(0xFF737373),
+                                      size: 24,
+                                    ) : Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                               )
@@ -241,7 +331,7 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                                   ),
                                 ),
                                 Text(
-                                  'Rp${lista!.price?.toString().replaceAll('.', '')}',
+                                  'Rp${price.replaceAll('IDR', '').replaceAll(',00', '')}',
                                   style: FlutterFlowTheme.bodyText1.override(
                                     fontFamily: 'Poppins',
                                     fontSize: 14,
@@ -261,7 +351,7 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                                   ),
                                 ),
                                 Text(
-                                  'Rp${lista.commission?.toString().replaceAll('.', '')}',
+                                  'Rp${komisi.replaceAll('IDR', '').replaceAll(',00', '')}',
                                   style: FlutterFlowTheme.bodyText1.override(
                                     fontFamily: 'Poppins',
                                     color: FlutterFlowTheme.moGaweGreen,
