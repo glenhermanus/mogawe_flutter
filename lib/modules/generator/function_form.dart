@@ -42,11 +42,11 @@ class _FunctionFormState extends State<FunctionForm> {
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
     return ListView.builder(
-        itemCount: files!.length,
+        itemCount: files.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, int index){
 
-          filer = files![index];
+          filer = files[index];
           String? mimeStr = lookupMimeType(filer.path);
           fileType = mimeStr!.split('/');
           print('file type ${fileType}');
@@ -73,7 +73,7 @@ class _FunctionFormState extends State<FunctionForm> {
                       onTap: () {
                         setState(
                               () {
-                            files!.removeAt(index);
+                            files.removeAt(index);
                           },
                         );
                       },
@@ -105,7 +105,7 @@ class _FunctionFormState extends State<FunctionForm> {
                     onTap: () {
                       setState(
                             () {
-                          files!.removeAt(index);
+                          files.removeAt(index);
                         },
                       );
                     },
@@ -133,7 +133,7 @@ class _FunctionFormState extends State<FunctionForm> {
                       onTap: () {
                         setState(
                               () {
-                            files!.removeAt(index);
+                            files.removeAt(index);
                           },
                         );
                       },
@@ -317,7 +317,7 @@ class _FunctionFormState extends State<FunctionForm> {
                     ),
                   ),
                 ),
-                files!= null ? Container(
+                Container(
                   width: 300, height: 150,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -327,7 +327,7 @@ class _FunctionFormState extends State<FunctionForm> {
                           child: munculingambar(context)),
                     ],
                   ),
-                ) : Container(),
+                ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 28),
                   child: FFButtonWidget(
