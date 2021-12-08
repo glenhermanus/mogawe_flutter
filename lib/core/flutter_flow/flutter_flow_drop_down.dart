@@ -41,12 +41,12 @@ class FlutterFlowDropDown extends StatefulWidget {
 class _FlutterFlowDropDownState extends State<FlutterFlowDropDown> {
   String? dropDownValue;
   List<String> get effectiveOptions =>
-      widget.options!.isEmpty ? ['[Option]'] : widget.options!;
+      widget.options == []? ['[Option]'] : widget.options!;
 
   @override
   void initState() {
     super.initState();
-    dropDownValue = widget.initialOption ?? widget.options!.first;
+    dropDownValue = widget.initialOption ?? widget.options?.first;
   }
 
   @override

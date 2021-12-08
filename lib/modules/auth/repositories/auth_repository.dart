@@ -1,4 +1,5 @@
 import 'package:mogawe/core/data/request/reset_password_request.dart';
+import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
 import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
@@ -75,6 +76,14 @@ class AuthRepository extends NetworkService {
 
   Future<HireMeSalesResponses> hiremeSalesdata(token)async{
     return _apiService.hiremeSalesresponse(token);
+  }
+
+  Future<HireMeSalesResponses> CategoryhiremeSalesdata(token, uuid)async{
+    return _apiService.CategoryhiremeSalesresponse(token, uuid);
+  }
+
+  Future<CategoryListResponse> getCategorydata(token)async{
+    return _apiService.getCategory(token);
   }
 
   Future<FavHireMeSalesResponses> favhiremeSalesdata(token)async{
