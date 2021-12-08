@@ -96,7 +96,8 @@ class FFButtonWidget extends StatelessWidget {
             side: options!.borderSide ?? BorderSide.none,
           ),
           color: options!.color!,
-          colorBrightness: ThemeData.estimateBrightnessForColor(options!.color!),
+          colorBrightness:
+              ThemeData.estimateBrightnessForColor(options!.color!),
           textColor: options!.textStyle!.color,
           disabledColor: options!.disabledColor!,
           disabledTextColor: options!.disabledTextColor!,

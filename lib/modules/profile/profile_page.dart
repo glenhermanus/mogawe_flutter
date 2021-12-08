@@ -17,7 +17,6 @@ import 'package:mogawe/modules/profile/tab_widgets/setting_tab.dart';
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 
 class ProfilePage extends StatefulWidget {
-
   final ObjectData? data;
   final List<ProfileHistoryData>? histories;
   final Function(Map<String, String> map)? updateProfile;
@@ -31,17 +30,28 @@ class ProfilePage extends StatefulWidget {
   final TextEditingController? emailCtrl;
   final TextEditingController? phoneCtrl;
 
-  ProfilePage({Key? key, this.data, this.updateProfile,
-    this.updateTarget, this.onFotoChanged, this.histories,
-  this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
-    this.emailCtrl, this.phoneCtrl, this.searchListen}) : super(key: key);
+  ProfilePage(
+      {Key? key,
+      this.data,
+      this.updateProfile,
+      this.updateTarget,
+      this.onFotoChanged,
+      this.histories,
+      this.historyPageListen,
+      this.filter,
+      this.targetCtrl,
+      this.namaCtrl,
+      this.emailCtrl,
+      this.phoneCtrl,
+      this.searchListen})
+      : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin{
-  
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   late TabController tabController;
   int currTab = 0;
   final picker = ImagePicker();
@@ -123,9 +133,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                       ),
-                      child: widget.data == null? Container(): Image.network(
-                        widget.data!.profilePicture!,
-                      ),
+                      child: widget.data == null
+                          ? Container()
+                          : Image.network(
+                              widget.data!.profilePicture!,
+                            ),
                     ),
                   ),
                 ),
@@ -138,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.data != null? widget.data!.fullName!: "",
+                          widget.data != null ? widget.data!.fullName! : "",
                           style: FlutterFlowTheme.bodyText1.override(
                             fontFamily: 'Poppins',
                             color: FlutterFlowTheme.secondaryColor,
@@ -148,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                           child: Text(
-                            widget.data != null? widget.data!.email!: "",
+                            widget.data != null ? widget.data!.email! : "",
                             style: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Poppins',
                               color: FlutterFlowTheme.secondaryColor,
@@ -174,22 +186,21 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     ),
                     onPressed: () {
                       showDialog(
-                        context: context,
-                        builder: (ctx) => Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Material(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: IdCardProfile(data: widget.data!),
-                              ),
-                            ),
-                          ),
-                        )
-                      );
+                          context: context,
+                          builder: (ctx) => Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Material(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: IdCardProfile(data: widget.data!),
+                                    ),
+                                  ),
+                                ),
+                              ));
                     },
                   ),
                 )
@@ -206,13 +217,12 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     margin: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                         color: FlutterFlowTheme.primaryColor,
-                        borderRadius: BorderRadius.circular(24)
-                    ),
+                        borderRadius: BorderRadius.circular(24)),
                     child: TabBar(
                       labelStyle: GoogleFonts.getFont(
                         'Roboto',
                       ),
-                      padding: EdgeInsets.fromLTRB(2, 4, 4, 2),
+                      // padding: EdgeInsets.fromLTRB(2, 4, 4, 2),
                       indicatorPadding: EdgeInsets.zero,
                       labelPadding: EdgeInsets.symmetric(horizontal: 2),
                       indicatorColor: Colors.transparent,
@@ -234,10 +244,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             data: widget.data,
                             updateProfile: widget.updateProfile!,
                             updateTarget: widget.updateTarget!,
-                              targetCtrl: widget.targetCtrl,
-                              namaCtrl: widget.namaCtrl,
-                              emailCtrl: widget.emailCtrl,
-                              phoneCtrl: widget.phoneCtrl,
+                            targetCtrl: widget.targetCtrl,
+                            namaCtrl: widget.namaCtrl,
+                            emailCtrl: widget.emailCtrl,
+                            phoneCtrl: widget.phoneCtrl,
                           ),
                         ),
                         HistoryTab(
@@ -273,64 +283,56 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     return Container(
       width: 150,
       padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: colTab,
-        borderRadius: BorderRadius.circular(16)
-      ),
+      decoration:
+          BoxDecoration(color: colTab, borderRadius: BorderRadius.circular(16)),
       child: Row(children: [
         Icon(icon, size: 11, color: colText),
         SizedBox(width: 8),
-        Text(title, style: TextStyle(
-          color: colText,
-          fontWeight: FontWeight.w600,
-          fontSize: 10
-        ))
+        Text(title,
+            style: TextStyle(
+                color: colText, fontWeight: FontWeight.w600, fontSize: 10))
       ]),
     );
   }
 
   void chooseImage() {
     showDialog(
-      context: context,
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Material(
-            borderRadius: BorderRadius.circular(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InkWell(
-                  onTap: () => getImageCamera(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(children: [
-                      Icon(Icons.photo_camera, size: 24, color: Colors.black),
-                      SizedBox(width: 16),
-                      Text("Ambil Foto", style: TextStyle(
-                          fontSize: 16
-                      ))
-                    ]),
+        context: context,
+        builder: (ctx) => Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: Material(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap: () => getImageCamera(),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Row(children: [
+                            Icon(Icons.photo_camera,
+                                size: 24, color: Colors.black),
+                            SizedBox(width: 16),
+                            Text("Ambil Foto", style: TextStyle(fontSize: 16))
+                          ]),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => getImageGallery(),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Row(children: [
+                            Icon(Icons.image, size: 24, color: Colors.black),
+                            SizedBox(width: 16),
+                            Text("Dari Galeri", style: TextStyle(fontSize: 16))
+                          ]),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                InkWell(
-                  onTap: () => getImageGallery(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(children: [
-                      Icon(Icons.image, size: 24, color: Colors.black),
-                      SizedBox(width: 16),
-                      Text("Dari Galeri", style: TextStyle(
-                        fontSize: 16
-                      ))
-                    ]),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      )
-    );
+              ),
+            ));
   }
 }
