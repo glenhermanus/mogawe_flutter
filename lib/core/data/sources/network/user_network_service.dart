@@ -170,4 +170,27 @@ class UserNetworkService {
       throw Exception('not found');
     }
   }
+
+  Future<HireMeSalesResponses> postFavHireMeSales(bool fav, String token, String uuid) async {
+    final response = await http.post(
+      Uri.parse("$BASE_URL/api/sales/product/favorite/$uuid"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
+      },
+      body: jsonEncode(<String, String>{'isFavorite': fav.toString()}),
+    );
+    return HireMeSalesResponses.fromJson(json.decode(response.body));
+  }
+
+  Future<HireMeSalesResponses> deleteFavHireMeSales(bool fav, String token, String uuid) async {
+    final response = await http.delete(
+      Uri.parse("$BASE_URL/api/sales/product/favorite/$uuid"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
+      },
+      body: jsonEncode(<String, String>{'isFavorite': fav.toString()}),
+    );
+    return HireMeSalesResponses.fromJson(json.decode(response.body));
+  }
+
 }
