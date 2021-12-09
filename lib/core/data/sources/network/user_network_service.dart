@@ -140,7 +140,6 @@ class UserNetworkService {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8','token': '$token'
       },
-
     );
 
     final maps = json.decode(response.body);
@@ -148,6 +147,23 @@ class UserNetworkService {
       return HireMeSalesResponses.fromJson(maps);
     }
 
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future<HireMeSalesResponses> SearchhiremeSalesresponse(token, string) async {
+
+    final requestUrl = '$BASE_URL/api/sales/product/get?q=$string&page=1&offset=30';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return HireMeSalesResponses.fromJson(maps);
+    }
     else {
       throw Exception('not found');
     }

@@ -86,6 +86,10 @@ class AuthRepository extends NetworkService {
     return _apiService.getCategory(token);
   }
 
+  Future<HireMeSalesResponses> SearchCategorydata(token, string)async{
+    return _apiService.SearchhiremeSalesresponse(token, string);
+  }
+
   Future<FavHireMeSalesResponses> favhiremeSalesdata(token)async{
     return _apiService.favhiremeSalesresponse(token);
   }

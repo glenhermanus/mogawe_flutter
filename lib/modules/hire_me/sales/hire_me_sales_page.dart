@@ -33,6 +33,13 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
   var nameCategory, uuidCategory, nameCategoryValue, uuidCategoryValue;
   var value;
   CategoryListObject? categoryListObject;
+  var listcategory_, valuelist =
+    {
+      'name' : 'Semua Kategori',
+      'uuid' : 'abc',
+    };
+  var name;
+  String? search;
 
   Future getdata() async{
     setState(() {
@@ -59,17 +66,22 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
 
     setState(() {
       loading_category = false;
+      listcategory_ = [
+        {
+          'name' : 'Semua Kategori',
+          'uuid' : 'abc',
+        },
+      ];
+
       for(var i=0; i <category!.object!.length; i++){
 
-        var listcategorya = [
-          {
-            'name' : category?.object?[i].name,
-            'uuid' : category?.object?[i].uuid,
-            'kategori' : 'Semua Kategori'
-          }
-        ];
-        listcategory.add(listcategorya);
-      }
+        var listbaru = {
+          'name' : category?.object?[i].name as String,
+          'uuid' : category?.object?[i].uuid as String,
+        };
+        listcategory_.add(listbaru);
+
+      } print(listcategory_);
     });
   }
 
@@ -167,6 +179,16 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                       style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Poppins',
                       ),
+                      onChanged: (s)async{
+                        setState(() {
+                          search = s;
+                          loading = true;
+                        });
+                          hireMeSalesResponses = await AuthRepository().SearchCategorydata(token, search);
+                          setState(() {
+                            loading = false;
+                          });
+                      },
                     ),
                   ),
                   loading ? Container() : Padding(
@@ -186,7 +208,7 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                         padding: EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
                         child: DropdownButtonHideUnderline(
 
-                          child: DropdownButton<List<Map<String, dynamic>>>(
+                          child: DropdownButton<Map<String,String>>(
                             dropdownColor: FlutterFlowTheme.fieldColor,
                             value: value,
                             isExpanded: true,
@@ -195,27 +217,28 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                               fontFamily: 'Poppins',
                               color: Colors.black,
                             ),
+                            hint: Text('Semua Kategori', style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              color: Colors.black,
+                            ),),
                             onChanged: (newValue) async{
                               setState(() {
                                 value = newValue;
-                                for(var i=0; i< value.length; i++){
-                                  uuidCategory = value[i]['uuid'];
-                                }
+                                name = value['name'];
+
+                                uuidCategory = value['uuid'];
+
                                 loading = true;
                               });
+                              name == 'Semua Kategori' ? hireMeSalesResponses= await AuthRepository().hiremeSalesdata(token) :
                               hireMeSalesResponses= await AuthRepository().CategoryhiremeSalesdata(token, uuidCategory);
                               setState(() {
                                 loading = false;
                               });
                             },
-                            items: listcategory.map<DropdownMenuItem<List<Map<String, dynamic>>>>((value) {
-
-                              for(var i=0; i< value.length; i++){
-                                nameCategory = value[i]['name'];
-
-                              }
-
-                              return DropdownMenuItem<List<Map<String, dynamic>>>(
+                            items: listcategory_.map<DropdownMenuItem<Map<String, String>>>((value) {
+                              nameCategory = value['name'];
+                              return DropdownMenuItem<Map<String, String>>(
                                 value: value,
                                 child: Text(nameCategory),
                               );
