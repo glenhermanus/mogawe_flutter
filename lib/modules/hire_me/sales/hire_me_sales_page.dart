@@ -81,7 +81,7 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
         };
         listcategory_.add(listbaru);
 
-      } print(listcategory_);
+      }
     });
   }
 
