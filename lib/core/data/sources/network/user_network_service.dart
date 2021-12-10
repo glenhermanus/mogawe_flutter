@@ -5,6 +5,7 @@ import 'package:mogawe/core/data/request/reset_password_request.dart';
 import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
 import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
+import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
@@ -78,41 +79,41 @@ class UserNetworkService {
     );
     return ResetPasswordResponse.fromJson(json.decode(response.body));
   }
-  //
-  // Future<PesonaResponses> pesonaresponse(String token) async {
-  //   final response = await http.post(
-  //     Uri.parse("$BASE_URL/api/mogawers/certificate/mine"),
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8','token': '$token'
-  //     },
-  //     body: jsonEncode(<String, String>{'token': token}),
-  //   );
-  //   return PesonaResponses.fromJson(json.decode(response.body));
-  // }
 
   Future<PesonaResponses> pesonaresponse(token) async {
-
     print(token);
     final requestUrl = '$BASE_URL/api/mogawers/certificate/mine';
     final response = await http.get(Uri.parse(requestUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8','token': '$token'
       },
-
     );
-
     final maps = json.decode(response.body);
     if (maps.isNotEmpty) {
       return PesonaResponses.fromJson(maps);
     }
+    else {
+      throw Exception('not found');
+    }
+  }
 
+  Future<DetailPesonaResponses> detailpesonaresponse(token, uuidjob) async {
+    final requestUrl = '$BASE_URL/api/fieldtask/job/get/$uuidjob';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return DetailPesonaResponses.fromJson(maps);
+    }
     else {
       throw Exception('not found');
     }
   }
 
   Future<HireMeSalesResponses> hiremeSalesresponse(token) async {
-
     print(token);
     final requestUrl = '$BASE_URL/api/sales/product/get?page=1&offset=30';
     final response = await http.get(Uri.parse(requestUrl),
@@ -121,19 +122,16 @@ class UserNetworkService {
       },
 
     );
-
     final maps = json.decode(response.body);
     if (maps.isNotEmpty) {
       return HireMeSalesResponses.fromJson(maps);
     }
-
     else {
       throw Exception('not found');
     }
   }
 
   Future<HireMeSalesResponses> CategoryhiremeSalesresponse(token, uuid) async {
-
     print(token);
     final requestUrl = '$BASE_URL/api/sales/product/get?uuidCategory=$uuid&page=1&offset=30';
     final response = await http.get(Uri.parse(requestUrl),
@@ -141,19 +139,16 @@ class UserNetworkService {
         'Content-Type': 'application/json; charset=UTF-8','token': '$token'
       },
     );
-
     final maps = json.decode(response.body);
     if (maps.isNotEmpty) {
       return HireMeSalesResponses.fromJson(maps);
     }
-
     else {
       throw Exception('not found');
     }
   }
 
   Future<HireMeSalesResponses> SearchhiremeSalesresponse(token, string) async {
-
     final requestUrl = '$BASE_URL/api/sales/product/get?q=$string&page=1&offset=30';
     final response = await http.get(Uri.parse(requestUrl),
       headers: <String, String>{
@@ -177,33 +172,11 @@ class UserNetworkService {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8','token': '$token'
       },
-
     );
-
     final maps = json.decode(response.body);
     if (maps.isNotEmpty) {
       return FavHireMeSalesResponses.fromJson(maps);
     }
-
-    else {
-      throw Exception('not found');
-    }
-  }
-
-  Future<DetailPesonaResponses> detailpesonaresponse(token, uuidjob) async {
-    final requestUrl = '$BASE_URL/api/fieldtask/job/get/$uuidjob';
-    final response = await http.get(Uri.parse(requestUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
-      },
-
-    );
-
-    final maps = json.decode(response.body);
-    if (maps.isNotEmpty) {
-      return DetailPesonaResponses.fromJson(maps);
-    }
-
     else {
       throw Exception('not found');
     }
@@ -245,6 +218,24 @@ class UserNetworkService {
       return CategoryListResponse.fromJson(maps);
     }
 
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future<SalesDetailResponses> getSalesDetailresponse(token, uuid) async {
+    print(token);
+    final requestUrl = '$BASE_URL/api/sales/product/get/$uuid';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return SalesDetailResponses.fromJson(maps);
+    }
     else {
       throw Exception('not found');
     }

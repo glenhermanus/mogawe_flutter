@@ -98,10 +98,10 @@ class FFButtonWidget extends StatelessWidget {
           color: options!.color!,
           colorBrightness: ThemeData.estimateBrightnessForColor(options!.color!),
           textColor: options!.textStyle!.color,
-          disabledColor: options!.disabledColor!,
-          disabledTextColor: options!.disabledTextColor!,
-          elevation: options!.elevation!,
-          splashColor: options!.splashColor!,
+          disabledColor: options!.disabledColor,
+          disabledTextColor: options!.disabledTextColor,
+          elevation: options!.elevation,
+          splashColor: options!.splashColor,
         ),
       );
     }

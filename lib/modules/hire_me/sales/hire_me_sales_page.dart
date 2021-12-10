@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/hire_me/sales/favorite_page.dart';
+import 'package:mogawe/modules/hire_me/sales/working/sales_detail/sales_detail_page.dart';
 
 class HireMeSalesPage extends StatefulWidget {
   HireMeSalesPage({Key? key}) : super(key: key);
@@ -198,7 +199,7 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                       height: 50,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.fieldColor,
-                          borderRadius: BorderRadius.circular(8 ?? 28),
+                          borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color:  Color(0x00515151),
                           width: 0
@@ -269,124 +270,134 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                     var currencyFormatter = NumberFormat.currency(locale: 'ID');
                     var price = currencyFormatter.format(lista?.price);
                     var komisi = currencyFormatter.format(lista?.commission);
-                    return Card(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      color: Color(0xFFF5F5F5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            alignment: AlignmentDirectional(1, -1),
-                            children: [
-                              Image.network(
-                                '${lista?.imageUrl}',
-                                width: double.infinity,
-                                height: 120,
-                                fit: BoxFit.cover,
-                              ),
-                              Padding(
-                                padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
-                                child: InkWell(
-                                  onTap:()async{
-
-                                    if(lista?.isFavorite != true){
-                                      var res = await AuthRepository().postfavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
-                                      setState(() {
-                                        lista?.isFavorite = true;
-                                      });
-                                    }else{
-                                      var del = await AuthRepository().deletefavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
-                                      setState(() {
-                                        lista?.isFavorite = false;
-                                      });
-                                    }
-
-                                  },
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.secondaryColor,
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                    child: lista?.isFavorite != true ? Icon(
-                                      Icons.favorite,
-                                      color: Color(0xFF737373),
-                                      size: 24,
-                                    ) : Icon(
-                                      Icons.favorite,
-                                      color: Colors.red,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
+                    return InkWell(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SalesDetailPage(uuid: lista?.uuidobj as String,),
                           ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        );
+                      },
+                      child: Card(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        color: Color(0xFFF5F5F5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              alignment: AlignmentDirectional(1, -1),
                               children: [
-                                Text(
-                                  '${lista?.name}',
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                Image.network(
+                                  '${lista?.imageUrl}',
+                                  width: double.infinity,
+                                  height: 120,
+                                  fit: BoxFit.cover,
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 8, 0, 0),
-                                  child: Text(
-                                    'Harga Produk',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Rp${price.replaceAll('IDR', '').replaceAll(',00', '')}',
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 8, 0, 0),
-                                  child: Text(
-                                    'Komisi',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Rp${komisi.replaceAll('IDR', '').replaceAll(',00', '')}',
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: FlutterFlowTheme.moGaweGreen,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
+                                  padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
+                                  child: InkWell(
+                                    onTap:()async{
 
+                                      if(lista?.isFavorite != true){
+                                        var res = await AuthRepository().postfavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
+                                        setState(() {
+                                          lista?.isFavorite = true;
+                                        });
+                                      }else{
+                                        var del = await AuthRepository().deletefavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
+                                        setState(() {
+                                          lista?.isFavorite = false;
+                                        });
+                                      }
+
+                                    },
+                                    child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.secondaryColor,
+                                        borderRadius: BorderRadius.circular(24),
+                                      ),
+                                      child: lista?.isFavorite != true ? Icon(
+                                        Icons.favorite,
+                                        color: Color(0xFF737373),
+                                        size: 24,
+                                      ) : Icon(
+                                        Icons.favorite,
+                                        color: Colors.red,
+                                        size: 24,
+                                      ),
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
-                          )
-                        ],
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${lista?.name}',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0, 8, 0, 0),
+                                    child: Text(
+                                      'Harga Produk',
+                                      style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Rp${price.replaceAll('IDR', '').replaceAll(',00', '')}',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0, 8, 0, 0),
+                                    child: Text(
+                                      'Komisi',
+                                      style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Rp${komisi.replaceAll('IDR', '').replaceAll(',00', '')}',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      color: FlutterFlowTheme.moGaweGreen,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     );
                   }),
