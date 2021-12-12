@@ -1,5 +1,6 @@
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/modules/wallet/transfer_ewallet/transfer_ewallet_screen.dart';
 import '../transfer_bank/transfer_bank_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -94,41 +95,51 @@ class _WiithdrawalPageState extends State<WiithdrawalPage> {
                 ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
-                  child: Card(
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    color: FlutterFlowTheme.secondaryColor,
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Icon(
-                                Icons.account_balance_wallet,
-                                color: FlutterFlowTheme.primaryColor,
-                                size: 24,
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                                child: Text(
-                                  'Transfer E-Wallet',
-                                  style: FlutterFlowTheme.subtitle2.override(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                  child: InkWell(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TransferEWalletScreen(),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      color: FlutterFlowTheme.secondaryColor,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Icon(
+                                  Icons.account_balance_wallet,
+                                  color: FlutterFlowTheme.primaryColor,
+                                  size: 24,
                                 ),
-                              )
-                            ],
-                          )
-                        ],
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      8, 0, 0, 0),
+                                  child: Text(
+                                    'Transfer E-Wallet',
+                                    style: FlutterFlowTheme.subtitle2.override(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

@@ -6,6 +6,7 @@ class FlutterFlowTheme {
   static const Color primaryColor = Color(0xFFEA2327);
   static const Color secondaryColor = Color(0xFFFFFFFF);
   static const Color tertiaryColor = Color(0xFF515151);
+  static const Color blackColor = Color.fromRGBO(0, 0, 0, 1);
 
   static const Color fieldColor = Color(0xFFF3F2F2);
   static const Color moGaweGreen = Color(0xFF43B54D);
@@ -38,11 +39,11 @@ class FlutterFlowTheme {
         fontSize: 18,
       );
   static TextStyle get subtitle2 => GoogleFonts.getFont(
-    'Poppins',
-    color: Color(0xFF757575),
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-  );
+        'Poppins',
+        color: Color(0xFF757575),
+        fontWeight: FontWeight.w500,
+        fontSize: 14,
+      );
   static TextStyle get subtitle3 => GoogleFonts.getFont(
         'Poppins',
         color: Color(0xFF616161),
@@ -62,11 +63,11 @@ class FlutterFlowTheme {
         fontSize: 14,
       );
   static TextStyle get bodyText3 => GoogleFonts.getFont(
-    'Poppins',
-    color: Color(0xFF424242),
-    fontWeight: FontWeight.normal,
-    fontSize: 12,
-  );
+        'Poppins',
+        color: Color(0xFF424242),
+        fontWeight: FontWeight.normal,
+        fontSize: 12,
+      );
 }
 
 extension TextStyleHelper on TextStyle {

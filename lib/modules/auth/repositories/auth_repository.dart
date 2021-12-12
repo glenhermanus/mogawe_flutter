@@ -17,7 +17,6 @@ import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthRepository extends NetworkService {
-
   AuthRepository();
 
   AuthRepository._privateConstructor();
@@ -50,76 +49,80 @@ class AuthRepository extends NetworkService {
     return RegisterResponse.fromJsonMap(map);
   }
 
-  Future<EmailActivationResponse> submitActivateEmail(Map<String, String> body) async {
+  Future<EmailActivationResponse> submitActivateEmail(
+      Map<String, String> body) async {
     var header = {contentType: applicationJson};
     var map = await postMethod("$BASE_URL/api/mogawers/activation",
         headers: header, body: body);
     return EmailActivationResponse.fromJsonMap(map);
   }
 
-  Future<RegisterResponse> submitResendActivationEmail(Map<String, String> body) async {
+  Future<RegisterResponse> submitResendActivationEmail(
+      Map<String, String> body) async {
     var header = {contentType: applicationJson};
     var map = await postMethod("$BASE_URL/api/mogawers/resendActivationCode",
         headers: header, body: body);
     return RegisterResponse.fromJsonMap(map);
   }
 
-  Future<RegisterResponse> submitActivateNewPassowrd(Map<String, String> body) async {
+  Future<RegisterResponse> submitActivateNewPassowrd(
+      Map<String, String> body) async {
     var header = {contentType: applicationJson};
     var map = await postMethod("$BASE_URL/api/mogawers/activateNewPassword",
         headers: header, body: body);
     return RegisterResponse.fromJsonMap(map);
   }
 
-  Future<PesonaResponses> pesonadata(token)async{
+  Future<PesonaResponses> pesonadata(token) async {
     return _apiService.pesonaresponse(token);
   }
 
-  Future<HireMeSalesResponses> hiremeSalesdata(token)async{
+  Future<HireMeSalesResponses> hiremeSalesdata(token) async {
     return _apiService.hiremeSalesresponse(token);
   }
 
-  Future<HireMeSalesResponses> CategoryhiremeSalesdata(token, uuid)async{
+  Future<HireMeSalesResponses> CategoryhiremeSalesdata(token, uuid) async {
     return _apiService.CategoryhiremeSalesresponse(token, uuid);
   }
 
-  Future<CategoryListResponse> getCategorydata(token)async{
+  Future<CategoryListResponse> getCategorydata(token) async {
     return _apiService.getCategory(token);
   }
 
-  Future<HireMeSalesResponses> SearchCategorydata(token, string)async{
+  Future<HireMeSalesResponses> SearchCategorydata(token, string) async {
     return _apiService.SearchhiremeSalesresponse(token, string);
   }
 
-  Future<FavHireMeSalesResponses> favhiremeSalesdata(token)async{
+  Future<FavHireMeSalesResponses> favhiremeSalesdata(token) async {
     return _apiService.favhiremeSalesresponse(token);
   }
 
-  Future<HireMeSalesResponses> postfavhiremeSalesdata(fav, token, uuid)async{
-    return _apiService.postFavHireMeSales(fav,token, uuid);
+  Future<HireMeSalesResponses> postfavhiremeSalesdata(fav, token, uuid) async {
+    return _apiService.postFavHireMeSales(fav, token, uuid);
   }
 
-  Future<HireMeSalesResponses> deletefavhiremeSalesdata(fav, token, uuid)async{
-    return _apiService.deleteFavHireMeSales(fav,token, uuid);
+  Future<HireMeSalesResponses> deletefavhiremeSalesdata(
+      fav, token, uuid) async {
+    return _apiService.deleteFavHireMeSales(fav, token, uuid);
   }
 
-  Future<SalesDetailResponses> getDetailsales(token, uuid)async{
+  Future<SalesDetailResponses> getDetailsales(token, uuid) async {
     return _apiService.getSalesDetailresponse(token, uuid);
   }
 
-  Future<DetailPesonaResponses> detailpesonadata(token, uuidjob)async{
+  Future<DetailPesonaResponses> detailpesonadata(token, uuidjob) async {
     return _apiService.detailpesonaresponse(token, uuidjob);
   }
 
-  Future<UserLoginResponse> LoginFacebook(nama, email, id)async{
+  Future<UserLoginResponse> LoginFacebook(nama, email, id) async {
     return _apiService.loginUserFacebook(nama, email, id);
   }
 
-  Future<UserProfileResponse> getProfile(token)async{
+  Future<UserProfileResponse> getProfile(token) async {
     return _apiService.profileUser(token);
   }
 
-  Future<UserLoginResponse> LoginTwitter(nama, email, id)async{
+  Future<UserLoginResponse> LoginTwitter(nama, email, id) async {
     return _apiService.loginUserTwitter(nama, email, id);
   }
 
@@ -139,7 +142,4 @@ class AuthRepository extends NetworkService {
 
     return deleteData;
   }
-
-
-
 }
