@@ -71,6 +71,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin google_sign_in, io.flutter.plugins.googlesignin.GoogleSignInPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new com.ko2ic.imagedownloader.ImageDownloaderPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin image_downloader, com.ko2ic.imagedownloader.ImageDownloaderPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.imagepicker.ImagePickerPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin image_picker, io.flutter.plugins.imagepicker.ImagePickerPlugin", e);
@@ -89,6 +94,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new net.touchcapture.qr.flutterqr.FlutterQrPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin qr_code_scanner, net.touchcapture.qr.flutterqr.FlutterQrPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.share.SharePlusPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin share_plus, dev.fluttercommunity.plus.share.SharePlusPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin());

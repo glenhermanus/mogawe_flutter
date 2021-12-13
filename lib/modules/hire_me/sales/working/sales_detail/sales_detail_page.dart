@@ -1,3 +1,8 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_downloader/image_downloader.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
@@ -6,6 +11,8 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/chat_page.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SalesDetailPage extends StatefulWidget {
@@ -25,6 +32,13 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
   bool loading =false;
   var token;
   var price, komisi;
+  String _message = "";
+  String _path = "";
+  String _size = "";
+  String _mimeType = "";
+  File? _imageFile;
+  int _progress = 0;
+  var image;
 
   Future getData()async{
     setState(() {
@@ -42,10 +56,104 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
     });
   }
 
+  Future<void> _downloadImage(
+      String url, {
+        AndroidDestinationType? destination,
+        bool whenError = false,
+        String? outputMimeType,
+      }) async {
+    String? fileName;
+    String? path;
+    int? size;
+    String? mimeType;
+    try {
+      String? imageId;
+
+      if (whenError) {
+        imageId = await ImageDownloader.downloadImage(url,
+            outputMimeType: outputMimeType)
+            .catchError((error) {
+          if (error is PlatformException) {
+            String? path = "";
+            if (error.code == "404") {
+              print("Not Found Error.");
+            } else if (error.code == "unsupported_file") {
+              print("UnSupported FIle Error.");
+              path = error.details["unsupported_file_path"];
+            }
+            setState(() {
+              _message = error.toString();
+              _path = path ?? '';
+            });
+          }
+
+          print(error);
+        }).timeout(Duration(seconds: 10), onTimeout: () {
+          print("timeout");
+          return;
+        });
+      } else {
+        if (destination == null) {
+          imageId = await ImageDownloader.downloadImage(
+            url,
+            outputMimeType: outputMimeType,
+          );
+        } else {
+          imageId = await ImageDownloader.downloadImage(
+            url,
+            destination: destination,
+            outputMimeType: outputMimeType,
+          );
+        }
+      }
+
+      if (imageId == null) {
+        return;
+      }
+      fileName = await ImageDownloader.findName(imageId);
+      path = await ImageDownloader.findPath(imageId);
+      size = await ImageDownloader.findByteSize(imageId);
+      mimeType = await ImageDownloader.findMimeType(imageId);
+      Fluttertoast.showToast(
+          msg: "Image Saved",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0
+      );
+    } on PlatformException catch (error) {
+      setState(() {
+        _message = error.message ?? '';
+      });
+      return;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      var location = Platform.isAndroid ? "Directory" : "Photo Library";
+      _message = 'Saved as "$fileName" in $location.\n';
+      _size = 'size:     $size';
+      _mimeType = 'mimeType: $mimeType';
+      _path = path ?? '';
+
+      if (!_mimeType.contains("video")) {
+        _imageFile = File(path!);
+      }
+      return;
+    });
+  }
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    ImageDownloader.callback(onProgressUpdate: (String? imageId, int progress) {
+      setState(() {
+        _progress = progress;
+      });
+    });
     getData();
   }
 
@@ -115,6 +223,8 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                   itemCount: salesDetailResponses?.images.length,
                   itemBuilder: (context, snap){
                   final listImage = salesDetailResponses?.images[snap];
+                  image = salesDetailResponses?.images[0].value;
+
                 return Row(
                   children: [
                     Stack(
@@ -126,35 +236,6 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                           height: 240,
                           fit: BoxFit.cover,
                         ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 16),
-                          child: FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
-                            },
-                            text: 'Download',
-                            icon: Icon(
-                              Icons.download_sharp,
-                              size: 15,
-                            ),
-                            options: FFButtonOptions(
-                              width: 148,
-                              height: 40,
-                              color: FlutterFlowTheme.secondaryColor,
-                              textStyle: FlutterFlowTheme.subtitle2.override(
-                                fontFamily: 'Poppins',
-                                color: FlutterFlowTheme.tertiaryColor,
-                              ),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                                width: 1,
-                              ),
-                              borderRadius: 12,
-                            ),
-                            loading: _loadingButton1,
-                          ),
-                        ),
-
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 10, 16, 0),
                           child: Container(
@@ -179,10 +260,49 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                                     ),
                                   ),
                                 );
-                                },
+                              },
                             ),
                           ),
-                        )
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 16),
+                          child: FFButtonWidget(
+                            onPressed: () {
+                              Fluttertoast.showToast(
+                                  msg: "Saving Image...",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0
+                              );
+                              _downloadImage(listImage?.value as String);
+                            },
+                            text: 'Download',
+                            icon: Icon(
+                              Icons.download_sharp,
+                              size: 15,
+                            ),
+                            options: FFButtonOptions(
+                              width: 148,
+                              height: 40,
+                              color: FlutterFlowTheme.secondaryColor,
+                              textStyle: FlutterFlowTheme.subtitle2.override(
+                                fontFamily: 'Poppins',
+                                color: FlutterFlowTheme.tertiaryColor,
+                              ),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1,
+                              ),
+                              borderRadius: 12,
+                            ),
+                            loading: _loadingButton1,
+                          ),
+                        ),
+
+
                       ],
                     ),
                     SizedBox(width: 10,)
@@ -219,8 +339,15 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                             ),
                           ), 
                           FFButtonWidget(
-                            onPressed: () {
+                            onPressed: () async{
                               print('Button pressed ...');
+                              final url = Uri.parse('$image');
+                              final res = await http.get(url);
+                              final bytes = res.bodyBytes;
+                              final temp = await getTemporaryDirectory();
+                              final path = '${temp.path}/image.jpg';
+                              File(path).writeAsBytesSync(bytes);
+                              await Share.shareFiles([path],text: 'Mau Beli paket ${salesDetailResponses?.name} seharga Rp${price.replaceAll('IDR', '').replaceAll(',00', '')} ?\n\nDM ke saya aja ya!' );
                             },
                             text: 'Share',
                             icon: Icon(
