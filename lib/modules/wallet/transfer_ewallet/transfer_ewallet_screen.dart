@@ -10,11 +10,11 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/repositories/wallet_repository.dart';
-import 'package:mogawe/modules/wallet/add_bank_account/add_bank_account_page.dart';
 import 'package:mogawe/modules/wallet/add_ewallet_account/add_ewallet_account_screen.dart';
 import 'package:mogawe/modules/wallet/bloc/ewallet_bloc.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_event.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_state.dart';
+import 'package:mogawe/modules/wallet/otp/ewallet_otp_screen.dart';
 import 'package:mogawe/modules/wallet/transfer_ewallet/widget/nominal_item_tile.dart';
 
 class TransferEWalletScreen extends StatefulWidget {
@@ -30,11 +30,14 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
   List<EWalletNominalModel>? eWalletNominalList;
   List<EWalletModel>? eWalletDataList;
 
+  final WalletRepository _walletRepository = WalletRepository.instance;
+
   bool _loadingButton1 = false;
   bool _loadingButton2 = false;
 
-  late int nominalSelectedIndex = 100;
+  late int nominalSelectedIndex = 0;
   int eWalletSelectedIndex = 0;
+  late EWalletModel mEWallet;
 
   UserProfileResponse? userProfileResponse;
   bool isLoading = false;
@@ -98,6 +101,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
         }
         if (state is ShowEWalletList) {
           eWalletDataList?.addAll(state.list);
+          mEWallet = state.list[eWalletSelectedIndex];
           print("Wallet size is ${state.list.length}");
           return _buildEWalletList(state.list);
         }
@@ -189,7 +193,8 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
               loading
                   ? CircularProgressIndicator()
                   : Expanded(
-                      child: _buildItemEWalletNominal(eWalletNominalList)),
+                      child: _buildItemEWalletNominal(eWalletNominalList),
+                    ),
             ],
           ),
         ),
@@ -216,7 +221,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
                           MaterialPageRoute(
                             builder: (context) => AddEWalletAccountScreen(),
                           ),
-                        );
+                        ).then((value) => setState(() {}));
                       } finally {
                         setState(() => _loadingButton1 = false);
                       }
@@ -346,17 +351,10 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
                   padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
                   child: FFButtonWidget(
                     onPressed: () async {
-                      // setState(() => _loadingButton2 = true);
-                      // try {
-                      //   await Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => HomePage(),
-                      //     ),
-                      //   );
-                      // } finally {
-                      //   setState(() => _loadingButton2 = false);
-                      // }
+                      setState(() => _loadingButton2 = true);
+                      print(mEWallet.accountOwner);
+                      _handleSendOTPCode(mEWallet.uuid);
+                      setState(() => _loadingButton2 = false);
                     },
                     text: 'Transfer',
                     options: FFButtonOptions(
@@ -374,7 +372,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
                       ),
                       borderRadius: 12,
                     ),
-                    // loading: _loadingButton2,
+                    loading: _loadingButton2,
                   ),
                 )
               ],
@@ -392,7 +390,9 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
       physics: NeverScrollableScrollPhysics(),
       itemCount: list?.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3, childAspectRatio: 3),
+        crossAxisCount: 3,
+        childAspectRatio: 3,
+      ),
       itemBuilder: (context, index) {
         return NominalItemTile(
           splitNominalString(list?[index].pulsaNominal ?? "debug"),
@@ -410,14 +410,15 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
 
   Widget _buildEWalletList(List<EWalletModel> list) {
     return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          EWalletModel eWallet = list[index];
-          return _buildItemEWallet(eWallet, index);
-        });
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        EWalletModel eWallet = list[index];
+        return _buildItemEWallet(eWallet, index);
+      },
+    );
   }
 
   Widget _buildItemEWallet(EWalletModel eWalletModel, int index) {
@@ -484,6 +485,33 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleSendOTPCode(String eWalletUuid) async {
+    var token =
+        "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJNTy04Rk1HOFAiLCJpYXQiOjE2MzkzODc0ODIsInN1YiI6Im1vZ2F3ZXJzIiwiaXNzIjoibW9nYXdlIn0.8_QeC-6Ui3RGG1CvM66rjuSZgidzcHVB2uSCDy4ZnfQ";
+    var response = await _walletRepository.sendOtpCode(token);
+    if (response.returnValue == "000") {
+      print("Kode otp berhasil dikirim");
+      try {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtpEWalletScreen(
+              eWalletModel: mEWallet,
+              eWalletNominal: splitNominalString(
+                  eWalletNominalList![nominalSelectedIndex].pulsaNominal),
+              eWalletVoucherCode:
+                  eWalletNominalList![nominalSelectedIndex].pulsaCode,
+            ),
+          ),
+        );
+      } finally {
+        setState(() {
+          _loadingButton2 = false;
+        });
+      }
+    }
   }
 
   String splitNominalString(String nominal) {

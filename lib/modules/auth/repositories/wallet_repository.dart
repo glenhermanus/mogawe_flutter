@@ -3,6 +3,8 @@ import 'package:mogawe/core/data/response/ewallet/ewallet_model.dart';
 import 'package:mogawe/core/data/response/ewallet/ewallet_response.dart';
 import 'package:mogawe/core/data/response/ewallet/nominal/ewallet_nominal_model.dart';
 import 'package:mogawe/core/data/response/ewallet/nominal/ewallet_nominal_response.dart';
+import 'package:mogawe/core/data/response/ewallet/otp/send_otp_response.dart';
+import 'package:mogawe/core/data/response/ewallet/otp/verification_otp_response.dart';
 import 'package:mogawe/core/data/response/wallet/wallet_history_model.dart';
 import 'package:mogawe/core/data/response/wallet/wallet_history_response.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
@@ -19,6 +21,13 @@ class WalletRepository extends NetworkService {
   final String contentType = "Content-Type";
   final String applicationJson = "application/json; charset=UTF-8";
   final String token = "token";
+
+  Future<SendOtpResponse> sendOtpCode(String realToken) async {
+    var header = {token: realToken};
+    var map = await postMethod("${BASE_URL}api/fieldtransfer/order/otp/send",
+        headers: header);
+    return SendOtpResponse.fromJson(map);
+  }
 
   Future<List<WalletHistoryModel>> getProfileHistory(
       {String? realToken,
@@ -45,6 +54,19 @@ class WalletRepository extends NetworkService {
     var map = await getMethod(
         "${BASE_URL}api/fieldtransfer/order/mp/linkaja/get", header);
     return EWalletNominalResponse.fromJson(map).object;
+  }
+
+  Future<VerificationOtpResponse> verifyOtpResponse(
+    String realToken,
+    Map<String, String> body,
+  ) async {
+    var header = {token: realToken, contentType: applicationJson};
+    var map = await postMethod(
+      "${BASE_URL}api/fieldtransfer/order/create",
+      headers: header,
+      body: body,
+    );
+    return VerificationOtpResponse.fromJson(map);
   }
 
   Future<List<EWalletModel>> getEWalletList({
