@@ -73,6 +73,8 @@ dependencies:
   cupertino_icons: ^1.0.2 
   grouped_list: ^4.1.0
   flutter_staggered_grid_view: ^0.4.1
+  form_field_validator: ^1.1.0
+
 
 dev_dependencies:
   flutter_test:
