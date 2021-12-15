@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -13,8 +14,8 @@ class SalesShipmentPage extends StatefulWidget {
 }
 
 class _SalesShipmentPageState extends State<SalesShipmentPage> {
-  TextEditingController? textController1;
-  TextEditingController? textController2;
+  TextEditingController? nama_pembeli;
+  TextEditingController? no_hp;
   TextEditingController? textController3;
   TextEditingController? textController4;
   bool? checkboxListTileValue1;
@@ -27,8 +28,8 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
   @override
   void initState() {
     super.initState();
-    textController1 = TextEditingController();
-    textController2 = TextEditingController();
+    nama_pembeli = TextEditingController();
+    no_hp = TextEditingController();
     textController3 = TextEditingController();
     textController4 = TextEditingController();
   }
@@ -95,8 +96,13 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                 ),
                               ),
                               TextFormField(
-                                controller: textController1,
+                                controller: nama_pembeli,
                                 obscureText: false,
+                                onTap: ()async{
+                                  final PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
+                                  no_hp?.text = contact.phoneNumber!.number.toString();
+                                  nama_pembeli?.text = contact.fullName.toString();
+                                },
                                 decoration: InputDecoration(
                                   hintText: 'John Doe',
                                   hintStyle:
@@ -150,7 +156,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: textController2,
+                                  controller: no_hp,
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     hintText: '08XXXXXXXXX',

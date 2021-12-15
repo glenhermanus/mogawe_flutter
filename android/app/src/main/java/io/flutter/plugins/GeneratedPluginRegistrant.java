@@ -56,6 +56,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin flutter_sound, com.dooboolab.fluttersound.FlutterSound", e);
     }
     try {
+      flutterEngine.getPlugins().add(new me.schlaubi.fluttercontactpicker.FlutterContactPickerPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin fluttercontactpicker, me.schlaubi.fluttercontactpicker.FlutterContactPickerPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin fluttertoast, io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin", e);
