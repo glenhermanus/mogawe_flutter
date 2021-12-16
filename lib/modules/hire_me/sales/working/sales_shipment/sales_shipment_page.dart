@@ -7,6 +7,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_address_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SalesShipmentPage extends StatefulWidget {
@@ -280,6 +281,14 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                     ),
                                     filled: true,
                                     fillColor: FlutterFlowTheme.fieldColor,
+                                    suffixIcon: InkWell(
+                                        onTap: (){ Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => SalesAddress(),
+                                          ),
+                                        );},
+                                        child: Icon(Icons.location_searching, size: 18,)),
                                     prefixIcon: Icon(
                                       Icons.location_on,
                                       size: 18,
