@@ -538,7 +538,7 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SalesShipmentPage(),
+                      builder: (context) => SalesShipmentPage(uuid: widget.uuid,),
                     ),
                   );
                 },
