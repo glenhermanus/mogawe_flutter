@@ -2,7 +2,9 @@ import 'package:mogawe/core/data/request/reset_password_request.dart';
 import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
 import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
+import 'package:mogawe/core/data/response/hire_me/provinsi_response.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
+import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
@@ -109,6 +111,15 @@ class AuthRepository extends NetworkService {
   Future<SalesDetailResponses> getDetailsales(token, uuid) async {
     return _apiService.getSalesDetailresponse(token, uuid);
   }
+
+  Future<ProvinsiResponse> getProvinsi(token) async {
+    return _apiService.getProvinceCheckout(token);
+  }
+
+  Future<ShipmentCityResponse> getShipment(token, id) async {
+    return _apiService.getShipmentCheckout(token, id);
+  }
+
 
   Future<DetailPesonaResponses> detailpesonadata(token, uuidjob) async {
     return _apiService.detailpesonaresponse(token, uuidjob);

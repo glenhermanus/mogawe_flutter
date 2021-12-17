@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mogawe/core/data/response/hire_me/maps_shipment.dart';
+import 'package:mogawe/core/data/response/hire_me/provinsi_response.dart';
+import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 
 class SalesAddress extends StatefulWidget {
   const SalesAddress({Key? key}) : super(key: key);
@@ -11,6 +15,47 @@ class SalesAddress extends StatefulWidget {
 
 class _SalesAddressState extends State<SalesAddress> {
   bool _loadingButton = false;
+  bool loading = false;
+  List listcategory = [];
+  var nameProvince, idProvince, nameCity, idCity;
+  var value, value_city;
+  var name, token;
+  ProvinsiResponse? provinsiResponse;
+  var listprovinsi, listcity;
+  ShipmentCityResponse? shipmentCityResponse;
+
+  Future getdata() async{
+    setState(() {
+      loading = true;
+
+    });
+
+    token = await AuthRepository().readSecureData('token');
+    provinsiResponse = await AuthRepository().getProvinsi(token);
+
+    setState(() {
+      loading = false;
+      listprovinsi = [
+      ];
+      for(var i=0; i <provinsiResponse!.object.length; i++){
+
+        var listbaru = {
+          'province' : provinsiResponse?.object[i].province as String,
+          'province_id' : provinsiResponse?.object[i].province_id as String,
+        };
+        listprovinsi.add(listbaru);
+
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getdata();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,89 +80,175 @@ class _SalesAddressState extends State<SalesAddress> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 10,),
-                    Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Icon(Icons.location_on_outlined,),
-                              SizedBox(width: 15,),
-                              Expanded(child: Text('Provinsi')),
-                            ],
-                          ),
+                        Row(
+                          children: [
+                            Icon(Icons.location_on_outlined,),
+                            SizedBox(width: 15,),
+                            Text('Provinsi',  style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              color: Colors.black,
+                            )),
+                          ],
                         ),
-                        Expanded(
-                          child: Row(
-                            children: [ 
-                              Expanded(
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none
+                        Row(
+                          children: [
+                            loading? Icon(Icons.arrow_forward_ios, size: 14,) : Container(
+                              width: 170,
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<Map<String,String>>(
+                                    dropdownColor: FlutterFlowTheme.fieldColor,
+                                    value: value,
+                                    icon: Icon(Icons.arrow_forward_ios, size: 14,),
+                                    isExpanded: true,
+                                    elevation: 0,
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      color: Colors.black,
+                                    ),
+                                    onChanged: (newValue) async{
+                                      setState(() {
+                                        value = newValue;
+                                        name = value['province'];
+                                        idProvince = value['province_id'];
+                                        value_city = null;
+                                        loading = true;
+                                      });
+                                      shipmentCityResponse = await AuthRepository().getShipment(token, idProvince);
+                                      setState(() {
+                                        loading = false;
+                                        listcity = [
+                                        ];
+                                        for(var i=0; i <shipmentCityResponse!.object.length; i++){
+
+                                          var listbaru = {
+                                            'city_name' : shipmentCityResponse?.object[i].city_name as String,
+                                            'province_id' : shipmentCityResponse?.object[i].province_id as String,
+                                            'city_id' : shipmentCityResponse?.object[i].city_id as String,
+                                            'postal_code' : shipmentCityResponse?.object[i].postal_code as String,
+                                          };
+                                          listcity.add(listbaru);
+
+                                        }
+                                      });
+                                    },
+                                    items: listprovinsi.map<DropdownMenuItem<Map<String, String>>>((value) {
+                                      nameProvince = value['province'];
+                                      return DropdownMenuItem<Map<String, String>>(
+                                        value: value,
+                                        child: Text(nameProvince),
+                                      );
+                                    }).toList(),
                                   ),
                                 ),
                               ),
-                              Icon(Icons.arrow_forward_ios, size: 14,),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
 
                       ],
                     ),
                     Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Icon(Icons.location_city_outlined,),
-                              SizedBox(width: 15,),
-                              Expanded(child: Text('Kota/Kabupaten')),
-                            ],
-                          ),
+                        Row(
+                          children: [
+                            Icon(Icons.location_city_outlined,),
+                            SizedBox(width: 15,),
+                            Text('Kota/Kabupaten',  style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              color: Colors.black,
+                            )),
+                          ],
                         ),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none
+                        Row(
+                          children: [
+                            listcity == null ? Icon(Icons.arrow_forward_ios, size: 14,) : Container(
+                              width: 170,
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<Map<String,String>>(
+                                    dropdownColor: FlutterFlowTheme.fieldColor,
+                                    value: value_city,
+                                    icon: Icon(Icons.arrow_forward_ios, size: 14,),
+                                    isExpanded: true,
+                                    elevation: 0,
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      color: Colors.black,
+                                    ),
+                                    onChanged: (newValue) async{
+                                      setState(() {
+                                        value_city = newValue;
+                                        loading = true;
+                                      });
+
+                                      setState(() {
+                                        loading = false;
+
+                                      });
+                                    },
+                                    items: listcity.map<DropdownMenuItem<Map<String, String>>>((value) {
+                                      nameCity = value['city_name'];
+                                      return DropdownMenuItem<Map<String, String>>(
+                                        value: value,
+                                        child: Text(nameCity),
+                                      );
+                                    }).toList(),
                                   ),
                                 ),
                               ),
-                              Icon(Icons.arrow_forward_ios, size: 14,),
-                            ],
-                          ),
+                            ),
+
+                          ],
                         ),
 
                       ],
                     ),
-                    Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Icon(Icons.home_outlined,),
-                              SizedBox(width: 15,),
-                              Expanded(child: Text('Alamat Lengkap')),
-                            ],
+                    InkWell(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LocationShipment(),
                           ),
-                        ),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none
+                        );
+                      },
+                      child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Icon(Icons.home_outlined,),
+                                SizedBox(width: 15,),
+                                Expanded(child: Text('Alamat Lengkap',  style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Poppins',
+                                  color: Colors.black,
+                                ))),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Icon(Icons.arrow_forward_ios, size: 14,),
-                            ],
+                                Icon(Icons.arrow_forward_ios, size: 14,),
+                              ],
+                            ),
                           ),
-                        ),
 
-                      ],
+                        ],
+                      ),
                     ),
                     SizedBox(height: 20,),
                     Text(
