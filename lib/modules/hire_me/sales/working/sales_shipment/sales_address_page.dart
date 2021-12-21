@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mogawe/core/data/response/hire_me/maps_shipment.dart';
 import 'package:mogawe/core/data/response/hire_me/provinsi_response.dart';
+import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_shipment_page.dart';
 
 class SalesAddress extends StatefulWidget {
-  const SalesAddress({Key? key}) : super(key: key);
+  String uuid;
+  SalesAddress({required this.uuid});
 
   @override
   _SalesAddressState createState() => _SalesAddressState();
@@ -19,10 +22,12 @@ class _SalesAddressState extends State<SalesAddress> {
   List listcategory = [];
   var nameProvince, idProvince, nameCity, idCity;
   var value, value_city;
-  var name, token;
+  var name, token, alamat;
   ProvinsiResponse? provinsiResponse;
   var listprovinsi, listcity;
   ShipmentCityResponse? shipmentCityResponse;
+  SalesDetailResponses? salesDetailResponses;
+  TextEditingController detail = new TextEditingController();
 
   Future getdata() async{
     setState(() {
@@ -31,8 +36,9 @@ class _SalesAddressState extends State<SalesAddress> {
     });
 
     token = await AuthRepository().readSecureData('token');
+    alamat = await AuthRepository().readSecureData('alamat');
     provinsiResponse = await AuthRepository().getProvinsi(token);
-
+    salesDetailResponses = await AuthRepository().getDetailsales(token, widget.uuid);
     setState(() {
       loading = false;
       listprovinsi = [
@@ -184,6 +190,10 @@ class _SalesAddressState extends State<SalesAddress> {
                                     onChanged: (newValue) async{
                                       setState(() {
                                         value_city = newValue;
+                                        var name_city= value_city['city_name'];
+                                        var postal_code = value_city['postal_code'];
+                                        AuthRepository().writeSecureData('city_name', name_city);
+                                        AuthRepository().writeSecureData('postal_code', postal_code);
                                         loading = true;
                                       });
 
@@ -214,7 +224,7 @@ class _SalesAddressState extends State<SalesAddress> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LocationShipment(),
+                            builder: (context) => LocationShipment(uuid: widget.uuid,),
                           ),
                         );
                       },
@@ -250,6 +260,13 @@ class _SalesAddressState extends State<SalesAddress> {
                         ],
                       ),
                     ),
+                    alamat != null?  Padding(
+                      padding: const EdgeInsets.only(left: 30, right: 20),
+                      child: Text('$alamat',  style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Poppins',
+                        color: Colors.black,
+                      )),
+                    ) : Container(),
                     SizedBox(height: 20,),
                     Text(
                       'Detail Lokasi (Optional)',
@@ -258,7 +275,7 @@ class _SalesAddressState extends State<SalesAddress> {
                       ),
                     ),
                     TextFormField(
-
+                      controller: detail,
                       obscureText: false,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
@@ -286,7 +303,14 @@ class _SalesAddressState extends State<SalesAddress> {
                       padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 16),
                       child: FFButtonWidget(
                         onPressed: () {
-                          print('Button pressed ...');
+                          AuthRepository().writeSecureData('detail', detail.text);
+                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SalesShipmentPage(uuid: widget.uuid,),
+                            ),
+                          );
                         },
                         text: 'Simpan',
                         options: FFButtonOptions(

@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
+import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_address_page.dart';
 
 class LocationShipment extends StatefulWidget {
-  const LocationShipment({Key? key}) : super(key: key);
+  String uuid;
+  LocationShipment({required this.uuid});
 
   @override
   _LocationShipmentState createState() => _LocationShipmentState();
@@ -18,6 +23,7 @@ class _LocationShipmentState extends State<LocationShipment> {
   loc.Location location = loc.Location();
   GoogleMapController? _controller;
   LatLng _initialcameraposition = LatLng(-6.200000, 106.816666);
+  bool _loadingButton = false;
 
   void _onMapCreated(GoogleMapController _cntlr)
   {
@@ -66,6 +72,7 @@ class _LocationShipmentState extends State<LocationShipment> {
             setState(() {
               _address = "${value.first.street} ${value.first.subLocality} ${value.first.locality} ${value.first.administrativeArea} "
                   "${value.first.subAdministrativeArea} ${value.first.postalCode}";
+
             });
           });
         });
@@ -138,6 +145,37 @@ class _LocationShipmentState extends State<LocationShipment> {
                   SizedBox(
                     height: 3,
                   ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(16, 24, 16, 16),
+                    child: FFButtonWidget(
+                      onPressed: () {
+                        AuthRepository().writeSecureData('alamat', _address as String);
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SalesAddress(uuid: widget.uuid,),
+                          ),
+                        );
+                      },
+                      text: 'Simpan Alamat',
+                      options: FFButtonOptions(
+                        width: double.infinity,
+                        height: 56,
+                        color: FlutterFlowTheme.primaryColor,
+                        textStyle: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Poppins',
+                          color: Colors.white,
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                          width: 1,
+                        ),
+                        borderRadius: 12,
+                      ),
+                      loading: _loadingButton,
+                    ),
+                  )
                 ],
               ),
             ),

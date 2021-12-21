@@ -535,6 +535,8 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 5),
               child: FFButtonWidget(
                 onPressed: () {
+                  AuthRepository().deleteSecureData('alamat');
+                  AuthRepository().deleteSecureData('detail');
                   Navigator.push(
                     context,
                     MaterialPageRoute(

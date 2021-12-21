@@ -22,12 +22,12 @@ class SalesShipmentPage extends StatefulWidget {
 class _SalesShipmentPageState extends State<SalesShipmentPage> {
   TextEditingController? nama_pembeli;
   TextEditingController? no_hp;
-  TextEditingController? textController3;
+  TextEditingController textController3 = new TextEditingController();
   TextEditingController? textController4;
-  bool? checkboxListTileValue1;
-  bool? checkboxListTileValue2;
-  bool? checkboxListTileValue3;
-  bool? checkboxListTileValue4;
+  bool checkboxListTileValue1 = false;
+  bool checkboxListTileValue2= false;
+  bool checkboxListTileValue3= false;
+  bool checkboxListTileValue4= false;
   bool _loadingButton = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
@@ -35,7 +35,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
   SalesDetailResponses? salesDetailResponses;
   var image;
   int itemCount = 1;
-  var currencyFormatter;
+  var currencyFormatter, alamat, detailalamat;
 
   Future getData()async{
     setState(() {
@@ -44,6 +44,8 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
     });
 
     token = await AuthRepository().readSecureData('token');
+    alamat = await AuthRepository().readSecureData('alamat');
+    detailalamat = await AuthRepository().readSecureData('detail');
     salesDetailResponses = await AuthRepository().getDetailsales(token, widget.uuid);
     currencyFormatter = NumberFormat.currency(locale: 'ID');
     price = '${salesDetailResponses?.price.toString().split('.').first}';
@@ -53,6 +55,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
       int _price = int.parse(price);
       totalfee = _price * itemCount;
       totalfeeCurrency = currencyFormatter.format(totalfee);
+      alamat == null ? detailalamat == null ? textController3.text ='' : textController3.text = '$alamat' : textController3.text = '$alamat $detailalamat';
     });
   }
 
@@ -285,9 +288,11 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                         onTap: (){ Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => SalesAddress(),
+                                            builder: (context) => SalesAddress(uuid: widget.uuid,),
                                           ),
-                                        );},
+                                        );
+                                        AuthRepository().deleteSecureData('alamat');
+                                        },
                                         child: Icon(Icons.location_searching, size: 18,)),
                                     prefixIcon: Icon(
                                       Icons.location_on,
@@ -507,9 +512,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ),
                                 ),
                                 CheckboxListTile(
-                                  value: checkboxListTileValue1 ??= true,
+                                  value: checkboxListTileValue1,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue1 = newValue),
+                                          () => checkboxListTileValue1 = newValue!),
                                   title: Text(
                                     'Ambil Sendiri',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -522,9 +527,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ListTileControlAffinity.trailing,
                                 ),
                                 CheckboxListTile(
-                                  value: checkboxListTileValue2 ??= true,
+                                  value: checkboxListTileValue2,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue2 = newValue),
+                                          () => checkboxListTileValue2 = newValue!),
                                   title: Text(
                                     'Kurir Toko',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -537,9 +542,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ListTileControlAffinity.trailing,
                                 ),
                                 CheckboxListTile(
-                                  value: checkboxListTileValue3 ??= true,
+                                  value: checkboxListTileValue3,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue3 = newValue),
+                                          () => checkboxListTileValue3 = newValue!),
                                   title: Text(
                                     'Ekspedisi',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -656,9 +661,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
                     child: CheckboxListTile(
-                      value: checkboxListTileValue4 ??= true,
+                      value: checkboxListTileValue4,
                       onChanged: (newValue) =>
-                          setState(() => checkboxListTileValue4 = newValue),
+                          setState(() => checkboxListTileValue4 = newValue!),
                       title: Text(
                         'Kirim sebagai dropshipper',
                         style: FlutterFlowTheme.bodyText1.override(
