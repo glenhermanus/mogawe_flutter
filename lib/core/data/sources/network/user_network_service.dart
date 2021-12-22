@@ -277,4 +277,17 @@ class UserNetworkService {
     }
   }
 
+  Future checkout(uuid, buyername, buyerphone, buyeraddres, buyerlat, buyerlng, quantity, shipmentType, shipmentFee, shipmentProvinceId,
+      shipmentProvinceName, shipmentCityId, shipmentCityName, shipmentEstMax, shipmentEstMin, price,total, commission, adminFee,
+      resellerName, resellerPhone, resellerAddress, paymentMethod, trackingToken, refundStatus, additionalNotes, token) async {
+    final response = await http.post(
+      Uri.parse("$BASE_URL/api/sales/product/favorite/$uuid"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
+      },
+      body: jsonEncode(<String, String>{'isFavorite': 'fav.toString()'}),
+    );
+    return json.decode(response.body);
+  }
+
 }

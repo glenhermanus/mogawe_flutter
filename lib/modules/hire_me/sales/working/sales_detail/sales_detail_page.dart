@@ -537,6 +537,8 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                 onPressed: () {
                   AuthRepository().deleteSecureData('alamat');
                   AuthRepository().deleteSecureData('detail');
+                  AuthRepository().deleteSecureData('lat');
+                  AuthRepository().deleteSecureData('long');
                   Navigator.push(
                     context,
                     MaterialPageRoute(

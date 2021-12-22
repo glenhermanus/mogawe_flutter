@@ -55,7 +55,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
       int _price = int.parse(price);
       totalfee = _price * itemCount;
       totalfeeCurrency = currencyFormatter.format(totalfee);
-      alamat == null ? detailalamat == null ? textController3.text ='' : textController3.text = '$alamat' : textController3.text = '$alamat $detailalamat';
+      alamat == null ? textController3.text ='' : detailalamat == null ? textController3.text = '' : textController3.text = '$alamat $detailalamat';
     });
   }
 

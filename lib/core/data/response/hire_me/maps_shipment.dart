@@ -17,12 +17,13 @@ class LocationShipment extends StatefulWidget {
 
 class _LocationShipmentState extends State<LocationShipment> {
   loc.LocationData? _currentPosition;
-  String? _address,_dateTime;
+  String? _address, lat,long;
   GoogleMapController? mapController;
   Marker? marker;
   loc.Location location = loc.Location();
   GoogleMapController? _controller;
   LatLng _initialcameraposition = LatLng(-6.200000, 106.816666);
+  TextEditingController detail_alamat = new TextEditingController();
   bool _loadingButton = false;
 
   void _onMapCreated(GoogleMapController _cntlr)
@@ -72,7 +73,7 @@ class _LocationShipmentState extends State<LocationShipment> {
             setState(() {
               _address = "${value.first.street} ${value.first.subLocality} ${value.first.locality} ${value.first.administrativeArea} "
                   "${value.first.subAdministrativeArea} ${value.first.postalCode}";
-
+              detail_alamat.text = _address as String;
             });
           });
         });
@@ -130,26 +131,47 @@ class _LocationShipmentState extends State<LocationShipment> {
                   SizedBox(
                     height: 3,
                   ),
-                  if (_currentPosition != null)
-                    Text(
-                      "Latitude: ${_currentPosition?.latitude}, Longitude: ${_currentPosition?.longitude}",
-                    ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  if (_address != null)
-                    Text(
-                      "Alamat: $_address",
-                      textAlign: TextAlign.center,
-                    ),
+
                   SizedBox(
                     height: 3,
                   ),
+                  _address != null ?
+                    Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: TextFormField(
+                      controller: detail_alamat,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xffbfbfbf),
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x00000000),
+                            width: 1,
+                          ),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(4.0),
+                            topRight: Radius.circular(4.0),
+                          ),
+                        ),
+                      ),
+                      maxLines: 3,
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ) : Container(),
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(16, 24, 16, 16),
                     child: FFButtonWidget(
                       onPressed: () {
                         AuthRepository().writeSecureData('alamat', _address as String);
+                        AuthRepository().writeSecureData('lat', _currentPosition?.latitude.toString() as String);
+                        AuthRepository().writeSecureData('long', _currentPosition?.longitude.toString() as String);
                         Navigator.pop(context);
                         Navigator.pushReplacement(
                           context,
