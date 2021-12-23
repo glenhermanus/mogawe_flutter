@@ -1,20 +1,23 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/inbox/inbox_page.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
-import 'package:mogawe/modules/pesona/pesona_page.dart';
 import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
+import 'package:mogawe/utils/services/currency_formatter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import '../hire_me/hire_me_page.dart';
 
 class HomePage extends StatefulWidget {
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -30,13 +33,32 @@ class _HomePageState extends State<HomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
   UserProfileResponse? userProfileResponse;
+  int _target = 0;
 
-  void getToken() async{
+  // Text Editing Controller list
+  final TextEditingController _targetEditingController =
+      TextEditingController();
+
+  void getDailyTarget() async {
     setState(() {
       loading = true;
-
     });
-    token = await AuthRepository().readSecureData('token');
+    final prefs = await SharedPreferences.getInstance();
+    final target = prefs.getInt('target');
+    log(target.toString());
+    _target = target ?? 200000;
+  }
+
+  void saveDailyTarget(int target) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('target', target);
+  }
+
+  void getToken() async {
+    setState(() {
+      loading = true;
+    });
+    token = await AuthRepository().getToken();
 
     print("OUT >> hey");
     print(token);
@@ -45,17 +67,15 @@ class _HomePageState extends State<HomePage> {
     userProfileResponse = res;
     setState(() {
       loading = false;
-
     });
   }
-
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getToken();
-
+    getDailyTarget();
   }
 
   @override
@@ -89,16 +109,19 @@ class _HomePageState extends State<HomePage> {
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                child: loading ? Text('Loading ...', style: FlutterFlowTheme.bodyText1.override(
-                  fontFamily: 'Poppins',
-                  color: FlutterFlowTheme.secondaryColor,
-                ))  :Text(
-                  '${this.userProfileResponse?.balance}',
-                  style: FlutterFlowTheme.title2.override(
-                    fontFamily: 'Poppins',
-                    color: FlutterFlowTheme.secondaryColor,
-                  ),
-                ),
+                child: loading
+                    ? Text('Loading ...',
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ))
+                    : Text(
+                        '${this.userProfileResponse?.balance}',
+                        style: FlutterFlowTheme.title2.override(
+                          fontFamily: 'Poppins',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                      ),
               )
             ],
           ),
@@ -232,31 +255,15 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-
+                        //TODO: Banner Goes Here
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                          child: GestureDetector(
-                            onTap: () async{
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      PesonaPage(),
-                                ),
-                              );
-                            },
-                            child: Image.asset(
-                              'assets/images/card_banner_1.png',
-                              width: double.infinity,
-                              height: 148,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                          padding: const EdgeInsetsDirectional.only(top: 16),
+                          child: BuildBannerBuilder(),
                         ),
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
@@ -282,7 +289,8 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16, 16, 16, 16),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,25 +304,33 @@ class _HomePageState extends State<HomePage> {
                                           width: double.infinity,
                                           height: 160,
                                           decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.secondaryColor,
-                                            borderRadius: BorderRadius.circular(16),
+                                            color:
+                                                FlutterFlowTheme.secondaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(16),
                                           ),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Container(
                                                 width: double.infinity,
                                                 height: 32,
                                                 decoration: BoxDecoration(
-                                                  color: FlutterFlowTheme.moGaweGreen,
-                                                  borderRadius: BorderRadius.only(
-                                                    bottomLeft: Radius.circular(16),
-                                                    bottomRight: Radius.circular(16),
+                                                  color: FlutterFlowTheme
+                                                      .moGaweGreen,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(16),
+                                                    bottomRight:
+                                                        Radius.circular(16),
                                                     topLeft: Radius.circular(0),
-                                                    topRight: Radius.circular(0),
+                                                    topRight:
+                                                        Radius.circular(0),
                                                   ),
                                                 ),
                                               )
@@ -323,7 +339,8 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Text(
                                           '20%',
-                                          style: FlutterFlowTheme.subtitle1.override(
+                                          style: FlutterFlowTheme.subtitle1
+                                              .override(
                                             fontFamily: 'Poppins',
                                           ),
                                         )
@@ -332,57 +349,126 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding:
-                                      EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          24, 0, 0, 0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'Kejar sisa target hari ini:',
-                                            style:
-                                            FlutterFlowTheme.bodyText1.override(
+                                            style: FlutterFlowTheme.bodyText1
+                                                .override(
                                               fontFamily: 'Poppins',
                                               fontSize: 12,
                                             ),
                                           ),
                                           Padding(
-                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                0, 4, 0, 0),
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    0, 4, 0, 0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Text(
-                                                  'Rp.120.000',
+                                                  loading
+                                                      ? "--"
+                                                      : stringtoRupiah(_target),
                                                   style: FlutterFlowTheme.title1
                                                       .override(
                                                     fontFamily: 'Poppins',
-                                                    color:
-                                                    FlutterFlowTheme.primaryColor,
+                                                    color: FlutterFlowTheme
+                                                        .primaryColor,
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      8, 0, 0, 0),
-                                                  child: Icon(
-                                                    Icons.edit_rounded,
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(8, 0, 0, 0),
+                                                  child: IconButton(
+                                                    onPressed: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return Center(
+                                                            child: AlertDialog(
+                                                              content:
+                                                                  Container(
+                                                                child: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  children: [
+                                                                    TextFormField(
+                                                                      keyboardType:
+                                                                          TextInputType.numberWithOptions(
+                                                                              decimal: true),
+                                                                      controller:
+                                                                          _targetEditingController,
+                                                                      validator:
+                                                                          (value) {},
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              actions: [
+                                                                TextButton(
+                                                                  child: Text(
+                                                                      "Batal"),
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                ),
+                                                                TextButton(
+                                                                  child: Text(
+                                                                      "Simpan"),
+                                                                  onPressed:
+                                                                      () => {
+                                                                    saveDailyTarget(
+                                                                        int.parse(
+                                                                            _targetEditingController.text)),
+                                                                    Navigator.pop(
+                                                                        context),
+                                                                    setState(
+                                                                        () {
+                                                                      _target =
+                                                                          int.parse(
+                                                                              _targetEditingController.text);
+                                                                    }),
+                                                                    _targetEditingController
+                                                                        .text = "",
+                                                                  },
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    icon: Icon(
+                                                      Icons.edit_rounded,
+                                                      size: 20,
+                                                    ),
                                                     color: FlutterFlowTheme
                                                         .tertiaryColor,
-                                                    size: 20,
                                                   ),
                                                 )
                                               ],
                                             ),
                                           ),
                                           Padding(
-                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                0, 4, 0, 0),
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    0, 4, 0, 0),
                                             child: FFButtonWidget(
                                               onPressed: () async {
-                                                setState(
-                                                        () => _loadingButton1 = true);
+                                                setState(() =>
+                                                    _loadingButton1 = true);
                                                 try {
                                                   await Navigator.push(
                                                     context,
@@ -392,16 +478,18 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   );
                                                 } finally {
-                                                  setState(
-                                                          () => _loadingButton1 = false);
+                                                  setState(() =>
+                                                      _loadingButton1 = false);
                                                 }
                                               },
                                               text: 'Tambah Gawean',
                                               options: FFButtonOptions(
                                                 width: 160,
                                                 height: 32,
-                                                color: FlutterFlowTheme.primaryColor,
-                                                textStyle: FlutterFlowTheme.subtitle2
+                                                color: FlutterFlowTheme
+                                                    .primaryColor,
+                                                textStyle: FlutterFlowTheme
+                                                    .subtitle2
                                                     .override(
                                                   fontFamily: 'Poppins',
                                                   color: Colors.white,
@@ -417,12 +505,13 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                           Padding(
-                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                0, 8, 0, 0),
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    0, 8, 0, 0),
                                             child: Text(
                                               'Pesonamu:',
-                                              style:
-                                              FlutterFlowTheme.bodyText1.override(
+                                              style: FlutterFlowTheme.bodyText1
+                                                  .override(
                                                 fontFamily: 'Poppins',
                                                 fontSize: 12,
                                               ),
@@ -435,7 +524,8 @@ class _HomePageState extends State<HomePage> {
                                                 width: 40,
                                                 height: 40,
                                                 decoration: BoxDecoration(
-                                                  color: FlutterFlowTheme.moGaweGreen,
+                                                  color: FlutterFlowTheme
+                                                      .moGaweGreen,
                                                   boxShadow: [
                                                     BoxShadow(
                                                       blurRadius: 2,
@@ -445,12 +535,12 @@ class _HomePageState extends State<HomePage> {
                                                     )
                                                   ],
                                                   borderRadius:
-                                                  BorderRadius.circular(20),
+                                                      BorderRadius.circular(20),
                                                 ),
                                                 child: Icon(
                                                   Icons.calculate,
-                                                  color:
-                                                  FlutterFlowTheme.secondaryColor,
+                                                  color: FlutterFlowTheme
+                                                      .secondaryColor,
                                                   size: 24,
                                                 ),
                                               ),
@@ -458,7 +548,8 @@ class _HomePageState extends State<HomePage> {
                                                 width: 40,
                                                 height: 40,
                                                 decoration: BoxDecoration(
-                                                  color: FlutterFlowTheme.moGaweGreen,
+                                                  color: FlutterFlowTheme
+                                                      .moGaweGreen,
                                                   boxShadow: [
                                                     BoxShadow(
                                                       blurRadius: 2,
@@ -468,11 +559,12 @@ class _HomePageState extends State<HomePage> {
                                                     )
                                                   ],
                                                   borderRadius:
-                                                  BorderRadius.circular(20),
+                                                      BorderRadius.circular(20),
                                                 ),
                                                 child: Align(
                                                   alignment:
-                                                  AlignmentDirectional(0, 0),
+                                                      AlignmentDirectional(
+                                                          0, 0),
                                                   child: FaIcon(
                                                     FontAwesomeIcons.instagram,
                                                     color: FlutterFlowTheme
@@ -485,7 +577,8 @@ class _HomePageState extends State<HomePage> {
                                                 width: 40,
                                                 height: 40,
                                                 decoration: BoxDecoration(
-                                                  color: FlutterFlowTheme.moGaweGreen,
+                                                  color: FlutterFlowTheme
+                                                      .moGaweGreen,
                                                   boxShadow: [
                                                     BoxShadow(
                                                       blurRadius: 2,
@@ -495,22 +588,22 @@ class _HomePageState extends State<HomePage> {
                                                     )
                                                   ],
                                                   borderRadius:
-                                                  BorderRadius.circular(20),
+                                                      BorderRadius.circular(20),
                                                 ),
                                                 child: Icon(
                                                   Icons.delivery_dining,
-                                                  color:
-                                                  FlutterFlowTheme.secondaryColor,
+                                                  color: FlutterFlowTheme
+                                                      .secondaryColor,
                                                   size: 24,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    4, 0, 0, 0),
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(4, 0, 0, 0),
                                                 child: Text(
                                                   '+12',
-                                                  style: FlutterFlowTheme.subtitle1
+                                                  style: FlutterFlowTheme
+                                                      .subtitle1
                                                       .override(
                                                     fontFamily: 'Poppins',
                                                   ),
@@ -539,7 +632,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                                 child: Icon(
                                   Icons.add_circle,
                                   color: FlutterFlowTheme.primaryColor,
@@ -574,7 +668,8 @@ class _HomePageState extends State<HomePage> {
                                     alignment: AlignmentDirectional(0, 0),
                                     child: Text(
                                       'Penugasan',
-                                      style: FlutterFlowTheme.subtitle2.override(
+                                      style:
+                                          FlutterFlowTheme.subtitle2.override(
                                         fontFamily: 'Poppins',
                                         color: FlutterFlowTheme.secondaryColor,
                                       ),
@@ -602,162 +697,8 @@ class _HomePageState extends State<HomePage> {
                                     alignment: AlignmentDirectional(0, 0),
                                     child: Text(
                                       'Etalase',
-                                      style: FlutterFlowTheme.subtitle2.override(
-                                        fontFamily: 'Poppins',
-                                        color: FlutterFlowTheme.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                          child: Image.asset(
-                            'assets/images/im_no_job.png',
-                            width: double.infinity,
-                            height: 242,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                          child: Text(
-                            'Wah, kamu belum punya hire_me\nyang bisa dikerjain lagi.',
-                            textAlign: TextAlign.center,
-                            style: FlutterFlowTheme.subtitle2.override(
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                          child: FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
-                            },
-                            text: 'Dapatkan penugasan baru',
-                            options: FFButtonOptions(
-                              width: 240,
-                              height: 48,
-                              color: FlutterFlowTheme.secondaryColor,
-                              textStyle: FlutterFlowTheme.subtitle2.override(
-                                fontFamily: 'Poppins',
-                                color: FlutterFlowTheme.primaryColor,
-                                fontSize: 12,
-                              ),
-                              borderSide: BorderSide(
-                                color: FlutterFlowTheme.primaryColor,
-                                width: 1,
-                              ),
-                              borderRadius: 12,
-                            ),
-                            loading: _loadingButton2,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                          child: FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
-                            },
-                            text: 'Tambahkan pesonamu',
-                            options: FFButtonOptions(
-                              width: 240,
-                              height: 48,
-                              color: FlutterFlowTheme.secondaryColor,
-                              textStyle: FlutterFlowTheme.subtitle2.override(
-                                fontFamily: 'Poppins',
-                                color: FlutterFlowTheme.primaryColor,
-                                fontSize: 12,
-                              ),
-                              borderSide: BorderSide(
-                                color: FlutterFlowTheme.primaryColor,
-                                width: 1,
-                              ),
-                              borderRadius: 12,
-                            ),
-                            loading: _loadingButton3,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Text(
-                                'Gawean',
-                                style: FlutterFlowTheme.subtitle2.override(
-                                  fontFamily: 'Poppins',
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                                child: Icon(
-                                  Icons.add_circle,
-                                  color: FlutterFlowTheme.primaryColor,
-                                  size: 20,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  width: 100,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.primaryColor,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(16),
-                                      bottomRight: Radius.circular(0),
-                                      topLeft: Radius.circular(16),
-                                      topRight: Radius.circular(0),
-                                    ),
-                                    border: Border.all(
-                                      color: FlutterFlowTheme.primaryColor,
-                                    ),
-                                  ),
-                                  child: Align(
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Text(
-                                      'Penugasan',
-                                      style: FlutterFlowTheme.subtitle2.override(
-                                        fontFamily: 'Poppins',
-                                        color: FlutterFlowTheme.secondaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  width: 100,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.secondaryColor,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(0),
-                                      bottomRight: Radius.circular(16),
-                                      topLeft: Radius.circular(0),
-                                      topRight: Radius.circular(16),
-                                    ),
-                                    border: Border.all(
-                                      color: FlutterFlowTheme.primaryColor,
-                                    ),
-                                  ),
-                                  child: Align(
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Text(
-                                      'Etalase',
-                                      style: FlutterFlowTheme.subtitle2.override(
+                                      style:
+                                          FlutterFlowTheme.subtitle2.override(
                                         fontFamily: 'Poppins',
                                         color: FlutterFlowTheme.primaryColor,
                                       ),
@@ -774,7 +715,8 @@ class _HomePageState extends State<HomePage> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
                                 child: Card(
                                   clipBehavior: Clip.antiAliasWithSaveLayer,
                                   color: FlutterFlowTheme.secondaryColor,
@@ -784,10 +726,12 @@ class _HomePageState extends State<HomePage> {
                                         16, 16, 16, 16),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           child: Image.network(
                                             'https://picsum.photos/seed/879/600',
                                             width: 92,
@@ -797,15 +741,18 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Expanded(
                                           child: Padding(
-                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                16, 0, 0, 0),
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    16, 0, 0, 0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Row(
-                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Text(
                                                       'Teknisi Mesin EDC',
@@ -813,38 +760,46 @@ class _HomePageState extends State<HomePage> {
                                                           .subtitle2
                                                           .override(
                                                         fontFamily: 'Poppins',
-                                                        fontWeight: FontWeight.w600,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
                                                     ),
                                                     FaIcon(
-                                                      FontAwesomeIcons.ellipsisV,
+                                                      FontAwesomeIcons
+                                                          .ellipsisV,
                                                       color: Colors.black,
                                                       size: 16,
                                                     )
                                                   ],
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      0, 8, 0, 0),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons.calendarAlt,
+                                                        FontAwesomeIcons
+                                                            .calendarAlt,
                                                         color: Colors.black,
                                                         size: 12,
                                                       ),
                                                       Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(8, 0, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    8, 0, 0, 0),
                                                         child: Text(
                                                           'Expired in 3 days',
-                                                          style: FlutterFlowTheme
-                                                              .bodyText2
-                                                              .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: Color(0xFF8C8C8C),
+                                                          style:
+                                                              FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            color: Color(
+                                                                0xFF8C8C8C),
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -853,11 +808,11 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      0, 8, 0, 0),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     children: [
                                                       Icon(
                                                         Icons.money,
@@ -865,15 +820,20 @@ class _HomePageState extends State<HomePage> {
                                                         size: 12,
                                                       ),
                                                       Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(8, 0, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    8, 0, 0, 0),
                                                         child: Text(
                                                           'Rp.75.000',
-                                                          style: FlutterFlowTheme
-                                                              .bodyText2
-                                                              .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: Color(0xFF8C8C8C),
+                                                          style:
+                                                              FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            color: Color(
+                                                                0xFF8C8C8C),
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -882,36 +842,42 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                                 Row(
-                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Expanded(
                                                       child: Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(0, 8, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    0, 8, 0, 0),
                                                         child: Row(
                                                           mainAxisSize:
-                                                          MainAxisSize.max,
+                                                              MainAxisSize.max,
                                                           children: [
                                                             Icon(
                                                               Icons.location_on,
-                                                              color: Colors.black,
+                                                              color:
+                                                                  Colors.black,
                                                               size: 12,
                                                             ),
                                                             Padding(
                                                               padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  8, 0, 0, 0),
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          8,
+                                                                          0,
+                                                                          0,
+                                                                          0),
                                                               child: Text(
                                                                 'Cilandak ...',
-                                                                style:
-                                                                FlutterFlowTheme
+                                                                style: FlutterFlowTheme
                                                                     .bodyText2
                                                                     .override(
                                                                   fontFamily:
-                                                                  'Poppins',
+                                                                      'Poppins',
                                                                   color: Color(
                                                                       0xFF8C8C8C),
                                                                   fontSize: 12,
@@ -924,7 +890,8 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                     FFButtonWidget(
                                                       onPressed: () {
-                                                        print('Button pressed ...');
+                                                        print(
+                                                            'Button pressed ...');
                                                       },
                                                       text: 'Mulai',
                                                       options: FFButtonOptions(
@@ -932,17 +899,20 @@ class _HomePageState extends State<HomePage> {
                                                         height: 32,
                                                         color: FlutterFlowTheme
                                                             .secondaryColor,
-                                                        textStyle: FlutterFlowTheme
-                                                            .bodyText1
-                                                            .override(
+                                                        textStyle:
+                                                            FlutterFlowTheme
+                                                                .bodyText1
+                                                                .override(
                                                           fontFamily: 'Poppins',
-                                                          color: FlutterFlowTheme
-                                                              .primaryColor,
+                                                          color:
+                                                              FlutterFlowTheme
+                                                                  .primaryColor,
                                                           fontSize: 12,
                                                         ),
                                                         borderSide: BorderSide(
-                                                          color: FlutterFlowTheme
-                                                              .primaryColor,
+                                                          color:
+                                                              FlutterFlowTheme
+                                                                  .primaryColor,
                                                           width: 1,
                                                         ),
                                                         borderRadius: 12,
@@ -961,7 +931,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
                                 child: Card(
                                   clipBehavior: Clip.antiAliasWithSaveLayer,
                                   color: FlutterFlowTheme.secondaryColor,
@@ -971,10 +942,12 @@ class _HomePageState extends State<HomePage> {
                                         16, 16, 16, 16),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           child: Image.network(
                                             'https://picsum.photos/seed/879/600',
                                             width: 92,
@@ -984,15 +957,18 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Expanded(
                                           child: Padding(
-                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                16, 0, 0, 0),
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    16, 0, 0, 0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Row(
-                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Text(
                                                       'Teknisi Mesin EDC',
@@ -1000,38 +976,46 @@ class _HomePageState extends State<HomePage> {
                                                           .subtitle2
                                                           .override(
                                                         fontFamily: 'Poppins',
-                                                        fontWeight: FontWeight.w600,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
                                                     ),
                                                     FaIcon(
-                                                      FontAwesomeIcons.ellipsisV,
+                                                      FontAwesomeIcons
+                                                          .ellipsisV,
                                                       color: Colors.black,
                                                       size: 16,
                                                     )
                                                   ],
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      0, 8, 0, 0),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons.calendarAlt,
+                                                        FontAwesomeIcons
+                                                            .calendarAlt,
                                                         color: Colors.black,
                                                         size: 12,
                                                       ),
                                                       Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(8, 0, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    8, 0, 0, 0),
                                                         child: Text(
                                                           'Expired in 3 days',
-                                                          style: FlutterFlowTheme
-                                                              .bodyText2
-                                                              .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: Color(0xFF8C8C8C),
+                                                          style:
+                                                              FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            color: Color(
+                                                                0xFF8C8C8C),
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -1040,11 +1024,11 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      0, 8, 0, 0),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     children: [
                                                       Icon(
                                                         Icons.money,
@@ -1052,15 +1036,20 @@ class _HomePageState extends State<HomePage> {
                                                         size: 12,
                                                       ),
                                                       Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(8, 0, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    8, 0, 0, 0),
                                                         child: Text(
                                                           'Rp.75.000',
-                                                          style: FlutterFlowTheme
-                                                              .bodyText2
-                                                              .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: Color(0xFF8C8C8C),
+                                                          style:
+                                                              FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            color: Color(
+                                                                0xFF8C8C8C),
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -1069,36 +1058,42 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                                 Row(
-                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Expanded(
                                                       child: Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(0, 8, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    0, 8, 0, 0),
                                                         child: Row(
                                                           mainAxisSize:
-                                                          MainAxisSize.max,
+                                                              MainAxisSize.max,
                                                           children: [
                                                             Icon(
                                                               Icons.location_on,
-                                                              color: Colors.black,
+                                                              color:
+                                                                  Colors.black,
                                                               size: 12,
                                                             ),
                                                             Padding(
                                                               padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  8, 0, 0, 0),
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          8,
+                                                                          0,
+                                                                          0,
+                                                                          0),
                                                               child: Text(
                                                                 'Cilandak ...',
-                                                                style:
-                                                                FlutterFlowTheme
+                                                                style: FlutterFlowTheme
                                                                     .bodyText2
                                                                     .override(
                                                                   fontFamily:
-                                                                  'Poppins',
+                                                                      'Poppins',
                                                                   color: Color(
                                                                       0xFF8C8C8C),
                                                                   fontSize: 12,
@@ -1111,7 +1106,8 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                     FFButtonWidget(
                                                       onPressed: () {
-                                                        print('Button pressed ...');
+                                                        print(
+                                                            'Button pressed ...');
                                                       },
                                                       text: 'Mulai',
                                                       options: FFButtonOptions(
@@ -1119,17 +1115,20 @@ class _HomePageState extends State<HomePage> {
                                                         height: 32,
                                                         color: FlutterFlowTheme
                                                             .secondaryColor,
-                                                        textStyle: FlutterFlowTheme
-                                                            .bodyText1
-                                                            .override(
+                                                        textStyle:
+                                                            FlutterFlowTheme
+                                                                .bodyText1
+                                                                .override(
                                                           fontFamily: 'Poppins',
-                                                          color: FlutterFlowTheme
-                                                              .primaryColor,
+                                                          color:
+                                                              FlutterFlowTheme
+                                                                  .primaryColor,
                                                           fontSize: 12,
                                                         ),
                                                         borderSide: BorderSide(
-                                                          color: FlutterFlowTheme
-                                                              .primaryColor,
+                                                          color:
+                                                              FlutterFlowTheme
+                                                                  .primaryColor,
                                                           width: 1,
                                                         ),
                                                         borderRadius: 12,
@@ -1148,7 +1147,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
                                 child: Card(
                                   clipBehavior: Clip.antiAliasWithSaveLayer,
                                   color: FlutterFlowTheme.secondaryColor,
@@ -1158,10 +1158,12 @@ class _HomePageState extends State<HomePage> {
                                         16, 16, 16, 16),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           child: Image.network(
                                             'https://picsum.photos/seed/879/600',
                                             width: 92,
@@ -1171,15 +1173,18 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Expanded(
                                           child: Padding(
-                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                16, 0, 0, 0),
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    16, 0, 0, 0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Row(
-                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Text(
                                                       'Teknisi Mesin EDC',
@@ -1187,38 +1192,46 @@ class _HomePageState extends State<HomePage> {
                                                           .subtitle2
                                                           .override(
                                                         fontFamily: 'Poppins',
-                                                        fontWeight: FontWeight.w600,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
                                                     ),
                                                     FaIcon(
-                                                      FontAwesomeIcons.ellipsisV,
+                                                      FontAwesomeIcons
+                                                          .ellipsisV,
                                                       color: Colors.black,
                                                       size: 16,
                                                     )
                                                   ],
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      0, 8, 0, 0),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons.calendarAlt,
+                                                        FontAwesomeIcons
+                                                            .calendarAlt,
                                                         color: Colors.black,
                                                         size: 12,
                                                       ),
                                                       Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(8, 0, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    8, 0, 0, 0),
                                                         child: Text(
                                                           'Expired in 3 days',
-                                                          style: FlutterFlowTheme
-                                                              .bodyText2
-                                                              .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: Color(0xFF8C8C8C),
+                                                          style:
+                                                              FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            color: Color(
+                                                                0xFF8C8C8C),
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -1227,11 +1240,11 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                  EdgeInsetsDirectional.fromSTEB(
-                                                      0, 8, 0, 0),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(0, 8, 0, 0),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
                                                     children: [
                                                       Icon(
                                                         Icons.money,
@@ -1239,15 +1252,20 @@ class _HomePageState extends State<HomePage> {
                                                         size: 12,
                                                       ),
                                                       Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(8, 0, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    8, 0, 0, 0),
                                                         child: Text(
                                                           'Rp.75.000',
-                                                          style: FlutterFlowTheme
-                                                              .bodyText2
-                                                              .override(
-                                                            fontFamily: 'Poppins',
-                                                            color: Color(0xFF8C8C8C),
+                                                          style:
+                                                              FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            color: Color(
+                                                                0xFF8C8C8C),
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -1256,36 +1274,42 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ),
                                                 Row(
-                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Expanded(
                                                       child: Padding(
-                                                        padding: EdgeInsetsDirectional
-                                                            .fromSTEB(0, 8, 0, 0),
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    0, 8, 0, 0),
                                                         child: Row(
                                                           mainAxisSize:
-                                                          MainAxisSize.max,
+                                                              MainAxisSize.max,
                                                           children: [
                                                             Icon(
                                                               Icons.location_on,
-                                                              color: Colors.black,
+                                                              color:
+                                                                  Colors.black,
                                                               size: 12,
                                                             ),
                                                             Padding(
                                                               padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  8, 0, 0, 0),
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          8,
+                                                                          0,
+                                                                          0,
+                                                                          0),
                                                               child: Text(
                                                                 'Cilandak ...',
-                                                                style:
-                                                                FlutterFlowTheme
+                                                                style: FlutterFlowTheme
                                                                     .bodyText2
                                                                     .override(
                                                                   fontFamily:
-                                                                  'Poppins',
+                                                                      'Poppins',
                                                                   color: Color(
                                                                       0xFF8C8C8C),
                                                                   fontSize: 12,
@@ -1298,7 +1322,8 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                     FFButtonWidget(
                                                       onPressed: () {
-                                                        print('Button pressed ...');
+                                                        print(
+                                                            'Button pressed ...');
                                                       },
                                                       text: 'Mulai',
                                                       options: FFButtonOptions(
@@ -1306,17 +1331,20 @@ class _HomePageState extends State<HomePage> {
                                                         height: 32,
                                                         color: FlutterFlowTheme
                                                             .secondaryColor,
-                                                        textStyle: FlutterFlowTheme
-                                                            .bodyText1
-                                                            .override(
+                                                        textStyle:
+                                                            FlutterFlowTheme
+                                                                .bodyText1
+                                                                .override(
                                                           fontFamily: 'Poppins',
-                                                          color: FlutterFlowTheme
-                                                              .primaryColor,
+                                                          color:
+                                                              FlutterFlowTheme
+                                                                  .primaryColor,
                                                           fontSize: 12,
                                                         ),
                                                         borderSide: BorderSide(
-                                                          color: FlutterFlowTheme
-                                                              .primaryColor,
+                                                          color:
+                                                              FlutterFlowTheme
+                                                                  .primaryColor,
                                                           width: 1,
                                                         ),
                                                         borderRadius: 12,
@@ -1346,6 +1374,169 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
+    );
+  }
+
+  // show when gawean list is empty
+  Widget _gaweanListEmptyView() {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                'Gawean',
+                style: FlutterFlowTheme.subtitle2.override(
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                child: Icon(
+                  Icons.add_circle,
+                  color: FlutterFlowTheme.primaryColor,
+                  size: 20,
+                ),
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: Container(
+                  width: 100,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.primaryColor,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(0),
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(0),
+                    ),
+                    border: Border.all(
+                      color: FlutterFlowTheme.primaryColor,
+                    ),
+                  ),
+                  child: Align(
+                    alignment: AlignmentDirectional(0, 0),
+                    child: Text(
+                      'Penugasan',
+                      style: FlutterFlowTheme.subtitle2.override(
+                        fontFamily: 'Poppins',
+                        color: FlutterFlowTheme.secondaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: 100,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.secondaryColor,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(0),
+                      bottomRight: Radius.circular(16),
+                      topLeft: Radius.circular(0),
+                      topRight: Radius.circular(16),
+                    ),
+                    border: Border.all(
+                      color: FlutterFlowTheme.primaryColor,
+                    ),
+                  ),
+                  child: Align(
+                    alignment: AlignmentDirectional(0, 0),
+                    child: Text(
+                      'Etalase',
+                      style: FlutterFlowTheme.subtitle2.override(
+                        fontFamily: 'Poppins',
+                        color: FlutterFlowTheme.primaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+          child: Image.asset(
+            'assets/images/im_no_job.png',
+            width: double.infinity,
+            height: 242,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+          child: Text(
+            'Wah, kamu belum punya hire_me\nyang bisa dikerjain lagi.',
+            textAlign: TextAlign.center,
+            style: FlutterFlowTheme.subtitle2.override(
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+          child: FFButtonWidget(
+            onPressed: () {
+              print('Button pressed ...');
+            },
+            text: 'Dapatkan penugasan baru',
+            options: FFButtonOptions(
+              width: 240,
+              height: 48,
+              color: FlutterFlowTheme.secondaryColor,
+              textStyle: FlutterFlowTheme.subtitle2.override(
+                fontFamily: 'Poppins',
+                color: FlutterFlowTheme.primaryColor,
+                fontSize: 12,
+              ),
+              borderSide: BorderSide(
+                color: FlutterFlowTheme.primaryColor,
+                width: 1,
+              ),
+              borderRadius: 12,
+            ),
+            loading: _loadingButton2,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+          child: FFButtonWidget(
+            onPressed: () {
+              print('Button pressed ...');
+            },
+            text: 'Tambahkan pesonamu',
+            options: FFButtonOptions(
+              width: 240,
+              height: 48,
+              color: FlutterFlowTheme.secondaryColor,
+              textStyle: FlutterFlowTheme.subtitle2.override(
+                fontFamily: 'Poppins',
+                color: FlutterFlowTheme.primaryColor,
+                fontSize: 12,
+              ),
+              borderSide: BorderSide(
+                color: FlutterFlowTheme.primaryColor,
+                width: 1,
+              ),
+              borderRadius: 12,
+            ),
+            loading: _loadingButton3,
+          ),
+        ),
+      ],
     );
   }
 }

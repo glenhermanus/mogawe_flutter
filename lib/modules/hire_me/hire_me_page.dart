@@ -218,7 +218,7 @@ class _HireMePageState extends State<HireMePage> {
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),

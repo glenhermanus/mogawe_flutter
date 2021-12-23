@@ -12,6 +12,7 @@ import 'package:mogawe/modules/auth/screens/registration/registration_screen.dar
 import 'package:mogawe/modules/auth/screens/reset_password/reset_password_page.dart';
 import 'package:mogawe/modules/home/home_page.dart';
 import 'package:mogawe/modules/pesona/pesona_page.dart';
+import 'package:mogawe/utils/services/password_hasher.dart';
 import 'package:twitter_login/twitter_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -406,26 +407,27 @@ class _LoginPageState extends State<LoginPage> {
 
 
     //! delete after done
-    String email = "gellaps@gmail.com";
-    String staticPassword =
-        "ec7481d891314c11f10406d8bea73a2086a9e727a624f23de1694341016d055c";
-
-    var response = await _authRepository.submitLogin(email, staticPassword);
+    String? email = _emailInputController?.value.text;
+    // String staticPassword =
+    //     "ec7481d891314c11f10406d8bea73a2086a9e727a624f23de1694341016d055c";
+    String? password = _passwordInputController?.value.text;
+    String hashedPassword = PasswordHasher().convertToSha256(password ?? "");
+    var response = await _authRepository.submitLogin(email ?? "", hashedPassword);
     if (response.returnValue == "000") {
       logger.d("Success Login");
       setState(() => _loadingButton2 = true);
       try {
-
-        await AuthRepository().writeSecureData("token", response.token);
+        AuthRepository().saveToken(response.token);
         await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(),
           ),
         );
+      } catch (ex){
 
-
-      } finally {
+      }
+      finally {
         setState(() => _loadingButton2 = false);
       }
     }
