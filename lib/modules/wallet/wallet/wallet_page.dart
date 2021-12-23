@@ -25,7 +25,7 @@ class _WalletPageState extends State<WalletPage> {
   UserProfileResponse? userProfileResponse;
   bool isLoading = false;
   bool loading = false;
-  var token;
+  late String token;
   bool _loadingButton = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -33,7 +33,10 @@ class _WalletPageState extends State<WalletPage> {
     setState(() {
       loading = true;
     });
-    token = await AuthRepository().readSecureData('token');
+    token = await AuthRepository().getToken() ?? "";
+
+    print("OUT >> hey from wallet");
+    print(token);
 
     var res = await AuthRepository().getProfile(token);
     userProfileResponse = res;
@@ -45,9 +48,9 @@ class _WalletPageState extends State<WalletPage> {
   @override
   void initState() {
     super.initState();
+    getToken();
     bloc = WalletBloc();
     bloc.add(GetWalletHistoryEvent());
-    getToken();
   }
 
   @override

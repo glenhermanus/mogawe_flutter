@@ -17,6 +17,7 @@ import 'package:mogawe/core/data/response/user_response.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
 import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository extends NetworkService {
   AuthRepository();
@@ -146,6 +147,21 @@ class AuthRepository extends NetworkService {
     var readData = storage.read(key: key);
 
     return readData;
+  }
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  void saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', token);
+  }
+
+  void deleteToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
   }
 
   Object deleteSecureData(String key) {
