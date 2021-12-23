@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_address_page.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SalesShipmentPage extends StatefulWidget {
-  SalesShipmentPage({Key? key}) : super(key: key);
+  String uuid;
+  SalesShipmentPage({required this.uuid});
 
   @override
   _SalesShipmentPageState createState() =>
@@ -13,25 +20,55 @@ class SalesShipmentPage extends StatefulWidget {
 }
 
 class _SalesShipmentPageState extends State<SalesShipmentPage> {
-  TextEditingController? textController1;
-  TextEditingController? textController2;
-  TextEditingController? textController3;
+  TextEditingController? nama_pembeli;
+  TextEditingController? no_hp;
+  TextEditingController textController3 = new TextEditingController();
   TextEditingController? textController4;
-  bool? checkboxListTileValue1;
-  bool? checkboxListTileValue2;
-  bool? checkboxListTileValue3;
-  bool? checkboxListTileValue4;
+  bool checkboxListTileValue1 = false;
+  bool checkboxListTileValue2= false;
+  bool checkboxListTileValue3= false;
+  bool checkboxListTileValue4= false;
   bool _loadingButton = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool loading = false;
+  var token, price, totalfee, totalfeeCurrency, pricewithoutIDR, priceCurrency;
+  SalesDetailResponses? salesDetailResponses;
+  var image;
+  int itemCount = 1;
+  var currencyFormatter, alamat, detailalamat;
+
+  Future getData()async{
+    setState(() {
+      loading = true;
+
+    });
+
+    token = await AuthRepository().readSecureData('token');
+    alamat = await AuthRepository().readSecureData('alamat');
+    detailalamat = await AuthRepository().readSecureData('detail');
+    salesDetailResponses = await AuthRepository().getDetailsales(token, widget.uuid);
+    currencyFormatter = NumberFormat.currency(locale: 'ID');
+    price = '${salesDetailResponses?.price.toString().split('.').first}';
+    priceCurrency = currencyFormatter.format(salesDetailResponses?.price);
+    setState(() {
+      loading = false;
+      int _price = int.parse(price);
+      totalfee = _price * itemCount;
+      totalfeeCurrency = currencyFormatter.format(totalfee);
+      alamat == null ? textController3.text ='' : detailalamat == null ? textController3.text = '' : textController3.text = '$alamat $detailalamat';
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    textController1 = TextEditingController();
-    textController2 = TextEditingController();
+    nama_pembeli = TextEditingController();
+    no_hp = TextEditingController();
     textController3 = TextEditingController();
     textController4 = TextEditingController();
+    getData();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +132,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                 ),
                               ),
                               TextFormField(
-                                controller: textController1,
+                                controller: nama_pembeli,
                                 obscureText: false,
                                 decoration: InputDecoration(
                                   hintText: 'John Doe',
@@ -125,6 +162,17 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ),
                                   filled: true,
                                   fillColor: FlutterFlowTheme.fieldColor,
+                                  suffixIcon: InkWell(
+                                    onTap: ()async{
+                                      final PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
+                                      no_hp?.text = contact.phoneNumber!.number.toString();
+                                      nama_pembeli?.text = contact.fullName.toString();
+                                    },
+                                    child: Icon(
+                                      Icons.contacts,
+                                      size: 18,
+                                    ),
+                                  ),
                                   prefixIcon: Icon(
                                     Icons.person,
                                     size: 18,
@@ -150,7 +198,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ),
                                 ),
                                 TextFormField(
-                                  controller: textController2,
+                                  controller: no_hp,
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     hintText: '08XXXXXXXXX',
@@ -236,6 +284,16 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                     ),
                                     filled: true,
                                     fillColor: FlutterFlowTheme.fieldColor,
+                                    suffixIcon: InkWell(
+                                        onTap: (){ Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => SalesAddress(uuid: widget.uuid,),
+                                          ),
+                                        );
+                                        AuthRepository().deleteSecureData('alamat');
+                                        },
+                                        child: Icon(Icons.location_searching, size: 18,)),
                                     prefixIcon: Icon(
                                       Icons.location_on,
                                       size: 18,
@@ -264,18 +322,47 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Image.network(
-                                      'https://picsum.photos/seed/742/600',
-                                      width: 64,
-                                      height: 64,
-                                      fit: BoxFit.cover,
+                                    Expanded(
+                                      child: loading ? Shimmer.fromColors(
+                                        baseColor: Color(0xffD8D8D8),
+                                        highlightColor: Color(0xffEDEDED),
+                                        enabled: true,
+                                        child: Container(
+                                          color: Colors.white,
+                                          width: 100,
+                                          height: 10,),
+                                      ) :  Container(
+                                        width: 64,
+                                        height: 64,
+                                        child: ListView.builder(
+                                            itemCount: 1,
+                                            itemBuilder: (context, snap){
+                                              final listImage = salesDetailResponses?.images[snap];
+                                              image = salesDetailResponses?.images[0].value;
+                                              return Image.network(
+                                                '${image}',
+                                                width: 64,
+                                                height: 64,
+                                                fit: BoxFit.cover,
+                                              );
+                                            }
+                                        ),
+                                      ),
                                     ),
                                     Expanded(
                                       child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             8, 0, 0, 0),
-                                        child: Text(
-                                          'Product name',
+                                        child: loading ? Shimmer.fromColors(
+                                          baseColor: Color(0xffD8D8D8),
+                                          highlightColor: Color(0xffEDEDED),
+                                          enabled: true,
+                                          child: Container(
+                                            color: Colors.white,
+                                            width: 100,
+                                            height: 10,),
+                                        ) : Text(
+                                          '${salesDetailResponses?.name}',
                                           style: FlutterFlowTheme.bodyText1
                                               .override(
                                             fontFamily: 'Poppins',
@@ -286,7 +373,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        FlutterFlowIconButton(
+                                      itemCount == 1 ? Container() :  FlutterFlowIconButton(
                                           borderColor: Colors.transparent,
                                           borderRadius: 30,
                                           borderWidth: 1,
@@ -298,11 +385,16 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                             size: 20,
                                           ),
                                           onPressed: () {
-                                            print('IconButton pressed ...');
+                                            setState(() {
+                                              itemCount--;
+                                              int price_ = int.parse(price);
+                                              totalfee = price_ * itemCount;
+                                              totalfeeCurrency = currencyFormatter.format(totalfee);
+                                            });
                                           },
                                         ),
                                         Text(
-                                          '1',
+                                          '${itemCount.toString()}',
                                           style: FlutterFlowTheme.bodyText1
                                               .override(
                                             fontFamily: 'Poppins',
@@ -321,7 +413,12 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                             size: 20,
                                           ),
                                           onPressed: () {
-                                            print('IconButton pressed ...');
+                                            setState(() {
+                                              itemCount++;
+                                              int price_ = int.parse(price);
+                                              totalfee = price_ * itemCount;
+                                              totalfeeCurrency = currencyFormatter.format(totalfee);
+                                            });
                                           },
                                         )
                                       ],
@@ -415,9 +512,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ),
                                 ),
                                 CheckboxListTile(
-                                  value: checkboxListTileValue1 ??= true,
+                                  value: checkboxListTileValue1,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue1 = newValue),
+                                          () => checkboxListTileValue1 = newValue!),
                                   title: Text(
                                     'Ambil Sendiri',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -430,9 +527,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ListTileControlAffinity.trailing,
                                 ),
                                 CheckboxListTile(
-                                  value: checkboxListTileValue2 ??= true,
+                                  value: checkboxListTileValue2,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue2 = newValue),
+                                          () => checkboxListTileValue2 = newValue!),
                                   title: Text(
                                     'Kurir Toko',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -445,9 +542,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   ListTileControlAffinity.trailing,
                                 ),
                                 CheckboxListTile(
-                                  value: checkboxListTileValue3 ??= true,
+                                  value: checkboxListTileValue3,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue3 = newValue),
+                                          () => checkboxListTileValue3 = newValue!),
                                   title: Text(
                                     'Ekspedisi',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -495,8 +592,16 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   fontFamily: 'Poppins',
                                 ),
                               ),
-                              Text(
-                                'Rp200.000',
+                             loading ? Shimmer.fromColors(
+                               baseColor: Color(0xffD8D8D8),
+                               highlightColor: Color(0xffEDEDED),
+                               enabled: true,
+                               child: Container(
+                                 color: Colors.white,
+                                 width: 100,
+                                 height: 10,),
+                             ) : Text(
+                                'Rp${priceCurrency.replaceAll('IDR', '').replaceAll(',00', '')}',
                                 style: FlutterFlowTheme.bodyText1.override(
                                   fontFamily: 'Poppins',
                                 ),
@@ -533,8 +638,16 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                 color: FlutterFlowTheme.moGaweGreen,
                               ),
                             ),
-                            Text(
-                              'Rp200.000',
+                            loading ? Shimmer.fromColors(
+                              baseColor: Color(0xffD8D8D8),
+                              highlightColor: Color(0xffEDEDED),
+                              enabled: true,
+                              child: Container(
+                                color: Colors.white,
+                                width: 100,
+                                height: 10,),
+                            ) :  Text(
+                              'Rp${totalfeeCurrency.replaceAll('IDR', '').replaceAll(',00', '')}',
                               style: FlutterFlowTheme.bodyText1.override(
                                 fontFamily: 'Poppins',
                                 color: FlutterFlowTheme.moGaweGreen,
@@ -548,9 +661,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
                     child: CheckboxListTile(
-                      value: checkboxListTileValue4 ??= true,
+                      value: checkboxListTileValue4,
                       onChanged: (newValue) =>
-                          setState(() => checkboxListTileValue4 = newValue),
+                          setState(() => checkboxListTileValue4 = newValue!),
                       title: Text(
                         'Kirim sebagai dropshipper',
                         style: FlutterFlowTheme.bodyText1.override(

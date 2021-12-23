@@ -10,6 +10,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_shipment_page.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/chat_page.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -534,7 +535,16 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 5),
               child: FFButtonWidget(
                 onPressed: () {
-                  print('Button pressed ...');
+                  AuthRepository().deleteSecureData('alamat');
+                  AuthRepository().deleteSecureData('detail');
+                  AuthRepository().deleteSecureData('lat');
+                  AuthRepository().deleteSecureData('long');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SalesShipmentPage(uuid: widget.uuid,),
+                    ),
+                  );
                 },
                 text: 'Checkout\n',
                 options: FFButtonOptions(
