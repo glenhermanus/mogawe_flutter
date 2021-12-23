@@ -58,13 +58,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       loading = true;
     });
-    token = await AuthRepository().getToken();
+    token = await AuthRepository().readSecureData('token');
 
     print("OUT >> hey");
     print(token);
 
-    var res = await AuthRepository().getProfile(token);
-    userProfileResponse = res;
+    userProfileResponse = await AuthRepository().getProfile(token);
+
     setState(() {
       loading = false;
     });
