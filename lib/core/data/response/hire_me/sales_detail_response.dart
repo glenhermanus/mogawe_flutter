@@ -3,7 +3,8 @@ import 'package:mogawe/core/data/response/hire_me/image_sales_detail.dart';
 
 class SalesDetailResponses{
   String? returnValue, message, uuid, uuidobj, uuidClient, uuidCategory, uuidJob, uuidSupplier, brand,
-      name, condition, category, desc, imageUrl, youtubeUrl, shippingExpeditionServices;
+      name, condition, category, desc, imageUrl, youtubeUrl, shippingExpeditionServices, uuidSupplierAddress, supplierAddressName,
+  supplierAddressAddress, supplierAddressNotes;
   int? minimumOrder;
   bool? isDangerous, stock, isPublished, isFavorite, isFreeOngkir, isShippingTakeaway, isShippingOwncourier, isShippingExpedition;
   double? weight, width, height, length, price, commission;
@@ -40,8 +41,14 @@ class SalesDetailResponses{
         this.isShippingTakeaway,
         this.minimumOrder,
         this.uuidSupplier,
+        this.supplierAddressAddress,
+        this.supplierAddressName,
+        this.category,
+        this.youtubeUrl,
         this.weight,
-        this.youtubeUrl
+        this.supplierAddressNotes,
+        this.uuidClient,
+        this.uuidSupplierAddress,
       });
 
   factory SalesDetailResponses.fromJson(Map<String, dynamic> json){
@@ -77,6 +84,10 @@ class SalesDetailResponses{
       price: json['object']['price'],
       minimumOrder: json['object']['minimumOrder'],
       height: json['object']['height'],
+      uuidSupplierAddress: json['object']['uuidSupplierAddress'],
+      supplierAddressName: json['object']['supplierAddressName'],
+      supplierAddressAddress: json['object']['supplierAddressAddress'],
+      supplierAddressNotes: json['object']['supplierAddressNotes'],
     );
   }
 

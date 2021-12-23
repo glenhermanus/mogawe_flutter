@@ -1,4 +1,4 @@
-package com.example.mogawe_android
+package com.mogawe.mosurvei
 
 import io.flutter.embedding.android.FlutterActivity
 

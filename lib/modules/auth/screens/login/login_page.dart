@@ -29,8 +29,8 @@ class _LoginPageState extends State<LoginPage> {
 
   String _email = "", _password = "";
 
-  TextEditingController? _emailInputController;
-  TextEditingController? _passwordInputController;
+  TextEditingController _emailInputController = new TextEditingController();
+  TextEditingController _passwordInputController = new TextEditingController();
   bool? passwordVisibility;
   bool _loadingButton1 = false;
   bool _loadingButton2 = false;
@@ -42,8 +42,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _emailInputController = TextEditingController();
-    _passwordInputController = TextEditingController();
     passwordVisibility = false;
   }
 
@@ -239,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
                   child: FFButtonWidget(
                     onPressed: () async {
-                      _handleSubmitLogin(_email, _password);
+                      _handleSubmitLogin(_emailInputController.text, _passwordInputController.text);
                     },
                     text: 'Masuk',
                     options: FFButtonOptions(
@@ -406,11 +404,11 @@ class _LoginPageState extends State<LoginPage> {
 
 
     //! delete after done
-    String email = "gellaps@gmail.com";
-    String staticPassword =
-        "ec7481d891314c11f10406d8bea73a2086a9e727a624f23de1694341016d055c";
+    // String email = "gellaps@gmail.com";
+    // String staticPassword =
+    //     "ec7481d891314c11f10406d8bea73a2086a9e727a624f23de1694341016d055c";
 
-    var response = await _authRepository.submitLogin(email, staticPassword);
+    var response = await _authRepository.submitLogin(email, password);
     if (response.returnValue == "000") {
       logger.d("Success Login");
       setState(() => _loadingButton2 = true);
