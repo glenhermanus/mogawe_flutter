@@ -65,7 +65,7 @@ class ObjectData {
     idDevice = map["id_device"],
     profilePicture = map["profile_picture"],
     gender = map["gender"],
-    birthdate = map["birthdate"],
+    birthdate = map["birthdate"] != null ? map["birthdate"] : 0,
     latitude = map["latitude"],
     longitude = map["longitude"],
     address = map["address"],
