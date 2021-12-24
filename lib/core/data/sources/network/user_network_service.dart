@@ -321,11 +321,32 @@ class UserNetworkService {
       shipmentProvinceName, shipmentCityId, shipmentCityName, shipmentEstMax, shipmentEstMin, price,total, commission, adminFee,
       resellerName, resellerPhone, resellerAddress, paymentMethod, trackingToken, refundStatus, additionalNotes, token) async {
     final response = await http.post(
-      Uri.parse("$BASE_URL/api/sales/product/favorite/$uuid"),
+      Uri.parse("$BASE_URL/api/sales/product/checkout"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
       },
-      body: jsonEncode(<String, String>{'isFavorite': 'fav.toString()'}),
+      body: jsonEncode(<String, dynamic>{'uuid' : uuid,
+        'buyerName': buyername,
+        'buyerPhone': buyerphone,
+        'buyerAddres': buyeraddres,
+        'buyerLat': buyerlat,
+        'buyerLng' :buyerlng,
+        'quantity': quantity,
+        'shipmentType': shipmentType,
+        'shipmentFee': shipmentFee,
+        'shipmentProvinceId':shipmentProvinceId,
+        'shipmentProvinceName': shipmentProvinceName,
+        'shipmentCityId': shipmentCityId,
+        'shipmentCityName': shipmentCityName,
+        'shipmentEstMax':shipmentEstMax,
+        'shipmentEstMin':shipmentEstMin,
+        'price':price,
+        'total':total,
+        'commission':commission,
+        'adminFee': adminFee,
+        'resellerName':
+        resellerName, 'resellerPhone':resellerPhone, 'resellerAddress':resellerAddress, 'paymentMethod': paymentMethod,
+        'trackingToken':trackingToken, 'refundStatus' :refundStatus, 'additionalNotes': additionalNotes}),
     );
     return json.decode(response.body);
   }

@@ -13,7 +13,7 @@ String userProfileResponseToJson(UserProfileResponse data) =>
 @JsonSerializable()
 class UserProfileResponse {
   String returnValue;
-  String message, mogawers_code, full_name, email, password, id_device, gender, profil_picture, edu;
+  String message, mogawers_code, full_name, email, password, id_device, gender, profil_picture, edu, phone;
   int id_mogawers, birthdate, level, gawean_selesai, pending_payment, downline_count, balance, points;
   dynamic uuid;
   dynamic type;
@@ -41,7 +41,8 @@ class UserProfileResponse {
     required this.balance,
     required this.points,
     required this.termsAgreed,
-    required this.is_phone_active
+    required this.is_phone_active,
+    required this.phone
   });
 
   factory UserProfileResponse.fromJson(Map<String, dynamic> json) =>

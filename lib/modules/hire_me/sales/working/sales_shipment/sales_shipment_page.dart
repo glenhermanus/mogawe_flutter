@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/data/response/hire_me/seller_addres_response.dart';
+import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
@@ -26,6 +27,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
   TextEditingController? nama_pembeli;
   TextEditingController? no_hp;
   TextEditingController textController3 = new TextEditingController();
+  TextEditingController resellername = new TextEditingController();
+  TextEditingController resellerphone = new TextEditingController();
+  TextEditingController reselleralamat = new TextEditingController();
   TextEditingController? textController4;
   bool checkboxListTileValue1 = false;
   bool checkboxListTileValue2= false;
@@ -34,13 +38,17 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
   bool _loadingButton = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
-  var token, price, totalfee, totalfeeCurrency, pricewithoutIDR, priceCurrency;
+  var token, price, totalfee, totalfeeCurrency, pricewithoutIDR, priceCurrency, checkbox;
   SalesDetailResponses? salesDetailResponses;
   var image;
   int itemCount = 1;
-  var currencyFormatter, alamat, detailalamat, city_id_buyer, city_id_seller, cityShipment;
+  var currencyFormatter, alamat, detailalamat, city_id_buyer, city_id_seller,
+      lat,lng, latdouble, lngdouble,
+      cityShipment, nameEkspedisi, service,
+      priceEkspedisi, priceEkspedisiFormat, priceEkspedisiDouble;
   HireMeSalesResponses? hireMeSalesResponses;
   SellerAddress? sellerAddress;
+  UserProfileResponse? userProfileResponse;
 
   Future getData()async{
     setState(() {
@@ -53,9 +61,15 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
     detailalamat = await AuthRepository().readSecureData('detail');
     salesDetailResponses = await AuthRepository().getDetailsales(token, widget.uuid);
     hireMeSalesResponses = await AuthRepository().hiremeSalesdata(token);
-
+    checkbox = await AuthRepository().readSecureData('checkbox3');
+    nameEkspedisi = await AuthRepository().readSecureData('nameEkspedisi');
+    priceEkspedisi = await AuthRepository().readSecureData('value');
+    service = await AuthRepository().readSecureData('serviceEkspedisi');
     city_id_buyer = await AuthRepository().readSecureData('city_id');
+    userProfileResponse = await AuthRepository().getProfile(token);
     currencyFormatter = NumberFormat.currency(locale: 'ID');
+    priceEkspedisiDouble = priceEkspedisi != null ? double.parse(priceEkspedisi) : 0;
+    priceEkspedisiFormat = currencyFormatter.format(priceEkspedisiDouble);
     price = '${salesDetailResponses?.price.toString().split('.').first}';
     priceCurrency = currencyFormatter.format(salesDetailResponses?.price);
     for(var i =0; i<salesDetailResponses!.productAddresses.length; i++){
@@ -71,7 +85,11 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
       totalfeeCurrency = currencyFormatter.format(totalfee);
       alamat == null ? textController3.text ='' : detailalamat == null ? textController3.text = '' : textController3.text = '$alamat $detailalamat';
       city_id_seller = sellerAddress?.shipmentCityId;
-
+      checkboxListTileValue3 = checkbox =='true';
+      resellername.text = userProfileResponse?.full_name as String;
+      resellerphone.text = userProfileResponse?.phone != '' ? userProfileResponse?.phone as String : '';
+      print(userProfileResponse?.phone);
+      print('aas');
     });
   }
 
@@ -603,6 +621,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                     onChanged: (newValue) => setState(
                                             ()  {
                                               checkboxListTileValue3 = newValue!;
+                                              AuthRepository().deleteSecureData('nameEkspedisi');
+                                              AuthRepository().deleteSecureData('serviceEkspedisi');
+                                              AuthRepository().deleteSecureData('value');
                                               checkboxListTileValue2 = false;
                                               checkboxListTileValue1 = false;
                                               if(checkboxListTileValue3 = true){
@@ -610,7 +631,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) => ServiceEKspedisi(weight: 1,
+                                                    builder: (context) => ServiceEKspedisi(uuid: widget.uuid, weight: 1,
                                                       ekspedisi: salesDetailResponses?.shippingExpeditionServices, buyerCityId: city_id_buyer, supCityId:  cityShipment,),
                                                   ),
                                                 );
@@ -625,6 +646,15 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                         fontFamily: 'Poppins',
                                       ),
                                     ),
+                                    subtitle: nameEkspedisi!=null ? checkboxListTileValue3 != false? Text(
+                                      '$nameEkspedisi $service',
+                                      style: FlutterFlowTheme.bodyText3.override(
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ) :Text(
+                                      '',
+                                    ) : Text(
+                                      '') ,
                                     tileColor: Color(0xFFF5F5F5),
                                     dense: false,
                                     controlAffinity:
@@ -694,12 +724,17 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                 fontFamily: 'Poppins',
                               ),
                             ),
-                            Text(
-                              'Gratis',
+                           priceEkspedisi != null ? Text(
+                              'Rp${priceEkspedisiFormat.replaceAll('IDR', '').replaceAll(',00', '')}',
                               style: FlutterFlowTheme.bodyText1.override(
                                 fontFamily: 'Poppins',
                               ),
-                            )
+                            ) : Text(
+                             'Gratis',
+                             style: FlutterFlowTheme.bodyText1.override(
+                               fontFamily: 'Poppins',
+                             ),
+                           )
                           ],
                         ),
                         Row(
@@ -750,11 +785,179 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
                   ),
+                checkboxListTileValue4 != true ? Container(): Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Nama Pengirim',
+                              style: FlutterFlowTheme.bodyText1.override(
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            TextFormField(
+                              controller: resellername,
+                              obscureText: false,
+                              decoration: InputDecoration(
+                                hintText: 'John Doe',
+                                hintStyle:
+                                FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Poppins',
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0x00000000),
+                                    width: 1,
+                                  ),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(4.0),
+                                    topRight: Radius.circular(4.0),
+                                  ),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0x00000000),
+                                    width: 1,
+                                  ),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(4.0),
+                                    topRight: Radius.circular(4.0),
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+
+                              ),
+                              style: FlutterFlowTheme.bodyText1.override(
+                                fontFamily: 'Poppins',
+                              ),
+                            )
+                          ],
+                        ),
+                        Padding(
+                          padding:
+                          EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'No HP Pengirim',
+                                style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              TextFormField(
+                                controller: resellerphone,
+                                obscureText: false,
+                                decoration: InputDecoration(
+                                  hintText: '08XXXXXXXXX',
+                                  hintStyle:
+                                  FlutterFlowTheme.bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color(0x00000000),
+                                      width: 1,
+                                    ),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(4.0),
+                                      topRight: Radius.circular(4.0),
+                                    ),
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color(0x00000000),
+                                      width: 1,
+                                    ),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(4.0),
+                                      topRight: Radius.circular(4.0),
+                                    ),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+
+                                ),
+                                style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Poppins',
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                          EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Alamat Pengirim',
+                                style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              TextFormField(
+                                controller: reselleralamat,
+                                obscureText: false,
+                                decoration: InputDecoration(
+                                  hintText: 'Alamat',
+                                  hintStyle:
+                                  FlutterFlowTheme.bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color(0x00000000),
+                                      width: 1,
+                                    ),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(4.0),
+                                      topRight: Radius.circular(4.0),
+                                    ),
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color(0x00000000),
+                                      width: 1,
+                                    ),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(4.0),
+                                      topRight: Radius.circular(4.0),
+                                    ),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+
+                                ),
+                                style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Poppins',
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(16, 24, 16, 16),
                     child: FFButtonWidget(
-                      onPressed: () {
+                      onPressed: () async{
                         print('Button pressed ...');
+                        await AuthRepository().checkout(widget.uuid, nama_pembeli?.text, no_hp?.text, textController3.text, -6.222, 102.222, itemCount, 'logistic', 9000.0,
+                            6, 'DKI Jakarta', 153, 'Jakarta Selatan',
+                            1, 2, price, totalfee, salesDetailResponses?.commission, 0, checkboxListTileValue4 != false ? resellername.text :
+                            salesDetailResponses?.supplierAddressName,
+                            resellerphone.text, alamat, 'midtrans', '', 'not yet', '', token);
                       },
                       text: 'Kirim Tagihan',
                       options: FFButtonOptions(

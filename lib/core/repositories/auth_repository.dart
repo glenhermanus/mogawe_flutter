@@ -43,6 +43,16 @@ class AuthRepository extends NetworkService {
     return _apiService.loginUser(email, password);
   }
 
+  Future checkout(uuid, buyername, buyerphone, buyeraddres, buyerlat, buyerlng, quantity, shipmentType,
+      shipmentFee, shipmentProvinceId, shipmentProvinceName, shipmentCityId, shipmentCityName,
+      shipmentEstMax, shipmentEstMin, price, total, commission, adminFee, resellerName,
+      resellerPhone, resellerAddress, paymentMethod, trackingToken, refundStatus, additionalNotes, token) async {
+    return _apiService.checkout(uuid, buyername, buyerphone, buyeraddres, buyerlat, buyerlng, quantity, shipmentType,
+        shipmentFee, shipmentProvinceId, shipmentProvinceName, shipmentCityId, shipmentCityName,
+        shipmentEstMax, shipmentEstMin, price, total, commission, adminFee, resellerName,
+        resellerPhone, resellerAddress, paymentMethod, trackingToken, refundStatus, additionalNotes, token);
+  }
+
   Future<ResetPasswordResponse> resetPassword(ResetPasswordRequest request) {
     return _apiService.resetPassword(request);
   }
