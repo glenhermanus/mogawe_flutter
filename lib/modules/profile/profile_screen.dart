@@ -28,10 +28,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<ProfileHistoryData> histories = [];
   String? periode;
   String? q;
-  TextEditingController? targetCtrl = TextEditingController();
-  TextEditingController? namaCtrl = TextEditingController();
-  TextEditingController? emailCtrl = TextEditingController();
-  TextEditingController? phoneCtrl = TextEditingController();
+  TextEditingController targetCtrl = TextEditingController();
+  TextEditingController namaCtrl = TextEditingController();
+  TextEditingController emailCtrl = TextEditingController();
+  TextEditingController phoneCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -70,10 +70,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (state is ShowProfileData) {
           checkLoading();
           data = state.data;
-          targetCtrl!.text = data!.config!.targetRevenue!.toInt().toString();
-          namaCtrl!.text = data!.fullName!;
-          emailCtrl!.text = data!.email!;
-          phoneCtrl!.text = data!.phone!;
+          targetCtrl.text = data!.config?.targetRevenue!.toInt().toString() as String;
+          namaCtrl.text = data!.fullName as String;
+          emailCtrl.text = data!.email as String;
+          phoneCtrl.text = data!.phone as String;
           return layout();
         }
         if (state is ShowProfileHistoryDataState) {

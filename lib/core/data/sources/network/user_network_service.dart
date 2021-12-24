@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/request/reset_password_request.dart';
@@ -27,12 +28,15 @@ class UserNetworkService {
   }
 
   Future<UserLoginResponse> loginUser(String email, String password) async {
+    var encodedata = utf8.encode(password);         // data being hashed
+    var password_baru = sha256.convert(encodedata);
+    var convert_string = password_baru.toString();
     final response = await http.post(
       Uri.parse("$BASE_URL/api/mogawers/logIn/"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{'email': email, 'password': password}),
+      body: jsonEncode(<String, String>{'email': email, 'password': convert_string}),
     );
     return UserLoginResponse.fromJson(json.decode(response.body));
   }

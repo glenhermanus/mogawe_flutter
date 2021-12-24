@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -36,6 +37,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
   var image;
   int itemCount = 1;
   var currencyFormatter, alamat, detailalamat;
+  HireMeSalesResponses? hireMeSalesResponses;
 
   Future getData()async{
     setState(() {
@@ -47,6 +49,8 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
     alamat = await AuthRepository().readSecureData('alamat');
     detailalamat = await AuthRepository().readSecureData('detail');
     salesDetailResponses = await AuthRepository().getDetailsales(token, widget.uuid);
+    hireMeSalesResponses = await AuthRepository().hiremeSalesdata(token);
+
     currencyFormatter = NumberFormat.currency(locale: 'ID');
     price = '${salesDetailResponses?.price.toString().split('.').first}';
     priceCurrency = currencyFormatter.format(salesDetailResponses?.price);
@@ -506,6 +510,35 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
+                                  'Alamat Pickup',
+                                  style: FlutterFlowTheme.subtitle3.override(
+                                    fontFamily: 'Poppins',
+                                    color: Colors.black,
+                                    fontSize: 14
+                                  ),
+                                ),
+                                SizedBox(height: 10,),
+                                loading ? Shimmer.fromColors(
+                                  baseColor: Color(0xffD8D8D8),
+                                  highlightColor: Color(0xffEDEDED),
+                                  enabled: true,
+                                  child: Container(
+                                    color: Colors.white,
+                                    width: 100,
+                                    height: 10,),
+                                ) : salesDetailResponses?.supplierAddressNotes != null?  Text(
+                                  '${salesDetailResponses?.supplierAddressAddress}\n${salesDetailResponses?.supplierAddressNotes}',
+                                  style: FlutterFlowTheme.bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ) : Text(
+                                  '${salesDetailResponses?.supplierAddressAddress}',
+                                  style: FlutterFlowTheme.bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                                SizedBox(height: 20,),
+                                Text(
                                   'Metode pengiriman',
                                   style: FlutterFlowTheme.bodyText1.override(
                                     fontFamily: 'Poppins',
@@ -514,7 +547,11 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                 CheckboxListTile(
                                   value: checkboxListTileValue1,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue1 = newValue!),
+                                          () {
+                                            checkboxListTileValue1 = newValue!;
+                                            checkboxListTileValue2 = false;
+                                            checkboxListTileValue3 = false;
+                                          } ),
                                   title: Text(
                                     'Ambil Sendiri',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -529,7 +566,11 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                 CheckboxListTile(
                                   value: checkboxListTileValue2,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue2 = newValue!),
+                                          () {
+                                            checkboxListTileValue2 = newValue!;
+                                            checkboxListTileValue1 = false;
+                                            checkboxListTileValue3 = false;
+                                          } ),
                                   title: Text(
                                     'Kurir Toko',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -544,7 +585,11 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                 CheckboxListTile(
                                   value: checkboxListTileValue3,
                                   onChanged: (newValue) => setState(
-                                          () => checkboxListTileValue3 = newValue!),
+                                          ()  {
+                                            checkboxListTileValue3 = newValue!;
+                                            checkboxListTileValue2 = false;
+                                            checkboxListTileValue1 = false;
+                                          } ),
                                   title: Text(
                                     'Ekspedisi',
                                     style: FlutterFlowTheme.bodyText1.override(
@@ -555,7 +600,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   dense: false,
                                   controlAffinity:
                                   ListTileControlAffinity.trailing,
-                                )
+                                ),
                               ],
                             )
                           ],

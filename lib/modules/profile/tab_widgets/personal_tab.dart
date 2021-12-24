@@ -14,7 +14,7 @@ class PersonalTab extends StatefulWidget {
   final TextEditingController? emailCtrl;
   final TextEditingController? phoneCtrl;
 
-  const PersonalTab({Key? key, this.data, this.updateProfile,
+  const PersonalTab({Key? key, required this.data, this.updateProfile,
     this.updateTarget, this.targetCtrl, this.namaCtrl,
     this.emailCtrl, this.phoneCtrl}) : super(key: key);
 
@@ -31,9 +31,16 @@ class _PersonalTabState extends State<PersonalTab> {
   String? birthdate;
   String? gender;
   List<String> genders = ["Laki-laki", "Perempuan"];
-
+  bool loading = false;
   Map<String, String> map = Map();
   Map<String, dynamic> revenueMap = Map();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.data == null ? loading = true :loading = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -292,17 +299,17 @@ class _PersonalTabState extends State<PersonalTab> {
                           ),
                         ),
                       ),
-                      Text(
-                        widget.data != null? AppUtil.formatDateTime(
+                      loading ? Text('') :  widget.data!.birthdate! != 0 ? Text(
+                        widget.data != null ? AppUtil.formatDateTime(
                             dateTime: DateTime.fromMillisecondsSinceEpoch(widget.data!.birthdate!),
                             dateFormat: "dd - MMM - yyyy"
-                        ): "",
+                        ) : "" ,
                         style: FlutterFlowTheme.bodyText1
                             .override(
                           fontFamily: 'Poppins',
                           fontSize: 12,
                         ),
-                      ),
+                      ) : Text(''),
                       Icon(
                         Icons.chevron_right,
                         color: Colors.black,

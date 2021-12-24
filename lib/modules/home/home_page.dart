@@ -43,13 +43,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       loading = true;
     });
-    token = await AuthRepository().getToken();
+    token = await AuthRepository().readSecureData('token');
 
     print("OUT >> hey");
     print(token);
 
-    var res = await AuthRepository().getProfile(token);
-    userProfileResponse = res;
+    userProfileResponse = await AuthRepository().getProfile(token);
+
     setState(() {
       loading = false;
     });
@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-              child: Container(
+              child: this.userProfileResponse?.profil_picture == null ? Container(
                 width: 40,
                 height: 40,
                 clipBehavior: Clip.antiAlias,
@@ -246,9 +246,19 @@ class _HomePageState extends State<HomePage> {
                 child: Image.network(
                   'https://picsum.photos/seed/168/600',
                 ),
-              ),
+              ) : Container(
+                width: 40,
+                height: 40,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: Image.network(
+                  '${this.userProfileResponse?.profil_picture}',
+                ),
             ),
-          )
+          ),
+          ),
         ],
         centerTitle: true,
         elevation: 0,
@@ -280,7 +290,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                      child: Text(
+                      child: loading
+                          ? Text('Loading ...',
+                          style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                            color: FlutterFlowTheme.secondaryColor,
+                          ))
+                          :  Text(
                         '${this.userProfileResponse?.points}pts',
                         style: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',

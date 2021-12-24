@@ -14,7 +14,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async*{
-    _userToken = await AuthRepository().getToken();
+    _userToken = await AuthRepository().readSecureData('token');
 
     if (event is GetProfileEvent) {
       yield ShowLoadingProfileState();
