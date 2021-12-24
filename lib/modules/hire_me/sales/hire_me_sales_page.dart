@@ -1,15 +1,12 @@
 
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/category_list_object.dart';
 import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_drop_down.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/hire_me/sales/favorite_page.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_detail/sales_detail_page.dart';
 

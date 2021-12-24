@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:mogawe/core/data/request/reset_password_request.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/utils/services/password_hasher.dart';
 
 part 'resetpassword_event.dart';

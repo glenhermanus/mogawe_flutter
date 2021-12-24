@@ -11,7 +11,7 @@ UserLoginResponse _$UserLoginResponseFromJson(Map<String, dynamic> json) {
     returnValue: json['returnValue'] as String,
     message: json['message'] as String,
     uuid: json['uuid'],
-    token: json['token'],
+    token: json['token'] == null ? "" : json['token'],
     type: json['type'],
     object: json['object'],
   );

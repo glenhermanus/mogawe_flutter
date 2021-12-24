@@ -2,18 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/user_login_response.dart';
 import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/screens/registration/registration_screen.dart';
 import 'package:mogawe/modules/auth/screens/reset_password/reset_password_page.dart';
 import 'package:mogawe/modules/home/home_page.dart';
-import 'package:mogawe/modules/pesona/pesona_page.dart';
+import 'package:mogawe/utils/services/password_hasher.dart';
 import 'package:twitter_login/twitter_login.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -29,8 +29,8 @@ class _LoginPageState extends State<LoginPage> {
 
   String _email = "", _password = "";
 
-  TextEditingController  _emailInputController = new TextEditingController();
-  TextEditingController _passwordInputController= new TextEditingController();
+  TextEditingController? _emailInputController;
+  TextEditingController? _passwordInputController;
   bool? passwordVisibility;
   bool _loadingButton1 = false;
   bool _loadingButton2 = false;
@@ -42,6 +42,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    _emailInputController = TextEditingController();
+    _passwordInputController = TextEditingController();
     passwordVisibility = false;
   }
 
@@ -237,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
                   child: FFButtonWidget(
                     onPressed: () async {
-                      _handleSubmitLogin(_emailInputController.text, _passwordInputController.text);
+                      _handleSubmitLogin(_email, _password, context);
                     },
                     text: 'Masuk',
                     options: FFButtonOptions(
@@ -394,7 +396,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _handleSubmitLogin(String email, String password) async {
+  Future<void> _handleSubmitLogin(String email, String password, BuildContext ctx) async {
     final FormState? form = _formKey.currentState;
     // if (form!.validate()) {
     //   form.save();
@@ -404,25 +406,36 @@ class _LoginPageState extends State<LoginPage> {
 
 
     //! delete after done
+    String? email = _emailInputController?.value.text;
+    // String staticEmail = "gellaps@gmail.com";
+    // String staticPassword = "masukaja123";
+    String? password = _passwordInputController?.value.text;
+    String hashedPassword = PasswordHasher().convertToSha256(password ?? "");
 
-    var response = await _authRepository.submitLogin(email, password);
+    var response = await _authRepository.submitLogin(email ?? "", hashedPassword);
     if (response.returnValue == "000") {
       logger.d("Success Login");
       setState(() => _loadingButton2 = true);
       try {
+        AuthRepository().saveToken(response.token);
 
-        await AuthRepository().writeSecureData("token", response.token);
         await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(),
           ),
         );
-
-
-      } finally {
+      } catch (ex){
+      }
+      finally {
         setState(() => _loadingButton2 = false);
       }
+    } else {
+      logger.d("Gagal Login");
+      final snackBar = new SnackBar(content: new Text(response.message),
+          backgroundColor: Colors.red);
+      ScaffoldMessenger.of(ctx).showSnackBar(snackBar);
+
     }
   }
 
@@ -441,7 +454,6 @@ class _LoginPageState extends State<LoginPage> {
         setState(() => _loadingButton2 = true);
         try {
           AuthRepository().writeSecureData('token', userLoginResponse!.token);
-
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -451,6 +463,8 @@ class _LoginPageState extends State<LoginPage> {
         } finally {
           setState(() => _loadingButton2 = false);
         }
+      } else {
+
       }
       print(responses.token);
 
