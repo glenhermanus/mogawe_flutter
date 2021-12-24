@@ -22,6 +22,15 @@ class _IdCardProfileState extends State<IdCardProfile> {
 
   String mogawe = "MoGawe (Your Data Your Control";
   String address = "Jl. M Kavling No.8, Kebon Baru, Tebet, Jakarta Timur";
+  bool loading = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.data == null ? loading = true :loading = false;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,11 +122,12 @@ class _IdCardProfileState extends State<IdCardProfile> {
                             ))
                           ],
                         )),
-                        rowItem("Telepon", Text(widget.data!.phone!)),
+                       rowItem("Telepon",   Text (loading ? '' : widget.data!.phone!)),
                         rowItem("Jenis Kelamin", Text(
                           widget.data!.gender == "M"? "Laki-laki": "Perempuan"
                         )),
-                        rowItem("Edukasi", Text(widget.data!.edu!))
+                        widget.data!.edu! != null ? rowItem("Edukasi", Text( widget.data!.edu!)) :
+                        rowItem("Edukasi", Text( ''))
                       ],
                     ),
                   ),

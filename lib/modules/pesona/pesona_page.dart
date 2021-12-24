@@ -41,7 +41,7 @@ class _PesonaPageState extends State<PesonaPage> {
     pesonaResponses = await AuthRepository().pesonadata(token);
 
     setState(() {
-      print(pesonaResponses);
+      print(pesonaResponses?.message);
       loading = false;
     });
   }

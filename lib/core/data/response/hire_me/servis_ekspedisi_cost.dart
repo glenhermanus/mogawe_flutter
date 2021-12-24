@@ -6,7 +6,7 @@ class ServisEkspedisCost{
 
   factory ServisEkspedisCost.fromJson(Map<String, dynamic> json){
     return ServisEkspedisCost(
-        etd: json[' etd'],
+        etd: json['etd'],
         note: json['note'],
         value: json['value']
     );

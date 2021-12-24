@@ -46,9 +46,11 @@ class _LocationShipmentState extends State<LocationShipment> {
             icon: BitmapDescriptor.defaultMarker,
             onTap: (){
               if(_addressLatest == null){
-                detail_alamat.text =  _address  as String;
+                detail_alamat.text =  _address!;
               }
-              detail_alamat.text = _addressLatest!;},
+              else{
+                detail_alamat.text = _addressLatest!;
+              }},
             onDragEnd: ((newPosition) {
               print(newPosition.latitude);
               print(newPosition.longitude);
@@ -97,42 +99,46 @@ class _LocationShipmentState extends State<LocationShipment> {
         _initialcameraposition = LatLng(_currentPosition!.latitude as double,_currentPosition!.longitude as double);
         _getAddress(_currentPosition?.latitude as double,_currentPosition?.longitude as double)
             .then((value) {
-              _address = "${value.first.street} ${value.first.subLocality} ${value.first.locality} ${value.first.administrativeArea} "
-            "${value.first.subAdministrativeArea} ${value.first.postalCode}";
-        detail_alamat.text =  _address  as String;
-          _latestAddress(latLatest as double,longLatest as double).then((value) {
-            _addressLatest = "${value.first.street} ${value.first.subLocality} ${value.first.locality} ${value.first.administrativeArea} "
-                "${value.first.subAdministrativeArea} ${value.first.postalCode}";
-            detail_alamat.text = _addressLatest as String;
-          });
-          marker =   Set<Marker>.of(
-            <Marker>[
-              Marker(
+          _address = "${value.first.street} ${value.first.subLocality} ${value.first.locality} ${value.first.administrativeArea} "
+              "${value.first.subAdministrativeArea} ${value.first.postalCode}";
+          detail_alamat.text =  _address  as String;
 
-                draggable: true,
-                markerId: MarkerId("1"),
-                position: _initialcameraposition,
-                icon: BitmapDescriptor.defaultMarker,
-                onTap: (){ if(_addressLatest == null){
-                  detail_alamat.text =  _address  as String;
-                }
-                detail_alamat.text = _addressLatest as String;},
-                onDragEnd: ((newPosition) {
-                  print(newPosition.latitude);
-                  print(newPosition.longitude);
-                  latLatest = newPosition.latitude;
-                  longLatest = newPosition.longitude;
-
-                }),
-
-                infoWindow: const InfoWindow(
-                  title: 'Pilih Lokasi',
-                ),
-              )
-            ],
-          );
 
         });
+        _latestAddress(latLatest as double,longLatest as double).then((value) {
+          _addressLatest = "${value.first.street} ${value.first.subLocality} ${value.first.locality} ${value.first.administrativeArea} "
+              "${value.first.subAdministrativeArea} ${value.first.postalCode}";
+          detail_alamat.text = _addressLatest as String;
+        });
+        marker =   Set<Marker>.of(
+          <Marker>[
+            Marker(
+
+              draggable: true,
+              markerId: MarkerId("1"),
+              position: _initialcameraposition,
+              icon: BitmapDescriptor.defaultMarker,
+              onTap: (){   if(_addressLatest == null){
+                detail_alamat.text =  _address  as String;
+              }
+              else{
+                detail_alamat.text = _addressLatest!;
+              }},
+              onDragEnd: ((newPosition) {
+                print(newPosition.latitude);
+                print(newPosition.longitude);
+                latLatest = newPosition.latitude;
+                longLatest = newPosition.longitude;
+
+              }),
+
+              infoWindow: const InfoWindow(
+                title: 'Pilih Lokasi',
+              ),
+            )
+          ],
+        );
+
 
       });
     });

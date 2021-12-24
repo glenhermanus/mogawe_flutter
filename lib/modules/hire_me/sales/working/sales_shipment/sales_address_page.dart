@@ -192,8 +192,10 @@ class _SalesAddressState extends State<SalesAddress> {
                                         value_city = newValue;
                                         var name_city= value_city['city_name'];
                                         var postal_code = value_city['postal_code'];
+                                        var city_id = value_city['city_id'];
                                         AuthRepository().writeSecureData('city_name', name_city);
                                         AuthRepository().writeSecureData('postal_code', postal_code);
+                                        AuthRepository().writeSecureData('city_id', city_id);
                                         loading = true;
                                       });
 

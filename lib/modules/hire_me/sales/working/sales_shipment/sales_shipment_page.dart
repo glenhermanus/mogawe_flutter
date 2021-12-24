@@ -4,11 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
+import 'package:mogawe/core/data/response/hire_me/seller_addres_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_address_page.dart';
+import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/servis%20ekspedisi.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SalesShipmentPage extends StatefulWidget {
@@ -36,8 +38,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
   SalesDetailResponses? salesDetailResponses;
   var image;
   int itemCount = 1;
-  var currencyFormatter, alamat, detailalamat;
+  var currencyFormatter, alamat, detailalamat, city_id_buyer, city_id_seller, cityShipment;
   HireMeSalesResponses? hireMeSalesResponses;
+  SellerAddress? sellerAddress;
 
   Future getData()async{
     setState(() {
@@ -51,15 +54,24 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
     salesDetailResponses = await AuthRepository().getDetailsales(token, widget.uuid);
     hireMeSalesResponses = await AuthRepository().hiremeSalesdata(token);
 
+    city_id_buyer = await AuthRepository().readSecureData('city_id');
     currencyFormatter = NumberFormat.currency(locale: 'ID');
     price = '${salesDetailResponses?.price.toString().split('.').first}';
     priceCurrency = currencyFormatter.format(salesDetailResponses?.price);
+    for(var i =0; i<salesDetailResponses!.productAddresses.length; i++){
+      cityShipment = salesDetailResponses?.productAddresses[i].supplierAddressShipmentCityId;
+      print(cityShipment);
+      print('inicity');
+    }
+    //sellerAddress = await AuthRepository().getSellerAddress(token, salesDetailResponses?.uuidSupplierAddress);
     setState(() {
       loading = false;
       int _price = int.parse(price);
       totalfee = _price * itemCount;
       totalfeeCurrency = currencyFormatter.format(totalfee);
       alamat == null ? textController3.text ='' : detailalamat == null ? textController3.text = '' : textController3.text = '$alamat $detailalamat';
+      city_id_seller = sellerAddress?.shipmentCityId;
+
     });
   }
 
@@ -582,24 +594,42 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                                   controlAffinity:
                                   ListTileControlAffinity.trailing,
                                 ),
-                                CheckboxListTile(
-                                  value: checkboxListTileValue3,
-                                  onChanged: (newValue) => setState(
-                                          ()  {
-                                            checkboxListTileValue3 = newValue!;
-                                            checkboxListTileValue2 = false;
-                                            checkboxListTileValue1 = false;
-                                          } ),
-                                  title: Text(
-                                    'Ekspedisi',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
+                                InkWell(
+                                  onTap: (){
+
+                                  },
+                                  child: CheckboxListTile(
+                                    value: checkboxListTileValue3,
+                                    onChanged: (newValue) => setState(
+                                            ()  {
+                                              checkboxListTileValue3 = newValue!;
+                                              checkboxListTileValue2 = false;
+                                              checkboxListTileValue1 = false;
+                                              if(checkboxListTileValue3 = true){
+                                                print(salesDetailResponses?.supplierAddressShipmentCityId);
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => ServiceEKspedisi(weight: 1,
+                                                      ekspedisi: salesDetailResponses?.shippingExpeditionServices, buyerCityId: city_id_buyer, supCityId:  cityShipment,),
+                                                  ),
+                                                );
+                                              }
+                                              else{
+
+                                              }
+                                            } ),
+                                    title: Text(
+                                      'Ekspedisi',
+                                      style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                      ),
                                     ),
+                                    tileColor: Color(0xFFF5F5F5),
+                                    dense: false,
+                                    controlAffinity:
+                                    ListTileControlAffinity.trailing,
                                   ),
-                                  tileColor: Color(0xFFF5F5F5),
-                                  dense: false,
-                                  controlAffinity:
-                                  ListTileControlAffinity.trailing,
                                 ),
                               ],
                             )
