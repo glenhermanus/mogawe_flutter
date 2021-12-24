@@ -1,12 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
-import 'package:mogawe/modules/auth/repositories/profile_repository.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/blocs/profile_event.dart';
 import 'package:mogawe/modules/profile/blocs/profile_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-
   late ProfileRepository _repo;
   late var _userToken;
 

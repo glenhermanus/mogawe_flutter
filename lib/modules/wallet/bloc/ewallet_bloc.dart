@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
-import 'package:mogawe/modules/auth/repositories/wallet_repository.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/wallet_repository.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_event.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -4,7 +4,7 @@ import 'package:mogawe/core/data/response/ewallet/ewallet_model.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_util.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
-import 'package:mogawe/modules/auth/repositories/wallet_repository.dart';
+import 'package:mogawe/core/repositories/wallet_repository.dart';
 
 class OtpEWalletScreen extends StatefulWidget {
   final EWalletModel eWalletModel;

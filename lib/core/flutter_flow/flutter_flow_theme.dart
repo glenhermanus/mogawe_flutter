@@ -10,6 +10,8 @@ class FlutterFlowTheme {
 
   static const Color fieldColor = Color(0xFFF3F2F2);
   static const Color moGaweGreen = Color(0xFF43B54D);
+  static const Color moGaweYellow = Color(0xFFFFC600);
+
 
   String primaryFontFamily = 'Poppins';
   String secondaryFontFamily = 'Roboto';

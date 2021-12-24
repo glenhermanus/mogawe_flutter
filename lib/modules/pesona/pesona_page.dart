@@ -1,14 +1,10 @@
-
-import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
-import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
-import 'package:mogawe/core/data/sources/network/user_network_service.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
+import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
+import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/generator/function_form.dart';
 import 'package:mogawe/modules/pesona/acreditation_page.dart';
 import 'package:mogawe/modules/pesona/detail_pesona_page.dart';

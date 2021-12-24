@@ -8,8 +8,8 @@ import 'package:mogawe/core/data/response/ewallet/nominal/ewallet_nominal_model.
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
-import 'package:mogawe/modules/auth/repositories/wallet_repository.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/wallet_repository.dart';
 import 'package:mogawe/modules/wallet/add_ewallet_account/add_ewallet_account_screen.dart';
 import 'package:mogawe/modules/wallet/bloc/ewallet_bloc.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_event.dart';

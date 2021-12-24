@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/screens/registration/bloc/registration_event.dart';
 import 'package:mogawe/modules/auth/screens/registration/bloc/registration_state.dart';
 

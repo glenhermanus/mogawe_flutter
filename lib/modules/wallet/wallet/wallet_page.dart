@@ -4,7 +4,7 @@ import 'package:mogawe/core/data/response/wallet/wallet_history_model.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_bloc.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_event.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_state.dart';

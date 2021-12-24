@@ -5,7 +5,6 @@ import 'package:mogawe/core/data/response/profile/profile_history_response.dart'
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/data/response/register/register_response.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
-import 'package:mogawe/modules/auth/repositories/auth_repository.dart';
 
 class ProfileRepository extends NetworkService {
   ProfileRepository();

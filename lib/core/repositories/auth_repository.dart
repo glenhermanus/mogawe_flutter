@@ -156,6 +156,7 @@ class AuthRepository extends NetworkService {
 
   void saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', true);
     prefs.setString('token', token);
   }
 
