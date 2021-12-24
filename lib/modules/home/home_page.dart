@@ -252,7 +252,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                      child: Text(
+                      child: loading
+                          ? Text('Loading ...',
+                          style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                            color: FlutterFlowTheme.secondaryColor,
+                          ))
+                          :  Text(
                         '${this.userProfileResponse?.points}pts',
                         style: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
