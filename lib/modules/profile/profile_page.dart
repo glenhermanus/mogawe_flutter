@@ -31,7 +31,7 @@ class ProfilePage extends StatefulWidget {
   final TextEditingController? emailCtrl;
   final TextEditingController? phoneCtrl;
 
-  ProfilePage({Key? key, this.data, this.updateProfile,
+  ProfilePage({Key? key, required this.data, this.updateProfile,
     this.updateTarget, this.onFotoChanged, this.histories,
   this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
     this.emailCtrl, this.phoneCtrl, this.searchListen}) : super(key: key);

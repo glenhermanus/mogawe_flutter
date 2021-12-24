@@ -198,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-              child: Container(
+              child: this.userProfileResponse?.profil_picture == null ? Container(
                 width: 40,
                 height: 40,
                 clipBehavior: Clip.antiAlias,
@@ -208,9 +208,19 @@ class _HomePageState extends State<HomePage> {
                 child: Image.network(
                   'https://picsum.photos/seed/168/600',
                 ),
-              ),
+              ) : Container(
+                width: 40,
+                height: 40,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: Image.network(
+                  '${this.userProfileResponse?.profil_picture}',
+                ),
             ),
-          )
+          ),
+          ),
         ],
         centerTitle: true,
         elevation: 0,
