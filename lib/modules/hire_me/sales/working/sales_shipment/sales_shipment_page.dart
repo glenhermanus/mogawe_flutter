@@ -13,6 +13,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_address_page.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/servis%20ekspedisi.dart';
+import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/shipment_detail.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SalesShipmentPage extends StatefulWidget {
@@ -994,6 +995,12 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                               '',
                               token);
                           Fluttertoast.showToast(msg: "Berhasil");
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ShipmentDetail(),
+                            ),
+                          );
                         } catch(e){
                           Fluttertoast.showToast(msg: '$e');
                         }
