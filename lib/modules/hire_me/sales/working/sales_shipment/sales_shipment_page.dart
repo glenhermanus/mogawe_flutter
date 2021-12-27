@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
@@ -38,14 +39,14 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
   bool _loadingButton = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
-  var token, price, totalfee, totalfeeCurrency, pricewithoutIDR, priceCurrency, checkbox;
+  var token, price, totalfee, totalfeeCurrency, pricewithoutIDR, priceCurrency, checkbox, provinceIdShipment, provinceShipmentName, cityShipmentName;
   SalesDetailResponses? salesDetailResponses;
   var image;
   int itemCount = 1;
   var currencyFormatter, alamat, detailalamat, city_id_buyer, city_id_seller,
       lat,lng, latdouble, lngdouble,
       cityShipment, nameEkspedisi, service,
-      priceEkspedisi, priceEkspedisiFormat, priceEkspedisiDouble;
+      priceEkspedisi, priceEkspedisiFormat, priceEkspedisiDouble, estmin, estmax;
   HireMeSalesResponses? hireMeSalesResponses;
   SellerAddress? sellerAddress;
   UserProfileResponse? userProfileResponse;
@@ -65,6 +66,10 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
     nameEkspedisi = await AuthRepository().readSecureData('nameEkspedisi');
     priceEkspedisi = await AuthRepository().readSecureData('value');
     service = await AuthRepository().readSecureData('serviceEkspedisi');
+    lat = await AuthRepository().readSecureData('lat');
+    lng = await AuthRepository().readSecureData('long');
+    estmin = await AuthRepository().readSecureData('estmin');
+    estmax = await AuthRepository().readSecureData('estmax');
     city_id_buyer = await AuthRepository().readSecureData('city_id');
     userProfileResponse = await AuthRepository().getProfile(token);
     currencyFormatter = NumberFormat.currency(locale: 'ID');
@@ -74,6 +79,9 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
     priceCurrency = currencyFormatter.format(salesDetailResponses?.price);
     for(var i =0; i<salesDetailResponses!.productAddresses.length; i++){
       cityShipment = salesDetailResponses?.productAddresses[i].supplierAddressShipmentCityId;
+      provinceIdShipment = salesDetailResponses?.productAddresses[i].supplierAddressShipmentProvinceId;
+      provinceShipmentName = salesDetailResponses?.productAddresses[i].supplierAddressShipmentProvinceName;
+      cityShipmentName = salesDetailResponses?.productAddresses[i].supplierAddressShipmentCityName;
       print(cityShipment);
       print('inicity');
     }
@@ -953,11 +961,42 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                     child: FFButtonWidget(
                       onPressed: () async{
                         print('Button pressed ...');
-                        await AuthRepository().checkout(widget.uuid, nama_pembeli?.text, no_hp?.text, textController3.text, -6.222, 102.222, itemCount, 'logistic', 9000.0,
-                            6, 'DKI Jakarta', 153, 'Jakarta Selatan',
-                            1, 2, price, totalfee, salesDetailResponses?.commission, 0, checkboxListTileValue4 != false ? resellername.text :
-                            salesDetailResponses?.supplierAddressName,
-                            resellerphone.text, alamat, 'midtrans', '', 'not yet', '', token);
+                        try {
+                          Fluttertoast.showToast(msg: "Loading...");
+                          await AuthRepository().checkout(
+                              widget.uuid,
+                              nama_pembeli?.text,
+                              no_hp?.text,
+                              textController3.text,
+                              lat,
+                              lng,
+                              itemCount,
+                              'Logistic',
+                              double.parse(priceEkspedisi),
+                              provinceIdShipment,
+                              provinceShipmentName,
+                              cityShipment,
+                              cityShipmentName,
+                              estmax,
+                              estmin,
+                              price,
+                              totalfee,
+                              salesDetailResponses?.commission,
+                              0,
+                              checkboxListTileValue4 != false ? resellername
+                                  .text :
+                              salesDetailResponses?.supplierAddressName,
+                              resellerphone.text,
+                              alamat,
+                              'midtrans',
+                              '',
+                              'not yet',
+                              '',
+                              token);
+                          Fluttertoast.showToast(msg: "Berhasil");
+                        } catch(e){
+                          Fluttertoast.showToast(msg: '$e');
+                        }
                       },
                       text: 'Kirim Tagihan',
                       options: FFButtonOptions(
