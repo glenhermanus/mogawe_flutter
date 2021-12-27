@@ -17,7 +17,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
-    _userToken = await AuthRepository().getToken();
+    _userToken = await AuthRepository().readSecureData('token');
 
     if (event is GetAdsBanner) {
       yield ShowLoadingAds();

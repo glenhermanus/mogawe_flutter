@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       loading = true;
     });
-    token = await AuthRepository().getToken();
+    token = await AuthRepository().readSecureData('token');
 
     print("OUT >> hey");
     print(token);
@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage> {
         if (state is ShowListGaweanState) {
           print("State : $state");
           return ListView.builder(
-            itemCount: state.list[1].jobs!.length == 5 ? 5 : state.list[1].jobs!.length,
+            itemCount: state.list[1].jobs!.length < 5 ? state.list[1].jobs!.length : 5,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (ctx, index) {

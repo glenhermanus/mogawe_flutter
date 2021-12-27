@@ -33,7 +33,7 @@ class _WalletPageState extends State<WalletPage> {
     setState(() {
       loading = true;
     });
-    token = await AuthRepository().getToken() ?? "";
+    token = await AuthRepository().readSecureData('token') as String ?? "";
 
     print("OUT >> hey from wallet");
     print(token);

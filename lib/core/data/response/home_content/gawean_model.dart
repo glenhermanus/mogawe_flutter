@@ -129,7 +129,7 @@ class Gawean {
     dynamic locationDescription;
     bool isQcNeeded;
     bool isHaveArea;
-    dynamic jobPicture;
+    String? jobPicture;
     dynamic jobBanner;
     dynamic jobColor;
     dynamic jobTextColor;
@@ -202,7 +202,7 @@ class Gawean {
         locationDescription: json["locationDescription"],
         isQcNeeded: json["isQcNeeded"] == null ? null : json["isQcNeeded"],
         isHaveArea: json["isHaveArea"] == null ? null : json["isHaveArea"],
-        jobPicture: json["jobPicture"],
+        jobPicture: json["jobPicture"] == null ? null : json["jobPicture"],
         jobBanner: json["jobBanner"],
         jobColor: json["jobColor"],
         jobTextColor: json["jobTextColor"],
@@ -275,7 +275,7 @@ class Gawean {
         "locationDescription": locationDescription,
         "isQcNeeded": isQcNeeded == null ? null : isQcNeeded,
         "isHaveArea": isHaveArea == null ? null : isHaveArea,
-        "jobPicture": jobPicture,
+        "jobPicture": jobPicture == null ? null : jobPicture,
         "jobBanner": jobBanner,
         "jobColor": jobColor,
         "jobTextColor": jobTextColor,

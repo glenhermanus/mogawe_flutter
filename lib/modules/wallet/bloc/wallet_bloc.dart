@@ -14,7 +14,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
   @override
   Stream<WalletState> mapEventToState(WalletEvent event) async* {
-    _userToken = await AuthRepository().getToken();
+    _userToken = await AuthRepository().readSecureData('token');
 
     if (event is GetWalletHistoryEvent) {
       yield ShowLoadingWalletState();

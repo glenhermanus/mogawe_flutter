@@ -38,7 +38,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
   final GaweanRepository _gaweanRepository = GaweanRepository.instance;
 
   void getToken() async {
-    token = await AuthRepository().getToken();
+    token = await AuthRepository().readSecureData('token');
 
     print("OUT >> hey");
     print(token);
@@ -67,7 +67,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  widget.gaweanModel.jobPicture,
+                  widget.gaweanModel.jobPicture ?? "https://sbu.co.id/info/wp-content/themes/easymag/images/no-image.png",
                   width: 92,
                   height: 114,
                   fit: BoxFit.cover,
