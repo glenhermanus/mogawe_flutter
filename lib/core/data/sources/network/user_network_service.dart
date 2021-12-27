@@ -8,6 +8,8 @@ import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_respons
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/provinsi_response.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
+import 'package:mogawe/core/data/response/hire_me/seller_addres_response.dart';
+import 'package:mogawe/core/data/response/hire_me/servis_ekspedisi_response.dart';
 import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
@@ -281,15 +283,70 @@ class UserNetworkService {
     }
   }
 
+  Future<SellerAddress> getSellerAddress(token, uuidSuppAddress) async {
+    print(token);
+    final requestUrl = '$BASE_URL/api/mogawers/supplier/address/get/$uuidSuppAddress';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return SellerAddress.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future<ServisEkspedisiResponse> getServisEkspedisi(token, buyerCity, supCity, weight, ekspedisi) async {
+    print(token);
+    final requestUrl = '$BASE_URL/api/sales/shipment/v2/cost?origin=$buyerCity&destination=$supCity&weight=$weight&courier=$ekspedisi';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return ServisEkspedisiResponse.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
+    }
+  }
+
   Future checkout(uuid, buyername, buyerphone, buyeraddres, buyerlat, buyerlng, quantity, shipmentType, shipmentFee, shipmentProvinceId,
       shipmentProvinceName, shipmentCityId, shipmentCityName, shipmentEstMax, shipmentEstMin, price,total, commission, adminFee,
       resellerName, resellerPhone, resellerAddress, paymentMethod, trackingToken, refundStatus, additionalNotes, token) async {
     final response = await http.post(
-      Uri.parse("$BASE_URL/api/sales/product/favorite/$uuid"),
+      Uri.parse("$BASE_URL/api/sales/product/checkout"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
       },
-      body: jsonEncode(<String, String>{'isFavorite': 'fav.toString()'}),
+      body: jsonEncode(<String, dynamic>{'uuid' : uuid,
+        'buyerName': buyername,
+        'buyerPhone': buyerphone,
+        'buyerAddres': buyeraddres,
+        'buyerLat': buyerlat,
+        'buyerLng' :buyerlng,
+        'quantity': quantity,
+        'shipmentType': shipmentType,
+        'shipmentFee': shipmentFee,
+        'shipmentProvinceId':shipmentProvinceId,
+        'shipmentProvinceName': shipmentProvinceName,
+        'shipmentCityId': shipmentCityId,
+        'shipmentCityName': shipmentCityName,
+        'shipmentEstMax':shipmentEstMax,
+        'shipmentEstMin':shipmentEstMin,
+        'price':price,
+        'total':total,
+        'commission':commission,
+        'adminFee': adminFee,
+        'resellerName':
+        resellerName, 'resellerPhone':resellerPhone, 'resellerAddress':resellerAddress, 'paymentMethod': paymentMethod,
+        'trackingToken':trackingToken, 'refundStatus' :refundStatus, 'additionalNotes': additionalNotes}),
     );
     return json.decode(response.body);
   }

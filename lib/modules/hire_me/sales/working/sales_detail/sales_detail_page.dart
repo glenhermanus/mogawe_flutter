@@ -539,6 +539,10 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                   AuthRepository().deleteSecureData('detail');
                   AuthRepository().deleteSecureData('lat');
                   AuthRepository().deleteSecureData('long');
+                  AuthRepository().deleteSecureData('nameEkspedisi');
+                  AuthRepository().deleteSecureData('serviceEkspedisi');
+                  AuthRepository().deleteSecureData('checkbox3');
+                  AuthRepository().deleteSecureData('value');
                   Navigator.push(
                     context,
                     MaterialPageRoute(

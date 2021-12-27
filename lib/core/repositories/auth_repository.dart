@@ -4,6 +4,8 @@ import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_respons
 import 'package:mogawe/core/data/response/hire_me/hire_me_sales_response.dart';
 import 'package:mogawe/core/data/response/hire_me/provinsi_response.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
+import 'package:mogawe/core/data/response/hire_me/seller_addres_response.dart';
+import 'package:mogawe/core/data/response/hire_me/servis_ekspedisi_response.dart';
 import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
@@ -39,6 +41,16 @@ class AuthRepository extends NetworkService {
 
   Future<UserLoginResponse> submitLogin(String email, String password) async {
     return _apiService.loginUser(email, password);
+  }
+
+  Future checkout(uuid, buyername, buyerphone, buyeraddres, buyerlat, buyerlng, quantity, shipmentType,
+      shipmentFee, shipmentProvinceId, shipmentProvinceName, shipmentCityId, shipmentCityName,
+      shipmentEstMax, shipmentEstMin, price, total, commission, adminFee, resellerName,
+      resellerPhone, resellerAddress, paymentMethod, trackingToken, refundStatus, additionalNotes, token) async {
+    return _apiService.checkout(uuid, buyername, buyerphone, buyeraddres, buyerlat, buyerlng, quantity, shipmentType,
+        shipmentFee, shipmentProvinceId, shipmentProvinceName, shipmentCityId, shipmentCityName,
+        shipmentEstMax, shipmentEstMin, price, total, commission, adminFee, resellerName,
+        resellerPhone, resellerAddress, paymentMethod, trackingToken, refundStatus, additionalNotes, token);
   }
 
   Future<ResetPasswordResponse> resetPassword(ResetPasswordRequest request) {
@@ -121,6 +133,13 @@ class AuthRepository extends NetworkService {
     return _apiService.getShipmentCheckout(token, id);
   }
 
+  Future<ServisEkspedisiResponse> getServisEkspedisi(token,buyerCity, supCity, weight, ekspedisi) async {
+    return _apiService.getServisEkspedisi(token, buyerCity, supCity, weight, ekspedisi);
+  }
+
+  Future<SellerAddress> getSellerAddress(token,uuidAddress) async {
+    return _apiService.getSellerAddress(token, uuidAddress);
+  }
 
   Future<DetailPesonaResponses> detailpesonadata(token, uuidjob) async {
     return _apiService.detailpesonaresponse(token, uuidjob);

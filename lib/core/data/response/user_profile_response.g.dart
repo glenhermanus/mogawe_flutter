@@ -16,6 +16,7 @@ UserProfileResponse _$UserProfileResponseFromJson(Map<String, dynamic> json) {
           id_mogawers: json['object']['id_mogawers']!= null? json['object']['id_mogawers'] : '',
           full_name: json['object']['full_name']!= null? json['object']['full_name'] : '',
           edu: json['object']['edu']!= null? json['object']['edu'] : '',
+          phone: json['object']['phone']!= null? json['object']['phone'] : '',
           email: json['object']['email']!= null? json['object']['email'] : '',
           password: json['object']['password']!= null? json['object']['password'] : '',
           profil_picture: json['object']['profile_picture']!= null? json['object']['profile_picture'] : '',

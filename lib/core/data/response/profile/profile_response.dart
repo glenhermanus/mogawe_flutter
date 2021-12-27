@@ -75,7 +75,7 @@ class ObjectData {
     downlineCount = map["douwnline_count"],
     pendingPayment = map["pending_payment"],
     refCode = map["ref_code"],
-    edu = map["edu"],
+    edu = map["edu"] != null ? map['edu'] : '',
     isPhoneActive = map["is_phone_active"],
     balance = map["balance"],
     point = map["point"],
