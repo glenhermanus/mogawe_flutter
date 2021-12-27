@@ -406,27 +406,28 @@ class _LoginPageState extends State<LoginPage> {
 
 
     //! delete after done
-    String? email = _emailInputController?.value.text;
-    // String staticEmail = "gellaps@gmail.com";
-    // String staticPassword = "masukaja123";
-    String? password = _passwordInputController?.value.text;
-    String hashedPassword = PasswordHasher().convertToSha256(password ?? "");
+    // String? email = _emailInputController?.value.text;
+    String staticEmail = "ibnubatutah002@gmail.com";
+    String staticPassword = "123456789";
+    // String? password = _passwordInputController?.value.text;
+    String hashedPassword = PasswordHasher().convertToSha256(staticPassword ?? "");
 
-    var response = await _authRepository.submitLogin(email ?? "", hashedPassword);
+    var response = await _authRepository.submitLogin(staticEmail ?? "", hashedPassword);
+    logger.d(response.returnValue);
+    logger.d(hashedPassword);
+
     if (response.returnValue == "000") {
       logger.d("Success Login");
       setState(() => _loadingButton2 = true);
       try {
         AuthRepository().saveToken(response.token);
-
         await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(),
           ),
         );
-      } catch (ex){
-      }
+      } catch (ex){}
       finally {
         setState(() => _loadingButton2 = false);
       }
@@ -435,7 +436,6 @@ class _LoginPageState extends State<LoginPage> {
       final snackBar = new SnackBar(content: new Text(response.message),
           backgroundColor: Colors.red);
       ScaffoldMessenger.of(ctx).showSnackBar(snackBar);
-
     }
   }
 
