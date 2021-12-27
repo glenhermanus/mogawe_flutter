@@ -122,8 +122,7 @@ class _ServiceEKspedisiState extends State<ServiceEKspedisi> {
                                       var estmax = listeksCost?.etd?.split('-').last.replaceAll('HARI', '');
                                       print(name);
                                       AuthRepository().writeSecureData('estmin', estmin as String);
-                                      AuthRepository().writeSecureData('estmin', estmin as String);
-                                      AuthRepository().writeSecureData('estmin', estmax as String);
+                                      AuthRepository().writeSecureData('estmax', estmax as String);
                                       AuthRepository().writeSecureData('checkbox3', 'true');
                                       AuthRepository().writeSecureData('nameEkspedisi', name as String);
                                       AuthRepository().writeSecureData('serviceEkspedisi', service as String);
