@@ -7,6 +7,7 @@ import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/home/faq/faq_webview.dart';
 import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 import 'package:mogawe/modules/home/widgets/build_gawean_item.dart';
 import 'package:mogawe/modules/home/widgets/build_mogawers_target.dart';
@@ -165,6 +166,26 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
+
+          FlutterFlowIconButton(
+            borderColor: Colors.transparent,
+            borderRadius: 30,
+            borderWidth: 1,
+            buttonSize: 44,
+            icon: Icon(
+              Icons.help_outline,
+              color: FlutterFlowTheme.secondaryColor,
+              size: 24,
+            ),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WebviewFAQ(),
+                ),
+              );
+            },
+          ),
           FlutterFlowIconButton(
             borderColor: Colors.transparent,
             borderRadius: 30,
