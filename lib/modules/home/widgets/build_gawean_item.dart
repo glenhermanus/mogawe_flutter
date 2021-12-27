@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_model.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_util.dart';
@@ -24,6 +25,8 @@ class BuildGaweanItem extends StatefulWidget {
 
 class _BuildGaweanItemState extends State<BuildGaweanItem> {
   bool _loadingButtonMulai = false;
+  var logger = Logger(printer: PrettyPrinter());
+
 
   // Gawean scheduling time
   String _selectedDate = DateTime.now().toString();
@@ -106,14 +109,16 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                               child: Text(
-                                'Expired in 3 days',
+                                'Sisa 2 Hari lagi',
                                 style: FlutterFlowTheme.bodyText2.override(
                                   fontFamily: 'Poppins',
                                   color: Color(0xFF8C8C8C),
                                   fontSize: 12,
                                 ),
                               ),
-                            )
+                            ),
+                            Expanded(
+                                child: _buildReminderText(widget.gaweanModel.reminderDate ?? ""))
                           ],
                         ),
                       ),
@@ -269,6 +274,10 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
     setState(() {
       _selectedTime = "${time?.hour}:${time?.minute}:00";
       _gaweanSchedulingTime = "$_selectedDate $_selectedTime";
+
+      String formattedDate = _formatReminderDate(_gaweanSchedulingTime);
+      _buildReminderText(_selectedDate);
+
       _handleUpdateGaweanReminder(token);
     });
   }
@@ -290,6 +299,23 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
     }
   }
 
+  Widget _buildReminderText(String date){
+    logger.d("Received $date}");
+    return Text(
+      date,
+      style: FlutterFlowTheme.bodyText2.override(
+        fontFamily: 'Poppins',
+        color: Colors.red,
+        fontSize: 12,
+      ),
+    );
+  }
+
+  String _formatReminderDate(String selectedDate){
+    //TODO: Membuat formatter untuk date
+    return "";
+  }
+
   Future<void> _handleUpdateGaweanReminder(String token) async {
     var body = {
       "uuid": widget.gaweanModel.uuid,
@@ -306,6 +332,8 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
         print(response);
         setState(() {
           widget.gaweanModel.reminderDate = _gaweanSchedulingTime;
+
+
         });
       } else if (response.returnValue == "001") {
         showSnackbar(context, response.message.toString());

@@ -41,7 +41,7 @@ class _SplashPageState extends State<SplashPage> {
             var state = snapshot.connectionState;
             switch (state) {
               case ConnectionState.waiting:
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               case ConnectionState.done:
                 return _buildSplashScreenBody(snapshot);
               default:

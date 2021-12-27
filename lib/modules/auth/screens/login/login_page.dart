@@ -421,6 +421,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() => _loadingButton2 = true);
       try {
         AuthRepository().saveToken(response.token);
+
         await Navigator.push(
           context,
           MaterialPageRoute(

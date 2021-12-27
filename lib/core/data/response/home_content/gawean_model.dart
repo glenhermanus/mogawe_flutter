@@ -196,7 +196,7 @@ class Gawean {
         target: json["target"] == null ? null : json["target"],
         points: json["points"] == null ? null : json["points"],
         duration: json["duration"] == null ? null : json["duration"],
-        schedule: json["schedule"],
+        schedule: json["schedule"] == null ? "" : json["schedule"],
         isPublished: json["isPublished"] == null ? null : json["isPublished"],
         isAutoApproved: json["isAutoApproved"] == null ? null : json["isAutoApproved"],
         locationDescription: json["locationDescription"],
