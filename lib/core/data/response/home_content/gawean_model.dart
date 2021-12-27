@@ -18,6 +18,7 @@ class Gawean {
         required this.receivedDate,
         required this.expiredDate,
         required this.createdDate,
+        required this.reminderDate,
         required this.createdBy,
         required this.updatedBy,
         required this.uuidJob,
@@ -89,6 +90,7 @@ class Gawean {
     int? startDate;
     dynamic receivedDate;
     int? expiredDate;
+    String? reminderDate;
     int? createdDate;
     dynamic createdBy;
     dynamic updatedBy;
@@ -161,6 +163,7 @@ class Gawean {
         startDate: json["startDate"] == null ? null : json["startDate"],
         receivedDate: json["receivedDate"],
         expiredDate: json["expiredDate"] == null ? null : json["expiredDate"],
+        reminderDate: json["reminderDate"] == null ? null: json["reminderDate"],
         createdDate: json["createdDate"] == null ? null : json["createdDate"],
         createdBy: json["createdBy"],
         updatedBy: json["updatedBy"],
@@ -193,7 +196,7 @@ class Gawean {
         target: json["target"] == null ? null : json["target"],
         points: json["points"] == null ? null : json["points"],
         duration: json["duration"] == null ? null : json["duration"],
-        schedule: json["schedule"],
+        schedule: json["schedule"] == null ? "" : json["schedule"],
         isPublished: json["isPublished"] == null ? null : json["isPublished"],
         isAutoApproved: json["isAutoApproved"] == null ? null : json["isAutoApproved"],
         locationDescription: json["locationDescription"],

@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       loading = true;
     });
-    token = await AuthRepository().readSecureData('token');
+    token = await AuthRepository().getToken();
 
     print("OUT >> hey");
     print(token);

@@ -85,7 +85,8 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
           itemCount: 3,
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
-            String image = ads[index].pictureUrl;
+            String placeHolder = "https://sbu.co.id/info/wp-content/themes/easymag/images/no-image.png";
+            String image = ads[index].pictureUrl == "" ? placeHolder : ads[index].pictureUrl;
             return Container(
                 width: 260,
                 margin: const EdgeInsets.symmetric(horizontal: 12),
