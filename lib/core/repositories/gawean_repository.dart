@@ -25,7 +25,7 @@ class GaweanRepository extends NetworkService {
   ) async {
     var header = {token: realToken};
     var map = await getMethod(
-      "${BASE_URL}api/fieldtask/widgetrow/get?page=1&offset=99999&lat=-6.440806666666666&lng=106.86051333333334",
+      "${BASE_URL}api/fieldtask/v3/widgetrow/get?page=1&offset=10&lat=-6.44046987091469&lng=106.8603937882579",
       header,
     );
     return WidgetRowResponse.fromJson(map).object;
