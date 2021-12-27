@@ -164,29 +164,16 @@ class AuthRepository extends NetworkService {
 
   Object readSecureData(String key) {
     var readData = storage.read(key: key);
-
     return readData;
-  }
-
-  Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
-  }
-
-  void saveToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', true);
-    prefs.setString('token', token);
-  }
-
-  void deleteToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove('token');
   }
 
   Object deleteSecureData(String key) {
     var deleteData = storage.delete(key: key);
-
     return deleteData;
+  }
+
+  void saveLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', true);
   }
 }

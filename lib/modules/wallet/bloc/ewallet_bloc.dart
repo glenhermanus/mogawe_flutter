@@ -15,7 +15,7 @@ class EWalletBloc extends Bloc<WalletEvent, WalletState> {
   @override
   Stream<WalletState> mapEventToState(WalletEvent event) async* {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _userToken = await AuthRepository().getToken() ?? "";
+    _userToken = await AuthRepository().readSecureData('token') as String ?? "";
 
     if (event is GetEWalletWithdrawNominalEvent) {
       yield ShowLoadingEWalletNominalState();

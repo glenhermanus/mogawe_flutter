@@ -124,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                         shape: BoxShape.circle,
                       ),
                       child: widget.data == null? Container(): Image.network(
-                        widget.data!.profilePicture!,
+                        widget.data?.profilePicture ?? "https://sbu.co.id/info/wp-content/themes/easymag/images/no-image.png",
                       ),
                     ),
                   ),

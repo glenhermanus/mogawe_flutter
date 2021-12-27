@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/gawean_repository.dart';
 import 'package:mogawe/modules/home/gawean/bloc/gawean_event.dart';
 import 'package:mogawe/modules/home/gawean/bloc/gawean_state.dart';
@@ -15,21 +16,21 @@ class GaweanBloc extends Bloc<GaweanEvent, GaweanState> {
   @override
   Stream<GaweanState> mapEventToState(GaweanEvent event) async* {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _userToken = prefs.getString('token') ?? '';
+    _userToken = await AuthRepository().readSecureData('token') as String;
 
     if (event is GetGaweanListEvent) {
       yield ShowLoadingListGaweanState();
-      try {
-        var data =
-            await _gaweanRepository.getGaweanRowList(realToken: _userToken);
-        if (data.isEmpty) {
-          yield ShowEmptyListState();
-        } else {
-          yield ShowListGaweanState(data);
-        }
-      } catch (ex) {
-        yield ShowErrorGaweanListState("$ex");
+      var data = await _gaweanRepository.getGaweanRowList(realToken: _userToken);
+      if (data.isEmpty) {
+        yield ShowEmptyListState();
+      } else {
+        yield ShowListGaweanState(data);
       }
+      // try {
+      //
+      // } catch (ex) {
+      //   yield ShowErrorGaweanListState("$ex");
+      // }
     }
   }
 }

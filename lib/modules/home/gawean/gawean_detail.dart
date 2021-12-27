@@ -56,7 +56,7 @@ class _GaweanDetailScreenState extends State<GaweanDetailScreen> {
         children: [
           ClipRRect(
             child: Image.network(
-              widget.gaweanModel.jobPicture,
+              widget.gaweanModel.jobPicture ?? "https://sbu.co.id/info/wp-content/themes/easymag/images/no-image.png",
               width: double.infinity,
               height: 200,
               fit: BoxFit.cover,
