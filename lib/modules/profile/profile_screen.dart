@@ -72,8 +72,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           checkLoading();
           data = state.data;
           targetCtrl.text = data!.config?.targetRevenue!.toInt().toString() as String;
-          namaCtrl.text = data!.fullName as String;
-          emailCtrl.text = data!.email as String;
+          namaCtrl.text = data?.fullName?? '';
+          emailCtrl.text = data?.email ?? '';
           phoneCtrl.text = data?.phone ?? '';
           taskReminder = data!.config?.taskReminderDefault ?? 0;
           return layout();
