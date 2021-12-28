@@ -55,7 +55,6 @@ class _WebviewMogaweState extends State<WebviewMogawe> {
             print('Page finished loading: $url');
           },
           gestureNavigationEnabled: true,
-          backgroundColor: const Color(0xffffff),
         );
       }),
     );
