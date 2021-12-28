@@ -111,7 +111,7 @@ class _SplashPageState extends State<SplashPage> {
             ),
           ),
           Text(
-            'Version 6.0',
+            'Version 6.0.0 dev2',
             style: FlutterFlowTheme.bodyText1.override(
               fontFamily: 'Poppins',
               color: FlutterFlowTheme.primaryColor,
