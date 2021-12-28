@@ -404,17 +404,18 @@ class _LoginPageState extends State<LoginPage> {
     //
     // } else {}
 
+    //! delete after done
+    // String staticEmail = "ibnubatutah002@gmail.com";
+    // String staticPassword = "123456789";
+    // String hashedPassword = PasswordHasher().convertToSha256(staticPassword ?? "");
+    // var response = await _authRepository.submitLogin(staticEmail ?? "", hashedPassword);
 
+    // Real Function
     String? email = _emailInputController?.value.text;
     String? password = _passwordInputController?.value.text;
-
-    //! delete after done
-    String staticEmail = "ibnubatutah002@gmail.com";
-    // String staticPassword = "123456789";
-
     String hashedPassword = PasswordHasher().convertToSha256(password ?? "");
-
     var response = await _authRepository.submitLogin(email ?? "", hashedPassword);
+
     logger.d(response.returnValue);
     logger.d(hashedPassword);
 
@@ -422,6 +423,7 @@ class _LoginPageState extends State<LoginPage> {
       logger.d("Success Login");
       setState(() => _loadingButton2 = true);
       try {
+        // String tokenn = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJNTy04Rk1HOFAiLCJpYXQiOjE2NDA2ODczODEsInN1YiI6Im1vZ2F3ZXJzIiwiaXNzIjoibW9nYXdlIn0._WeLYchQDHyWX5PM7kgIgwdcaYT8DV33B4v-2Dv4Yn0";
         AuthRepository().writeSecureData('token', response.token);
         AuthRepository().saveLoginStatus();
 

@@ -1,11 +1,16 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mogawe/core/data/response/home_content/Certificate.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
+import 'package:mogawe/modules/home/bloc/home_bloc.dart';
+import 'package:mogawe/modules/home/bloc/home_event.dart';
+import 'package:mogawe/modules/home/bloc/home_state.dart';
 import 'package:mogawe/utils/services/currency_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,10 +19,10 @@ class BuildMogawersTarget extends StatefulWidget {
 
   @override
   State<BuildMogawersTarget> createState() => _BuildMogawersTargetState();
-
 }
 
 class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
+  late HomeBloc bloc;
 
   int _target = 0;
   bool loading = false;
@@ -25,7 +30,55 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
 
   // Text Editing Controller list
   final TextEditingController _targetEditingController =
-  TextEditingController();
+      TextEditingController();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    bloc = HomeBloc();
+    bloc.add(GetCertificate());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    bloc.close();
+  }
+
+  Widget blocListener(Widget child) {
+    return BlocListener(
+      bloc: bloc,
+      listener: (ctx, state) => print("State : $state"),
+      child: child,
+    );
+  }
+
+  Widget blocBuilder() {
+    return BlocBuilder(
+      bloc: bloc,
+      builder: (ctx, state) {
+        if (state is ShowLoadingCertificate) {
+          print("State : $state");
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (state is ShowHomeCertificate) {
+          print("certificate size is ${state.list[0].myCertificates.length}");
+          if (state.list[0].myCertificates == null || state.list[0].myCertificates.length == 0) {
+            return Container();
+          } else {
+            return _buildCertificatesList(state.list[0].myCertificates);
+          }
+        }
+        if (state is ShowErrorHomeState) {
+          print("error certificate" + state.message);
+          return Container();
+        }
+        return Container();
+      },
+    );
+  }
 
   void getDailyTarget() async {
     setState(() {
@@ -242,92 +295,63 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
                         ),
                       ),
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.moGaweGreen,
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 2,
-                                color: Color(0x8F515151),
-                                offset: Offset(0, 2),
-                                spreadRadius: 0,
-                              )
-                            ],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Icon(
-                            Icons.calculate,
-                            color: FlutterFlowTheme.secondaryColor,
-                            size: 24,
-                          ),
-                        ),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.moGaweGreen,
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 2,
-                                color: Color(0x8F515151),
-                                offset: Offset(0, 2),
-                                spreadRadius: 0,
-                              )
-                            ],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Align(
-                            alignment: AlignmentDirectional(0, 0),
-                            child: FaIcon(
-                              FontAwesomeIcons.instagram,
-                              color: FlutterFlowTheme.secondaryColor,
-                              size: 24,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.moGaweGreen,
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 2,
-                                color: Color(0x8F515151),
-                                offset: Offset(0, 2),
-                                spreadRadius: 0,
-                              )
-                            ],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Icon(
-                            Icons.delivery_dining,
-                            color: FlutterFlowTheme.secondaryColor,
-                            size: 24,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
-                          child: Text(
-                            '+12',
-                            style: FlutterFlowTheme.subtitle1.override(
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                        )
-                      ],
-                    )
+                    blocListener(blocBuilder())
                   ],
                 ),
               ),
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCertificatesList(List<Certificate> listPesona) {
+    int limitCertificate = 4;
+    List<Widget> listCertificateWidget = <Widget>[];
+    int counter = 0;
+
+    for (var i = 0; i < listPesona.length; i++) {
+      if(listPesona[i].status != ""){
+        if (counter < limitCertificate){
+          listCertificateWidget.add(_buildCertificateItem(listPesona[i]));
+        }
+        counter++;
+      }
+    }
+
+    int sisaPesona = counter - limitCertificate;
+
+    if (counter > limitCertificate){
+      listCertificateWidget.add(Text(" +$sisaPesona"));
+    } else {
+      listCertificateWidget.add(SizedBox());
+    }
+
+    return Row(children: listCertificateWidget,);
+  }
+
+  Widget _buildCertificateItem(Certificate pesona) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 2,
+            color: Color(0x8F515151),
+            offset: Offset(0, 2),
+            spreadRadius: 0,
+          )
+        ],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Image.network(
+        pesona.iconUrl ?? "",
+        color: pesona.status == "pending" ? FlutterFlowTheme.moGaweYellow : FlutterFlowTheme.moGaweGreen,
+        width: 20,
+        height: 20,
       ),
     );
   }

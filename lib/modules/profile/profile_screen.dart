@@ -71,9 +71,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           checkLoading();
           data = state.data;
           targetCtrl.text = data!.config?.targetRevenue!.toInt().toString() as String;
-          namaCtrl.text = data!.fullName as String;
-          emailCtrl.text = data!.email as String;
-          phoneCtrl.text = data!.phone as String;
+          namaCtrl.text = data?.fullName ?? "";
+          emailCtrl.text = data?.email ?? "";
+          phoneCtrl.text = data?.phone ?? "";
           return layout();
         }
         if (state is ShowProfileHistoryDataState) {

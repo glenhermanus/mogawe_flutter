@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class PesonaResponsesObject{
   String? uuidobj, uuidClient, uuidCategory, uuidJob, questName, howto, tutorial, jobpic,
       name, code, category, categroyname, desc, instruction, iconUrl, status, uuidquest;

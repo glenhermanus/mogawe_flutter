@@ -1,3 +1,7 @@
+import 'package:mogawe/core/data/response/home_content/product_etalasa_model.dart';
+import 'package:mogawe/core/data/response/pesona/pesona_response_object.dart';
+
+import 'Certificate.dart';
 import 'gawean_model.dart';
 
 class GaweanRowModel {
@@ -37,9 +41,9 @@ class GaweanRowModel {
     dynamic postTimelines;
     dynamic jobCategories;
     dynamic targetRevenue;
-    dynamic myCertificates;
+    List<Certificate> myCertificates;
     dynamic tasks;
-    dynamic products;
+    List<ProductModel>? products;
 
     factory GaweanRowModel.fromJson(Map<String, dynamic> json) => GaweanRowModel(
         uuid: json["uuid"],
@@ -57,9 +61,9 @@ class GaweanRowModel {
         postTimelines: json["postTimelines"],
         jobCategories: json["jobCategories"],
         targetRevenue: json["targetRevenue"],
-        myCertificates: json["myCertificates"],
+        myCertificates: json["myCertificates"] == null ? [] : List<Certificate>.from(json["myCertificates"].map((x) => Certificate.fromJson(x))),
         tasks: json["tasks"],
-        products: json["products"],
+        products: json["products"] == null ? [] : List<ProductModel>.from(json["products"].map((x) => ProductModel.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -78,8 +82,8 @@ class GaweanRowModel {
         "postTimelines": postTimelines,
         "jobCategories": jobCategories,
         "targetRevenue": targetRevenue,
-        "myCertificates": myCertificates,
+        "myCertificates": myCertificates == null ? [] : List<Certificate>.from(myCertificates.map((x) => x.toJson())),
         "tasks": tasks,
-        "products": products,
+        "products": products == null ? [] : List<ProductModel>.from(products!.map((x) => x.toJson())),
     };
 }

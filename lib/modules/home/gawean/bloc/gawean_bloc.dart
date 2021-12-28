@@ -26,11 +26,6 @@ class GaweanBloc extends Bloc<GaweanEvent, GaweanState> {
       } else {
         yield ShowListGaweanState(data);
       }
-      // try {
-      //
-      // } catch (ex) {
-      //   yield ShowErrorGaweanListState("$ex");
-      // }
     }
   }
 }
