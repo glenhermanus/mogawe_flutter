@@ -78,7 +78,7 @@ class _WebviewFAQState extends State<WebviewFAQ> {
           },
           onPageFinished: (String url) {
             print('Page finished loading: $url');
-            _myController?.evaluateJavascript("document.getElementsByTagName('header')[0].style.display='none'");
+            _myController?.runJavascript("document.getElementsByTagName('header')[0].style.display='none'");
           },
           gestureNavigationEnabled: true,
         );
