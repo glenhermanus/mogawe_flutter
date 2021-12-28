@@ -32,10 +32,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if(event is GetCertificate) {
       yield ShowLoadingCertificate();
       try {
-        var data = await _pesonaRepository.getCertification(realToken: _userToken);
+        var data = await _repo.getHomeContenetRowList(realToken: _userToken);
         yield ShowHomeCertificate(data);
       } catch(ex) {
-        yield ShowErrorHomeState("$ex");
+        yield ShowErrorCertificateState("$ex");
       }
     }
 

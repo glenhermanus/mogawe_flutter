@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/chat/chat_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

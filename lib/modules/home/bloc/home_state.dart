@@ -1,5 +1,5 @@
 import 'package:mogawe/core/data/response/home/ads_model.dart';
-import 'package:mogawe/core/data/response/pesona/pesona_response_object.dart';
+import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
 
 abstract class HomeState {}
 
@@ -22,7 +22,13 @@ class ShowErrorHomeState extends HomeState {
 class ShowLoadingCertificate extends HomeState {}
 
 class ShowHomeCertificate extends HomeState {
-  List<PesonaResponsesObject> list;
+  List<GaweanRowModel> list;
 
   ShowHomeCertificate(this.list);
+}
+
+class ShowErrorCertificateState extends HomeState {
+  String message;
+
+  ShowErrorCertificateState(this.message);
 }
