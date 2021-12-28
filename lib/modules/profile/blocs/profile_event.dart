@@ -40,6 +40,12 @@ class DoUpdateTargetRevenueEvent extends ProfileEvent {
   DoUpdateTargetRevenueEvent(this.map);
 }
 
+class DoUpdateSelfReminderEvent extends ProfileEvent {
+  Map<String, dynamic> map;
+
+  DoUpdateSelfReminderEvent(this.map);
+}
+
 class DoUpdatePhotoProfileEvent extends ProfileEvent {
   Map<String, File> file;
 

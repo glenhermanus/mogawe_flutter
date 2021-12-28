@@ -32,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController namaCtrl = TextEditingController();
   TextEditingController emailCtrl = TextEditingController();
   TextEditingController phoneCtrl = TextEditingController();
+  int? taskReminder;
 
   @override
   void initState() {
@@ -73,7 +74,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           targetCtrl.text = data!.config?.targetRevenue!.toInt().toString() as String;
           namaCtrl.text = data!.fullName as String;
           emailCtrl.text = data!.email as String;
-          phoneCtrl.text = data!.phone as String;
+          phoneCtrl.text = data?.phone ?? '';
+          taskReminder = data!.config?.taskReminderDefault ?? 0;
           return layout();
         }
         if (state is ShowProfileHistoryDataState) {
@@ -102,6 +104,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return layout();
         }
         if (state is SuccessUpdateTargetRevenueState) {
+          checkLoading();
+          data = state.data;
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.message,
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white
+                ),
+              ),
+            ));
+          });
+          return layout();
+        }
+        if (state is SuccessUpdateSelfReminderState) {
           checkLoading();
           data = state.data;
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
@@ -189,10 +207,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     histories: histories,
     updateProfile: (map) => bloc.add(DoUpdateProfileEvent(map)),
     updateTarget: (map) => bloc.add(DoUpdateTargetRevenueEvent(map)),
+    updateSelfReminder: (map) => bloc.add(DoUpdateSelfReminderEvent(map)),
       targetCtrl: targetCtrl,
       namaCtrl: namaCtrl,
       emailCtrl: emailCtrl,
       phoneCtrl: phoneCtrl,
+    taskReminder: taskReminder,
     onFotoChanged: (v) {
       var map = {
         "profilePicture": v

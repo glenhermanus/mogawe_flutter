@@ -46,6 +46,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         yield ShowErrorProfileState("$ex");
       }
     }
+    if (event is DoUpdateSelfReminderEvent) {
+      yield ShowLoadingProfileState();
+      try {
+        var msg = await _repo.updateSelfReminder(event.map,realToken: _userToken);
+        var data = await _repo.getProfile(realToken: _userToken);
+        yield SuccessUpdateSelfReminderState(msg.message, data.object!);
+      } catch(ex) {
+        yield ShowErrorProfileState("$ex");
+      }
+    }
     if (event is DoUpdatePhotoProfileEvent) {
       yield ShowLoadingProfileState();
       try {

@@ -27,6 +27,7 @@ class _WebviewFAQState extends State<WebviewFAQ> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: const Text('FAQ MoGawe Apps', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         leading: InkWell(
@@ -45,8 +46,8 @@ class _WebviewFAQState extends State<WebviewFAQ> {
               MaterialPageRoute(builder: (context) => ChatPage()),
             );
           }),
-          elevation: 4,
-          tooltip: 'Tambahkan',
+          elevation: 0,
+          tooltip: 'Chat',
           child: Icon(Icons.mark_chat_unread_outlined, color: Colors.white, size: 24,),
           backgroundColor: Colors.red,
 
@@ -56,7 +57,7 @@ class _WebviewFAQState extends State<WebviewFAQ> {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       body: Builder(builder: (BuildContext context) {
         return WebView(
-          initialUrl: 'https://mogawe.id/faq.html',
+          initialUrl: 'https://mogawe.id/faq-mobile.html',
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (WebViewController webViewController) {
             _controller.complete(webViewController);

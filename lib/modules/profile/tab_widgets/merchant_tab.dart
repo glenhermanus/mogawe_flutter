@@ -65,7 +65,7 @@ class MerchantTab extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        'Alamat',
+                        'Alamat Pickup',
                         style: FlutterFlowTheme.bodyText1
                             .override(
                           fontFamily: 'Poppins',
@@ -87,7 +87,78 @@ class MerchantTab extends StatelessWidget {
                     )
                   ],
                 ),
-              )
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(
+                    0, 24, 0, 16),
+                child: Text(
+                  'Metode Pengiriman',
+                  style:
+                  FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: FlutterFlowTheme.primaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Text('Gratis Ongkir',
+                      style: FlutterFlowTheme.bodyText1
+                          .override(
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ),
+                  Text(
+                    ' Toko Gellaps',
+                    style: FlutterFlowTheme.bodyText1
+                        .override(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.black,
+                    size: 24,
+                  )
+                ],
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(
+                    0, 16, 0, 0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Ekspedisi',
+                        style: FlutterFlowTheme.bodyText1
+                            .override(
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                    Text(
+                      ' Toko Gellaps',
+                      style: FlutterFlowTheme.bodyText1
+                          .override(
+                        fontFamily: 'Poppins',
+                        fontSize: 12,
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black,
+                      size: 24,
+                    )
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -166,69 +237,6 @@ class MerchantTab extends StatelessWidget {
                             height: 100,
                             fit: BoxFit.cover,
                           ),
-                          Padding(
-                            padding: EdgeInsetsDirectional
-                                .fromSTEB(8, 0, 8, 8),
-                            child: Row(
-                              mainAxisSize:
-                              MainAxisSize.max,
-                              mainAxisAlignment:
-                              MainAxisAlignment
-                                  .spaceBetween,
-                              children: [
-                                Container(
-                                  decoration:
-                                  BoxDecoration(
-                                    color:
-                                    Color(0xFFEEEEEE),
-                                    borderRadius:
-                                    BorderRadius
-                                        .circular(4),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsetsDirectional
-                                        .fromSTEB(2,
-                                        2, 2, 2),
-                                    child: Text(
-                                      'Unpublished',
-                                      style:
-                                      FlutterFlowTheme
-                                          .bodyText1
-                                          .override(
-                                        fontFamily:
-                                        'Poppins',
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration:
-                                  BoxDecoration(
-                                    color:
-                                    Color(0xFFEEEEEE),
-                                    borderRadius:
-                                    BorderRadius
-                                        .circular(16),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsetsDirectional
-                                        .fromSTEB(4,
-                                        4, 4, 4),
-                                    child: Icon(
-                                      Icons
-                                          .bookmark_outlined,
-                                      color: FlutterFlowTheme
-                                          .tertiaryColor,
-                                      size: 16,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
                         ],
                       ),
                       Padding(
@@ -312,69 +320,7 @@ class MerchantTab extends StatelessWidget {
                             height: 100,
                             fit: BoxFit.cover,
                           ),
-                          Padding(
-                            padding: EdgeInsetsDirectional
-                                .fromSTEB(8, 0, 8, 8),
-                            child: Row(
-                              mainAxisSize:
-                              MainAxisSize.max,
-                              mainAxisAlignment:
-                              MainAxisAlignment
-                                  .spaceBetween,
-                              children: [
-                                Container(
-                                  decoration:
-                                  BoxDecoration(
-                                    color:
-                                    Color(0xFFEEEEEE),
-                                    borderRadius:
-                                    BorderRadius
-                                        .circular(4),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsetsDirectional
-                                        .fromSTEB(2,
-                                        2, 2, 2),
-                                    child: Text(
-                                      'Unpublished',
-                                      style:
-                                      FlutterFlowTheme
-                                          .bodyText1
-                                          .override(
-                                        fontFamily:
-                                        'Poppins',
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration:
-                                  BoxDecoration(
-                                    color:
-                                    Color(0xFFEEEEEE),
-                                    borderRadius:
-                                    BorderRadius
-                                        .circular(16),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsetsDirectional
-                                        .fromSTEB(4,
-                                        4, 4, 4),
-                                    child: Icon(
-                                      Icons
-                                          .bookmark_outlined,
-                                      color: FlutterFlowTheme
-                                          .tertiaryColor,
-                                      size: 16,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
+
                         ],
                       ),
                       Padding(
@@ -458,69 +404,7 @@ class MerchantTab extends StatelessWidget {
                             height: 100,
                             fit: BoxFit.cover,
                           ),
-                          Padding(
-                            padding: EdgeInsetsDirectional
-                                .fromSTEB(8, 0, 8, 8),
-                            child: Row(
-                              mainAxisSize:
-                              MainAxisSize.max,
-                              mainAxisAlignment:
-                              MainAxisAlignment
-                                  .spaceBetween,
-                              children: [
-                                Container(
-                                  decoration:
-                                  BoxDecoration(
-                                    color:
-                                    Color(0xFFEEEEEE),
-                                    borderRadius:
-                                    BorderRadius
-                                        .circular(4),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsetsDirectional
-                                        .fromSTEB(2,
-                                        2, 2, 2),
-                                    child: Text(
-                                      'Unpublished',
-                                      style:
-                                      FlutterFlowTheme
-                                          .bodyText1
-                                          .override(
-                                        fontFamily:
-                                        'Poppins',
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration:
-                                  BoxDecoration(
-                                    color:
-                                    Color(0xFFEEEEEE),
-                                    borderRadius:
-                                    BorderRadius
-                                        .circular(16),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsetsDirectional
-                                        .fromSTEB(4,
-                                        4, 4, 4),
-                                    child: Icon(
-                                      Icons
-                                          .bookmark_outlined,
-                                      color: FlutterFlowTheme
-                                          .tertiaryColor,
-                                      size: 16,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
+
                         ],
                       ),
                       Padding(
@@ -604,69 +488,7 @@ class MerchantTab extends StatelessWidget {
                             height: 100,
                             fit: BoxFit.cover,
                           ),
-                          Padding(
-                            padding: EdgeInsetsDirectional
-                                .fromSTEB(8, 0, 8, 8),
-                            child: Row(
-                              mainAxisSize:
-                              MainAxisSize.max,
-                              mainAxisAlignment:
-                              MainAxisAlignment
-                                  .spaceBetween,
-                              children: [
-                                Container(
-                                  decoration:
-                                  BoxDecoration(
-                                    color:
-                                    Color(0xFFEEEEEE),
-                                    borderRadius:
-                                    BorderRadius
-                                        .circular(4),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsetsDirectional
-                                        .fromSTEB(2,
-                                        2, 2, 2),
-                                    child: Text(
-                                      'Unpublished',
-                                      style:
-                                      FlutterFlowTheme
-                                          .bodyText1
-                                          .override(
-                                        fontFamily:
-                                        'Poppins',
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration:
-                                  BoxDecoration(
-                                    color:
-                                    Color(0xFFEEEEEE),
-                                    borderRadius:
-                                    BorderRadius
-                                        .circular(16),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsetsDirectional
-                                        .fromSTEB(4,
-                                        4, 4, 4),
-                                    child: Icon(
-                                      Icons
-                                          .bookmark_outlined,
-                                      color: FlutterFlowTheme
-                                          .tertiaryColor,
-                                      size: 16,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
+
                         ],
                       ),
                       Padding(
