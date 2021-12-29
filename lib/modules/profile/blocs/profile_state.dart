@@ -8,6 +8,8 @@ class InitProfileState extends ProfileState {}
 
 class ShowLoadingProfileState extends ProfileState {}
 
+class ShowLoadingSelfPickRadiusState extends ProfileState {}
+
 class ShowLoadingMerchantState extends ProfileState {}
 
 class ShowProfileData extends ProfileState {
@@ -76,6 +78,12 @@ class SuccessUpdatePhotoMerchantState extends ProfileState {
   SuccessUpdatePhotoMerchantState(this.messages, this.datam);
 }
 
+class SuccessUpdateSelfPickRadiusState extends ProfileState {
+  String messages;
+
+  SuccessUpdateSelfPickRadiusState(this.messages);
+}
+
 class ShowErrorGetProfileState extends ProfileState {
   String message;
 
@@ -98,4 +106,10 @@ class ShowErrorMerchantState extends ProfileState {
   String message;
 
   ShowErrorMerchantState(this.message);
+}
+
+class ShowErrorSelfPickRadiusState extends ProfileState {
+  String message;
+
+  ShowErrorSelfPickRadiusState(this.message);
 }

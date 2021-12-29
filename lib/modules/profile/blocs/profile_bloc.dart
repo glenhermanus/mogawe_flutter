@@ -131,5 +131,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       }
     }
+    if (event is DoUpdateSelfPickRadiusEvent) {
+
+      try {
+        var msg = await _repo.updateselPickup( realToken: _userToken, radius: event.radius);
+        var data = await _repo.getProfileMerchant(realToken: _userToken);
+        yield SuccessUpdateSelfPickRadiusState(msg.message);
+      } catch(ex) {
+        yield ShowErrorSelfPickRadiusState("$ex");
+
+      }
+    }
   }
 }

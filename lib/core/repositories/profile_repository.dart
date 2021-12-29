@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'package:mogawe/core/data/response/merchant/response_update.dart';
+import 'package:mogawe/core/data/response/merchant/selfpick_radius_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/data/response/register/register_response.dart';
@@ -98,6 +99,17 @@ class ProfileRepository extends NetworkService {
     var map = await multipartUpdate("${BASE_URL}api/mogawers/supplier/profile/image/upload",
         files: body, header: header);
     return UpdateResponseMerchant.fromJson(map);
+  }
+
+  Future<SelfpickRadiusResponse> updateselPickup({String? realToken, radius}) async {
+    print(realToken);
+    var header = {
+      token: realToken!, //Use realToken when implement get from original token
+      contentType: applicationJson
+    };
+    var map = await putMethod("${BASE_URL}api/mogawers/config/update",
+        header: header, body: {"selfPickupRadius" : radius});
+    return SelfpickRadiusResponse.fromJson(map);
   }
 
 }

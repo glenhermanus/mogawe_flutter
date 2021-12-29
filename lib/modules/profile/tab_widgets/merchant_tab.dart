@@ -5,12 +5,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MerchantTab extends StatefulWidget {
   final Object? dataMerchant;
   final Function(File photo)? onFotoChangedMerchant;
-  const MerchantTab({Key? key, required this.dataMerchant, this.onFotoChangedMerchant }) : super(key: key);
+  final Function(int selfPick)? parseRadius;
+  const MerchantTab({Key? key, required this.dataMerchant, this.onFotoChangedMerchant, this.parseRadius }) : super(key: key);
 
   @override
   State<MerchantTab> createState() => _MerchantTabState();
@@ -26,6 +29,11 @@ class _MerchantTabState extends State<MerchantTab> {
   bool valueswitchKurir = false;
   double slidervalue = 1;
   String rangeSlide ='1';
+  double convertSlide = 1;
+  int parseInt = 1;
+  String valueOngkir='';
+  String diantar ='';
+  String kurir ='';
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -76,9 +84,21 @@ class _MerchantTabState extends State<MerchantTab> {
     widget.dataMerchant == null ? loading = true :loading = false;
     getcekAntar().then((value) {
       valueswitchDiantar = value;
+      if(valueswitchDiantar == true) {
+        diantar = 'Diantar Mogawers';
+      }
+      else{
+        diantar = '';
+      }
     });
     getcekKurirToko().then((value) {
       valueswitchKurir = value;
+      if(valueswitchKurir == true){
+        kurir = 'Kurir Toko,';
+      }
+      else{
+        kurir = '';
+      }
     });
   }
 
@@ -210,7 +230,7 @@ class _MerchantTabState extends State<MerchantTab> {
                       ),
                     ),
                     Text(
-                      ' Toko Gellaps',
+                      '$kurir $diantar',
                       style: FlutterFlowTheme.bodyText1
                           .override(
                         fontFamily: 'Poppins',
@@ -543,18 +563,7 @@ class _MerchantTabState extends State<MerchantTab> {
             builder: (BuildContext context, StateSetter stateSetter) {
               return AlertDialog(
                 contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
-                actions: [
-                  TextButton(
-                      child: Text('CANCEL'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      }),
-                  TextButton(
-                      child: Text('SIMPAN'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      })
-                ],
+
                 content: Container(
                   height: MediaQuery.of(context).size.height * 0.32,
                   child: Padding(
@@ -618,7 +627,8 @@ class _MerchantTabState extends State<MerchantTab> {
                           onChanged: (value) {
                             stateSetter(() {
                               slidervalue = value;
-                              rangeSlide = slidervalue.toString();
+                              rangeSlide = slidervalue.round().toString();
+                              parseInt = int.parse(rangeSlide) * 1000;
                             });
                           },
                           max: 150,
@@ -631,6 +641,38 @@ class _MerchantTabState extends State<MerchantTab> {
                     ),
                   ),
                 ),
+                actions: [
+                TextButton(
+                    child: Text('CANCEL'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+                TextButton(
+                    child: Text('SIMPAN'),
+                    onPressed: () {
+                      widget.parseRadius!(parseInt);
+                      getcekAntar().then((value) {
+                        valueswitchDiantar = value;
+                        if(valueswitchDiantar == true) {
+                          diantar = 'Diantar Mogawers';
+                        }
+                        else{
+                          diantar = '';
+                        }
+                      });
+                      getcekKurirToko().then((value) {
+                        valueswitchKurir = value;
+                        if(valueswitchKurir == true){
+                          kurir = 'Kurir Toko,';
+                        }
+                        else{
+                          kurir = '';
+                        }
+                      });
+                      // var token = await AuthRepository().readSecureData('token');
+                      // await ProfileRepository().updateselPickup(realToken: token.toString(), radius: parseInt );
+                    })
+              ],
               );
             }));
   }

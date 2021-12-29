@@ -27,6 +27,7 @@ class ProfilePage extends StatefulWidget {
   final Function(Map<String, dynamic> map)? updateSelfReminder;
   final Function(File photo)? onFotoChanged;
   final Function(File photo)? onFotoChangedMerchant;
+  final Function(int selfPick)? parseRadius;
   final Function(int p, String q)? historyPageListen;
   final Function(String f, String q)? filter;
   final Function(String q)? searchListen;
@@ -37,7 +38,7 @@ class ProfilePage extends StatefulWidget {
   final int? taskReminder;
 
   ProfilePage({Key? key, required this.data, required this.dataMerchant, this.updateProfile,
-    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.onFotoChangedMerchant, this.histories,
+    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.onFotoChangedMerchant, this.parseRadius, this.histories,
   this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
     this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder}) : super(key: key);
 
@@ -263,6 +264,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                         MerchantTab(
                           dataMerchant: widget.dataMerchant,
                           onFotoChangedMerchant: widget.onFotoChangedMerchant,
+                          parseRadius: widget.parseRadius,
                         ),
                         SettingTab(logoutProfile: ()=>logout(),)
                       ],

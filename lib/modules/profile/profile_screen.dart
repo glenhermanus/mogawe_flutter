@@ -80,6 +80,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           isLoading = true;
           return layout();
         }
+        if (state is ShowLoadingSelfPickRadiusState) {
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            AppUtil.show(context);
+          });
+          isLoading = true;
+          return layout();
+        }
         if (state is ShowProfileData) {
           checkLoading();
           data = state.data;
@@ -179,6 +186,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           });
           return layout();
         }
+        if (state is SuccessUpdateSelfPickRadiusState) {
+          checkLoading();
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+
+          });
+          return layout();
+        }
         if (state is ShowErrorGetProfileState) {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) { 
@@ -188,6 +202,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return layout();
         }
         if (state is ShowErrorMerchantState) {
+          checkLoading();
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.message,
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white
+                ),
+              ),
+              backgroundColor: FlutterFlowTheme.primaryColor,
+            ));
+          });
+          return layout();
+        }
+        if (state is ShowErrorSelfPickRadiusState) {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -285,6 +315,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       };
       Navigator.pop(context);
       bloc.add(DoUpdatePhotoMerchantEvent(map));
+    },
+
+    parseRadius: (v){
+      var map = {
+        "selfPickupRadius" : v
+      };
+      Navigator.pop(context);
+      bloc.add(DoUpdateSelfPickRadiusEvent(map));
     },
 
     historyPageListen: (p, q) {

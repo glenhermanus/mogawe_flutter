@@ -65,3 +65,9 @@ class DoUpdatePhotoMerchantEvent extends ProfileEvent {
 
   DoUpdatePhotoMerchantEvent(this.file);
 }
+
+class DoUpdateSelfPickRadiusEvent extends ProfileEvent {
+  Map<String,int> radius;
+
+  DoUpdateSelfPickRadiusEvent(this.radius);
+}
