@@ -425,7 +425,7 @@ class _LoginPageState extends State<LoginPage> {
       try {
         // String tokenn = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJNTy04Rk1HOFAiLCJpYXQiOjE2NDA2ODczODEsInN1YiI6Im1vZ2F3ZXJzIiwiaXNzIjoibW9nYXdlIn0._WeLYchQDHyWX5PM7kgIgwdcaYT8DV33B4v-2Dv4Yn0";
         AuthRepository().writeSecureData('token', response.token);
-        AuthRepository().saveLoginStatus();
+        AuthRepository().saveLoginStatus(true);
 
         await Navigator.push(
           context,
