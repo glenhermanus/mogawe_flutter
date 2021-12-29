@@ -39,6 +39,13 @@ class SuccessUpdateTargetRevenueState extends ProfileState {
   SuccessUpdateTargetRevenueState(this.message, this.data);
 }
 
+class SuccessUpdateSelfReminderState extends ProfileState {
+  String message;
+  ObjectData data;
+
+  SuccessUpdateSelfReminderState(this.message, this.data);
+}
+
 class SuccessUpdatePhotoProfileState extends ProfileState {
   String message;
   ObjectData data;

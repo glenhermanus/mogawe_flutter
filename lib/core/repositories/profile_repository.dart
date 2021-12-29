@@ -64,6 +64,17 @@ class ProfileRepository extends NetworkService {
     return RegisterResponse.fromJsonMap(map);
   }
 
+  Future<RegisterResponse> updateSelfReminder(Map<String, dynamic>? body, {String? realToken}) async {
+    print(realToken);
+    var header = {
+      token: realToken!, //Use realToken when implement get from original token
+      contentType: applicationJson
+    };
+    var map = await putMethod("${BASE_URL}api/mogawers/config/update",
+        header: header, body: body);
+    return RegisterResponse.fromJsonMap(map);
+  }
+
   Future<RegisterResponse> updatePhotoProfile(Map<String, File> body, {String? realToken}) async {
     print(realToken);
     var header = { token: realToken! }; //Use realToken when implement get from original token

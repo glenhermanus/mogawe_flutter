@@ -21,6 +21,7 @@ class ProfilePage extends StatefulWidget {
   final List<ProfileHistoryData>? histories;
   final Function(Map<String, String> map)? updateProfile;
   final Function(Map<String, dynamic> map)? updateTarget;
+  final Function(Map<String, dynamic> map)? updateSelfReminder;
   final Function(File photo)? onFotoChanged;
   final Function(int p, String q)? historyPageListen;
   final Function(String f, String q)? filter;
@@ -29,22 +30,12 @@ class ProfilePage extends StatefulWidget {
   final TextEditingController? namaCtrl;
   final TextEditingController? emailCtrl;
   final TextEditingController? phoneCtrl;
+  final int? taskReminder;
 
-  ProfilePage(
-      {Key? key,
-        this.data,
-        this.updateProfile,
-        this.updateTarget,
-        this.onFotoChanged,
-        this.histories,
-        this.historyPageListen,
-        this.filter,
-        this.targetCtrl,
-        this.namaCtrl,
-        this.emailCtrl,
-        this.phoneCtrl,
-        this.searchListen})
-      : super(key: key);
+  ProfilePage({Key? key, required this.data, this.updateProfile,
+    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.histories,
+  this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
+    this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -242,12 +233,14 @@ class _ProfilePageState extends State<ProfilePage>
                         SingleChildScrollView(
                           child: PersonalTab(
                             data: widget.data,
+                            dataReminder: widget.taskReminder!,
                             updateProfile: widget.updateProfile!,
                             updateTarget: widget.updateTarget!,
-                            targetCtrl: widget.targetCtrl,
-                            namaCtrl: widget.namaCtrl,
-                            emailCtrl: widget.emailCtrl,
-                            phoneCtrl: widget.phoneCtrl,
+                              updateSelfReminder: widget.updateSelfReminder!,
+                              targetCtrl: widget.targetCtrl,
+                              namaCtrl: widget.namaCtrl,
+                              emailCtrl: widget.emailCtrl,
+                              phoneCtrl: widget.phoneCtrl,
                           ),
                         ),
                         HistoryTab(
