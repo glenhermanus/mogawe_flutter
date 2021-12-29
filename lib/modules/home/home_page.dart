@@ -361,7 +361,6 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        //TODO: Banner Goes Here
                         Padding(
                           padding: const EdgeInsetsDirectional.only(top: 16),
                           child: BuildBannerBuilder(),
@@ -380,12 +379,10 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                        //TODO: Card Target goes here
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: BuildMogawersTarget(),
                         ),
-                        //TODO: Gawean goes here
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                           child: Row(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mogawe/modules/hire_me/bundle/hire_me_bundle_page.dart';
 import 'package:mogawe/modules/hire_me/instant/hire_me_instant_page.dart';
 import 'package:mogawe/modules/hire_me/sales/hire_me_sales_page.dart';
+import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 
 class HireMePage extends StatefulWidget {
   HireMePage({Key? key}) : super(key: key);
@@ -245,28 +246,8 @@ class _HireMePageState extends State<HireMePage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(
-                            'https://picsum.photos/seed/442/600',
-                            width: double.infinity,
-                            height: 160,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(
-                            'https://picsum.photos/seed/442/600',
-                            width: double.infinity,
-                            height: 160,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: BuildBannerBuilder(),
                       )
                     ],
                   ),

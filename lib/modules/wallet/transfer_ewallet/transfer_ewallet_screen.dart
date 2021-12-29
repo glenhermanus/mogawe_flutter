@@ -226,7 +226,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
                         setState(() => _loadingButton1 = false);
                       }
                     },
-                    text: 'Tambah Akun Bank',
+                    text: 'Tambah Akun E-Wallet',
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 48,
@@ -433,7 +433,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
         },
         child: Card(
           clipBehavior: Clip.antiAliasWithSaveLayer,
-          color: Color(0xFFF5F5F5),
+          color: Color(0xFFFFFFFF),
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

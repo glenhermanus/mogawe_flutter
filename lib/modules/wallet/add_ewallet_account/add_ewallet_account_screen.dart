@@ -65,6 +65,7 @@ class _AddEWalletAccountScreenState extends State<AddEWalletAccountScreen> {
                         ),
                       ),
                       TextFormField(
+                        enabled: false,
                         controller: textController1,
                         obscureText: false,
                         decoration: InputDecoration(

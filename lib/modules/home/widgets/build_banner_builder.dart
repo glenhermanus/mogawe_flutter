@@ -50,10 +50,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
         }
         if (state is ShowHomeAds) {
           print("ads size is ${state.list.length}");
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: _buildAdsBanner(state.list),
-          );
+          return _buildAdsBanner(state.list);
         }
         if (state is ShowErrorHomeState) {
           print("error ads" + state.message);
