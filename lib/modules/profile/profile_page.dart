@@ -257,7 +257,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           dataMerchant: widget.dataMerchant,
                           onFotoChangedMerchant: widget.onFotoChangedMerchant,
                         ),
-                        SettingTab(logoutProfile: ,)
+                        SettingTab()
                       ],
                     ),
                   ),

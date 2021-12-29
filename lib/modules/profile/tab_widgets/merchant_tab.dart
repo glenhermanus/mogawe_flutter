@@ -164,31 +164,36 @@ class _MerchantTabState extends State<MerchantTab> {
                   ),
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Text('Gratis Ongkir',
+              InkWell(
+                onTap: (){
+                  openAlertBox();
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text('Gratis Ongkir',
+                        style: FlutterFlowTheme.bodyText1
+                            .override(
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                    Text(
+                      ' Toko Gellaps',
                       style: FlutterFlowTheme.bodyText1
                           .override(
                         fontFamily: 'Poppins',
+                        fontSize: 12,
                       ),
                     ),
-                  ),
-                  Text(
-                    ' Toko Gellaps',
-                    style: FlutterFlowTheme.bodyText1
-                        .override(
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                    ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.black,
-                    size: 24,
-                  )
-                ],
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black,
+                      size: 24,
+                    )
+                  ],
+                ),
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(
@@ -499,6 +504,39 @@ class _MerchantTabState extends State<MerchantTab> {
           ),
         )
     );
+  }
+
+  openAlertBox() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return AlertDialog(
+                contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
+                content: Container(
+                  width: 300.0,
+                  height: 180,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Text(
+                          "Pilih Durasi pengingat gawean :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        Row(
+                          children: [
+
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }));
   }
 
 }
