@@ -111,5 +111,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         yield ShowErrorProfileState("$ex");
       }
     }
+    if (event is GetMerchantEvent) {
+      yield ShowLoadingMerchantState();
+      try {
+        var data = await _repo.getProfileMerchant(realToken: _userToken);
+        yield ShowProfileMerchant(data.object!);
+      } catch(ex) {
+        yield ShowErrorGetMerchantState("$ex");
+      }
+    }
+    if (event is DoUpdatePhotoMerchantEvent) {
+      yield ShowLoadingMerchantState();
+      try {
+        var msg = await _repo.updatePhotoMerchant(event.file, realToken: _userToken);
+        var data = await _repo.getProfileMerchant(realToken: _userToken);
+        yield SuccessUpdatePhotoMerchantState(msg.message, data.object!);
+      } catch(ex) {
+        yield ShowErrorMerchantState("$ex");
+
+      }
+    }
   }
 }

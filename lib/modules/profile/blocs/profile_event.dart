@@ -4,6 +4,8 @@ abstract class ProfileEvent {}
 
 class GetProfileEvent extends ProfileEvent {}
 
+class GetMerchantEvent extends ProfileEvent {}
+
 class GetProfileHistoryEvent extends ProfileEvent {}
 
 class SearchProfileHistoryEvent extends ProfileEvent {
@@ -34,6 +36,12 @@ class DoUpdateProfileEvent extends ProfileEvent {
   DoUpdateProfileEvent(this.map);
 }
 
+class DoUpdateMerchantEvent extends ProfileEvent {
+  Map<String, String> map;
+
+  DoUpdateMerchantEvent(this.map);
+}
+
 class DoUpdateTargetRevenueEvent extends ProfileEvent {
   Map<String, dynamic> map;
 
@@ -50,4 +58,10 @@ class DoUpdatePhotoProfileEvent extends ProfileEvent {
   Map<String, File> file;
 
   DoUpdatePhotoProfileEvent(this.file);
+}
+
+class DoUpdatePhotoMerchantEvent extends ProfileEvent {
+  Map<String, File> file;
+
+  DoUpdatePhotoMerchantEvent(this.file);
 }

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:mogawe/constant/api_path.dart';
+import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
+import 'package:mogawe/core/data/response/merchant/response_update.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/data/response/register/register_response.dart';
@@ -30,6 +32,13 @@ class ProfileRepository extends NetworkService {
     var header = {token: realToken!}; //Use realToken when implement get from original token
     var map = await postMethod("${BASE_URL}api/mogawers/v2/getProfile", headers: header);
     return ProfileResponse.fromJsonMap(map);
+  }
+
+  Future<MerchantProfileResponse> getProfileMerchant({String? realToken}) async {
+    print(realToken);
+    var header = {token: realToken!}; //Use realToken when implement get from original token
+    var map = await getMethod("${BASE_URL}api/mogawers/supplier/profile/me", header);
+    return MerchantProfileResponse.fromJson(map);
   }
 
   Future<List<ProfileHistoryData>> getProfileHistory({String? realToken,
@@ -81,6 +90,14 @@ class ProfileRepository extends NetworkService {
     var map = await multipartPost("${BASE_URL}api/mogawers/updatePhotoProfile",
       files: body, header: header);
     return RegisterResponse.fromJsonMap(map);
+  }
+
+  Future<UpdateResponseMerchant> updatePhotoMerchant(Map<String, File> body, {String? realToken}) async {
+    print(realToken);
+    var header = { token: realToken! }; //Use realToken when implement get from original token
+    var map = await multipartUpdate("${BASE_URL}api/mogawers/supplier/profile/image/upload",
+        files: body, header: header);
+    return UpdateResponseMerchant.fromJson(map);
   }
 
 }

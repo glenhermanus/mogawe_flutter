@@ -5,11 +5,14 @@ import 'package:mogawe/core/data/response/profile/profile_history_response.dart'
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/auth/screens/login/login_page.dart';
+import 'package:mogawe/modules/home/home_page.dart';
 import 'package:mogawe/modules/profile/blocs/profile_event.dart';
 import 'package:mogawe/modules/profile/blocs/profile_state.dart';
 import 'package:mogawe/modules/profile/profile_page.dart';
+import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
 import 'package:mogawe/utils/ui/widgets/app_util.dart';
 
+import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'blocs/profile_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   late ProfileBloc bloc;
   ObjectData? data;
+  Object? dataMerchant;
   bool isLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<ProfileHistoryData> histories = [];
@@ -39,6 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     bloc = ProfileBloc();
     bloc.add(GetProfileEvent());
+    bloc.add(GetMerchantEvent());
     bloc.add(GetProfileHistoryEvent());
   }
 
@@ -62,6 +67,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (ctx, state) {
         if (state is InitProfileState) return layout();
         if (state is ShowLoadingProfileState) {
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            AppUtil.show(context);
+          });
+          isLoading = true;
+          return layout();
+        }
+        if (state is ShowLoadingMerchantState) {
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             AppUtil.show(context);
           });
@@ -151,11 +163,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
           });
           return layout();
         }
+        if (state is SuccessUpdatePhotoMerchantState) {
+          checkLoading();
+          dataMerchant = state.datam;
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.messages,
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white
+                ),
+              ),
+            ));
+          });
+          return layout();
+        }
         if (state is ShowErrorGetProfileState) {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) { 
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>
             LoginPage()), (route) => false);
+          });
+          return layout();
+        }
+        if (state is ShowErrorMerchantState) {
+          checkLoading();
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.message,
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white
+                ),
+              ),
+              backgroundColor: FlutterFlowTheme.primaryColor,
+            ));
           });
           return layout();
         }
@@ -172,6 +216,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               backgroundColor: FlutterFlowTheme.primaryColor,
             ));
+          });
+          return layout();
+        }
+        if (state is ShowProfileMerchant) {
+          checkLoading();
+          dataMerchant = state.data;
+          return layout();
+        }
+        if (state is ShowErrorGetMerchantState) {
+          checkLoading();
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>
+                HomePage()), (route) => false);
           });
           return layout();
         }
@@ -204,6 +261,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget layout() => ProfilePage(
     data: data,
+    dataMerchant: dataMerchant,
     histories: histories,
     updateProfile: (map) => bloc.add(DoUpdateProfileEvent(map)),
     updateTarget: (map) => bloc.add(DoUpdateTargetRevenueEvent(map)),
@@ -220,6 +278,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Navigator.pop(context);
       bloc.add(DoUpdatePhotoProfileEvent(map));
     },
+
+    onFotoChangedMerchant: (v) {
+      var map = {
+        "file": v
+      };
+      Navigator.pop(context);
+      bloc.add(DoUpdatePhotoMerchantEvent(map));
+    },
+
     historyPageListen: (p, q) {
       this.q = q;
       bloc.add(PaginateProfileHistoryEvent(q, periode, "$p"));

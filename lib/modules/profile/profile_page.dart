@@ -14,16 +14,19 @@ import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/personal_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/setting_tab.dart';
 
+import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 
 class ProfilePage extends StatefulWidget {
 
   final ObjectData? data;
+  final Object? dataMerchant;
   final List<ProfileHistoryData>? histories;
   final Function(Map<String, String> map)? updateProfile;
   final Function(Map<String, dynamic> map)? updateTarget;
   final Function(Map<String, dynamic> map)? updateSelfReminder;
   final Function(File photo)? onFotoChanged;
+  final Function(File photo)? onFotoChangedMerchant;
   final Function(int p, String q)? historyPageListen;
   final Function(String f, String q)? filter;
   final Function(String q)? searchListen;
@@ -33,8 +36,8 @@ class ProfilePage extends StatefulWidget {
   final TextEditingController? phoneCtrl;
   final int? taskReminder;
 
-  ProfilePage({Key? key, required this.data, this.updateProfile,
-    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.histories,
+  ProfilePage({Key? key, required this.data, required this.dataMerchant, this.updateProfile,
+    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.onFotoChangedMerchant, this.histories,
   this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
     this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder}) : super(key: key);
 
@@ -234,7 +237,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                         SingleChildScrollView(
                           child: PersonalTab(
                             data: widget.data,
-                            dataReminder: widget.taskReminder!,
+                            dataReminder: widget.taskReminder,
                             updateProfile: widget.updateProfile!,
                             updateTarget: widget.updateTarget!,
                               updateSelfReminder: widget.updateSelfReminder!,
@@ -250,7 +253,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           filter: widget.filter,
                           searchListen: widget.searchListen,
                         ),
-                        MerchantTab(),
+                        MerchantTab(
+                          dataMerchant: widget.dataMerchant,
+                          onFotoChangedMerchant: widget.onFotoChangedMerchant,
+                        ),
                         SettingTab()
                       ],
                     ),
