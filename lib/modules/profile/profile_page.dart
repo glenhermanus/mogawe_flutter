@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/auth/screens/login/login_page.dart';
 import 'package:mogawe/modules/profile/id_card_profile.dart';
 import 'package:mogawe/modules/profile/tab_widgets/history_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
@@ -43,6 +45,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
+  final AuthRepository _authRepository = AuthRepository.instance;
+
   late TabController tabController;
   int currTab = 0;
   final picker = ImagePicker();
@@ -127,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage>
                       child: widget.data == null
                           ? Container()
                           : Image.network(
-                        widget.data!.profilePicture!,
+                        widget.data?.profilePicture ?? "",
                       ),
                     ),
                   ),
@@ -233,14 +237,14 @@ class _ProfilePageState extends State<ProfilePage>
                         SingleChildScrollView(
                           child: PersonalTab(
                             data: widget.data,
-                            dataReminder: widget.taskReminder!,
+                            dataReminder: widget.taskReminder ?? 0,
                             updateProfile: widget.updateProfile!,
                             updateTarget: widget.updateTarget!,
-                              updateSelfReminder: widget.updateSelfReminder!,
-                              targetCtrl: widget.targetCtrl,
-                              namaCtrl: widget.namaCtrl,
-                              emailCtrl: widget.emailCtrl,
-                              phoneCtrl: widget.phoneCtrl,
+                            updateSelfReminder: widget.updateSelfReminder!,
+                            targetCtrl: widget.targetCtrl,
+                            namaCtrl: widget.namaCtrl,
+                            emailCtrl: widget.emailCtrl,
+                            phoneCtrl: widget.phoneCtrl,
                           ),
                         ),
                         HistoryTab(
@@ -302,7 +306,14 @@ class _ProfilePageState extends State<ProfilePage>
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
+            onPressed: () {
+              _authRepository.deleteSecureData('token');
+              _authRepository.saveLoginStatus(false);
+
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  (Route<dynamic> route) => false);
+            },
             child: const Text('OK'),
           ),
         ],

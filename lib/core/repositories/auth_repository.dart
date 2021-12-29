@@ -172,8 +172,9 @@ class AuthRepository extends NetworkService {
     return deleteData;
   }
 
-  void saveLoginStatus() async {
+  void saveLoginStatus(bool status) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', true);
+    prefs.setBool('isLoggedIn', status);
   }
+
 }

@@ -29,7 +29,7 @@ class _WebviewMogaweState extends State<WebviewMogawe> {
     return Scaffold(
       backgroundColor: Colors.green,
       appBar: AppBar(
-        title: const Text('Flutter WebView example'),
+        title: const Text(''),
       ),
       body: Builder(builder: (BuildContext context) {
         return WebView(
