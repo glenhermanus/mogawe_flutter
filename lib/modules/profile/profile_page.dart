@@ -74,6 +74,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     }
   }
 
+  void logout(){
+    setState(() {
+
+    });
+
+  }
+
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -257,7 +264,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           dataMerchant: widget.dataMerchant,
                           onFotoChangedMerchant: widget.onFotoChangedMerchant,
                         ),
-                        SettingTab()
+                        SettingTab(logoutProfile: ()=>logout(),)
                       ],
                     ),
                   ),

@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MerchantTab extends StatefulWidget {
   final Object? dataMerchant;
@@ -21,6 +22,10 @@ class _MerchantTabState extends State<MerchantTab> {
   final picker = ImagePicker();
   File? photo;
   String? path;
+  bool valueswitchDiantar = false;
+  bool valueswitchKurir = false;
+  double slidervalue = 1;
+  String rangeSlide ='1';
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -44,12 +49,37 @@ class _MerchantTabState extends State<MerchantTab> {
     }
   }
 
+  void setisDiantar(bool antar) async{
+    SharedPreferences cekAntar = await SharedPreferences.getInstance();
+    cekAntar.setBool('diantar', antar);
+  }
+
+  void setisKurirToko(bool antar) async{
+    SharedPreferences cekKurirtoko = await SharedPreferences.getInstance();
+    cekKurirtoko.setBool('kurirtoko', antar);
+  }
+
+  Future<bool> getcekKurirToko()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('kurirtoko') ?? false;
+  }
+
+  Future<bool> getcekAntar()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('diantar') ?? false;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     widget.dataMerchant == null ? loading = true :loading = false;
-
+    getcekAntar().then((value) {
+      valueswitchDiantar = value;
+    });
+    getcekKurirToko().then((value) {
+      valueswitchKurir = value;
+    });
   }
 
 
@@ -513,27 +543,90 @@ class _MerchantTabState extends State<MerchantTab> {
             builder: (BuildContext context, StateSetter stateSetter) {
               return AlertDialog(
                 contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
+                actions: [
+                  TextButton(
+                      child: Text('CANCEL'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }),
+                  TextButton(
+                      child: Text('SIMPAN'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      })
+                ],
                 content: Container(
-                  width: 300.0,
-                  height: 180,
+                  height: MediaQuery.of(context).size.height * 0.32,
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
                         Text(
-                          "Pilih Durasi pengingat gawean :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600),
+                          "Metode Gratis Ongkir :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600),
                         ),
-                        Row(
+                        Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Row(
+
+                              children: [
+                                Icon(Icons.all_inbox),
+                                SizedBox(width: 10,),
+                                Text('Diantar Mogawers'),
+                              ],
+                            ),
+                            Switch(
+                                value: valueswitchDiantar,
+                                onChanged: (v){
+                                  stateSetter(() {
+                                    valueswitchDiantar = v;
+                                    setisDiantar(v);
+                                  });
+
+                                }
+                            ),
                           ],
                         ),
-                        Row(
+                        Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Row(
+
+                              children: [
+                                Icon(Icons.all_inbox),
+                                SizedBox(width: 10,),
+                                Text('Kurir Toko'),
+                              ],
+                            ),
+                            Switch(
+                                value: valueswitchKurir,
+                                onChanged: (v){
+                                  stateSetter(() {
+                                    valueswitchKurir = v;
+                                    setisKurirToko(v);
+                                  });
+
+                                }
+                            ),
                           ],
                         ),
+                        SizedBox(height: 10,),
+                        Text('Radius Pengiriman :'),
+                        Slider(
+                          value: slidervalue,
+                          onChanged: (value) {
+                            stateSetter(() {
+                              slidervalue = value;
+                              rangeSlide = slidervalue.toString();
+                            });
+                          },
+                          max: 150,
+                          min: 1,
+                          divisions: 150,
+                        ),
+                        Text('${rangeSlide.split('.').first}km'),
+
                       ],
                     ),
                   ),
