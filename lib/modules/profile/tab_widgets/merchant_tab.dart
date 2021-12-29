@@ -528,9 +528,12 @@ class _MerchantTabState extends State<MerchantTab> {
                         ),
                         Row(
                           children: [
-
                           ],
-                        )
+                        ),
+                        Row(
+                          children: [
+                          ],
+                        ),
                       ],
                     ),
                   ),
