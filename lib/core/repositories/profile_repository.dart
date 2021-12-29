@@ -101,14 +101,14 @@ class ProfileRepository extends NetworkService {
     return UpdateResponseMerchant.fromJson(map);
   }
 
-  Future<SelfpickRadiusResponse> updateselPickup({String? realToken, radius}) async {
+  Future<SelfpickRadiusResponse> updateselPickup(Map<String, int> body, {String? realToken}) async {
     print(realToken);
     var header = {
       token: realToken!, //Use realToken when implement get from original token
       contentType: applicationJson
     };
-    var map = await putMethod("${BASE_URL}api/mogawers/config/update",
-        header: header, body: {"selfPickupRadius" : radius});
+    var map = await putMethod("${BASE_URL}api/mogawers/supplier/profile/update",
+        header: header, body: body);
     return SelfpickRadiusResponse.fromJson(map);
   }
 
