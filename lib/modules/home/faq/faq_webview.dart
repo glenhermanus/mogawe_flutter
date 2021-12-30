@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mogawe/modules/chat/chat_page.dart';
+import 'package:mogawe/modules/inbox_notif/inbox/inbox/inbox_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebviewFAQ extends StatefulWidget {
@@ -42,12 +43,12 @@ class _WebviewFAQState extends State<WebviewFAQ> {
           onPressed: () => setState(() {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ChatPage()),
+              MaterialPageRoute(builder: (context) => InboxPage()),
             );
           }),
           elevation: 0,
           tooltip: 'Chat',
-          child: Icon(Icons.mark_chat_unread_outlined, color: Colors.white, size: 24,),
+          child: Image.asset('assets/icon/ic_chat.png', width: 24,),
           backgroundColor: Colors.red,
 
 

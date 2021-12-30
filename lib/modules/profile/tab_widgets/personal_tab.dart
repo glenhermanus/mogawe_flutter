@@ -567,18 +567,6 @@ class _PersonalTabState extends State<PersonalTab> {
             }));
   }
 
-  Future getdata() async{
-    setState(() {
-      loading = true;
-
-    });
-
-    var token = await AuthRepository().readSecureData('token');
-
-    setState(() {
-      loading = false;
-    });
-  }
 
   void datePicker() async{
     var datetime = await showDatePicker(
