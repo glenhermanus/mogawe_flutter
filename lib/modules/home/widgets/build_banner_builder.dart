@@ -114,7 +114,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
         _handleOpenApp(ad.actionValue);
         break;
       case "open_activity":
-    _handleOpenActivity(ad.actionValue, ad.actionParam);
+        _handleOpenActivity(ad.actionValue, ad.actionParam);
         break;
     }
   }
