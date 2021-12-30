@@ -47,7 +47,7 @@ class _WebviewFAQState extends State<WebviewFAQ> {
           }),
           elevation: 0,
           tooltip: 'Chat',
-          child: Icon(Icons.mark_chat_unread_outlined, color: Colors.white, size: 24,),
+          child: Image.asset('assets/icon/ic_chat.png', width: 24,),
           backgroundColor: Colors.red,
 
 

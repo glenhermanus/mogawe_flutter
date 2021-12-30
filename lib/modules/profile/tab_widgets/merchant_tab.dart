@@ -582,16 +582,17 @@ class _MerchantTabState extends State<MerchantTab> {
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
                         Text(
-                          "Metode Gratis Ongkir :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600),
+                          "Metode Gratis Ongkir :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
+                        fontSize: 16),
                         ),
                         Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
 
                               children: [
-                                Icon(Icons.all_inbox),
+                                Image.asset('assets/icon/ic_ambil_sendiri.png', width: 20,),
                                 SizedBox(width: 10,),
-                                Text('Diantar Mogawers'),
+                                Text('Diantar Mogawers', style: FlutterFlowTheme.bodyText1,),
                               ],
                             ),
                             Switch(
@@ -611,9 +612,9 @@ class _MerchantTabState extends State<MerchantTab> {
                             Row(
 
                               children: [
-                                Icon(Icons.all_inbox),
+                                Image.asset('assets/icon/ic_kurir_toko.png', width: 20,),
                                 SizedBox(width: 10,),
-                                Text('Kurir Toko'),
+                                Text('Kurir Toko', style: FlutterFlowTheme.bodyText1,),
                               ],
                             ),
                             Switch(
@@ -628,7 +629,7 @@ class _MerchantTabState extends State<MerchantTab> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(height: 16,),
                         Text('Radius Pengiriman :'),
                         Slider(
                           value: valueAwal,

@@ -198,11 +198,7 @@ class _HomePageState extends State<HomePage> {
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 44,
-            icon: Icon(
-              Icons.help_outline,
-              color: FlutterFlowTheme.secondaryColor,
-              size: 24,
-            ),
+            icon: Image.asset('assets/icon/ic_faq.png', width: 20,),
             onPressed: () async {
               await Navigator.push(
                 context,
