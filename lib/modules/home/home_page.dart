@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   bool loading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
+  var convertCurrency, balance;
   UserProfileResponse? userProfileResponse;
 
   int gaweanMenu = 0;
@@ -50,6 +52,7 @@ class _HomePageState extends State<HomePage> {
     });
     token = await AuthRepository().readSecureData('token');
 
+
     print("OUT >> hey");
     print(token);
 
@@ -57,6 +60,9 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       loading = false;
+      convertCurrency = this.userProfileResponse?.balance;
+      var currencyFormatter = NumberFormat.currency(locale: 'ID');
+      balance = currencyFormatter.format(convertCurrency);
     });
   }
 
@@ -172,21 +178,23 @@ class _HomePageState extends State<HomePage> {
                   size: 18,
                 ),
               ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                child: loading
-                    ? Text('Loading ...',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: FlutterFlowTheme.secondaryColor,
-                        ))
-                    : Text(
-                        'Rp ${this.userProfileResponse?.balance}',
-                        style: FlutterFlowTheme.title2.override(
-                          fontFamily: 'Poppins',
-                          color: FlutterFlowTheme.secondaryColor,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                  child: loading
+                      ? Text('Loading ...',
+                          style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                            color: FlutterFlowTheme.secondaryColor,
+                          ))
+                      : Text(
+                          'Rp ${balance.replaceAll('IDR', '').replaceAll(',00', '')}',
+                          style: FlutterFlowTheme.title2.override(
+                            fontFamily: 'Poppins',
+                            color: FlutterFlowTheme.secondaryColor,
+                          ),
                         ),
-                      ),
+                ),
               )
             ],
           ),
@@ -208,44 +216,44 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
-          FlutterFlowIconButton(
-            borderColor: Colors.transparent,
-            borderRadius: 30,
-            borderWidth: 1,
-            buttonSize: 44,
-            icon: Icon(
-              Icons.person_outline,
-              color: FlutterFlowTheme.secondaryColor,
-              size: 24,
-            ),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HireMePage(),
-                ),
-              );
-            },
-          ),
-          FlutterFlowIconButton(
-            borderColor: Colors.transparent,
-            borderRadius: 30,
-            borderWidth: 1,
-            buttonSize: 44,
-            icon: Icon(
-              Icons.message_rounded,
-              color: FlutterFlowTheme.secondaryColor,
-              size: 24,
-            ),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => InboxPage(),
-                ),
-              );
-            },
-          ),
+          // FlutterFlowIconButton(
+          //   borderColor: Colors.transparent,
+          //   borderRadius: 30,
+          //   borderWidth: 1,
+          //   buttonSize: 44,
+          //   icon: Icon(
+          //     Icons.person_outline,
+          //     color: FlutterFlowTheme.secondaryColor,
+          //     size: 24,
+          //   ),
+          //   onPressed: () async {
+          //     await Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => HireMePage(),
+          //       ),
+          //     );
+          //   },
+          // ),
+          // FlutterFlowIconButton(
+          //   borderColor: Colors.transparent,
+          //   borderRadius: 30,
+          //   borderWidth: 1,
+          //   buttonSize: 44,
+          //   icon: Icon(
+          //     Icons.message_rounded,
+          //     color: FlutterFlowTheme.secondaryColor,
+          //     size: 24,
+          //   ),
+          //   onPressed: () async {
+          //     await Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => InboxPage(),
+          //       ),
+          //     );
+          //   },
+          // ),
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
             child: FlutterFlowIconButton(
