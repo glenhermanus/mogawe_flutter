@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
+import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
@@ -16,7 +17,8 @@ class MerchantTab extends StatefulWidget {
   final Function(Map<String, String> map)? updateShipmet;
   final Function(File photo)? onFotoChangedMerchant;
   final Function(int selfPick)? parseRadius;
-  const MerchantTab({Key? key, required this.dataMerchant, this.objectShipment, this.updateShipmet, this.onFotoChangedMerchant, this.parseRadius }) : super(key: key);
+  final SupplierProduct? supplierProduct;
+  const MerchantTab({Key? key, required this.dataMerchant, this.supplierProduct, this.objectShipment, this.updateShipmet, this.onFotoChangedMerchant, this.parseRadius }) : super(key: key);
 
   @override
   State<MerchantTab> createState() => _MerchantTabState();
@@ -46,6 +48,12 @@ class _MerchantTabState extends State<MerchantTab> {
   List selectShipmentName = [];
   String textShipment ='';
   Map<String, String> map = Map();
+  String codeShipment ='';
+  String codeNameShipment = '';
+  List a =[];
+  bool selectedV = false;
+  String values = '';
+  var token;
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -86,12 +94,23 @@ class _MerchantTabState extends State<MerchantTab> {
 
   void setShipmentBool(shipment) async{
     SharedPreferences shipmentValue = await SharedPreferences.getInstance();
-    shipmentValue.setBool('shipmentBool', shipment);
+    shipmentValue.setString('shipmentString', shipment);
+
+  }
+  void setShipmentSelect( select) async{
+    SharedPreferences shipmentValue1 = await SharedPreferences.getInstance();
+    shipmentValue1.setBool('selected', select);
   }
 
-  Future<bool> getShipmentValueBool()async{
+
+  Future<String> getShipmentValueBool2()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('shipmentBool') ?? false;
+    return prefs.getString('shipmentString') ?? '';
+  }
+
+  Future<bool> getShipmentValueBool1()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('selected') ?? false;
   }
 
   Future<String> getShipmentValue()async{
@@ -137,6 +156,7 @@ class _MerchantTabState extends State<MerchantTab> {
     if (selected == true) {
       setState(() {
         selectShipmentName.add(name);
+
       });
     } else {
       setState(() {
@@ -146,13 +166,30 @@ class _MerchantTabState extends State<MerchantTab> {
   }
 
   void cekValue(){
-    var codeValue;
+    getShipmentValueBool1().then((value) {
+      selectedV = value;
 
-    for(var i =0; i < widget.objectShipment!.length!; i++){
-      valuesShipment = selectShipment.contains(widget.objectShipment?[i].code);
+    });
+
+    getShipmentValueBool2().then((value1) {
+      values = value1;
+
+    });
+    if(selectedV == true){
+      setState(() {
+        selectShipment.add(values);
+        print('abcd');
+        print(selectShipment);
+      });
+    }
+    else {
+      setState(() {
+        selectShipment.remove(values);
+      });
     }
 
   }
+
 
   @override
   void initState() {
@@ -164,6 +201,7 @@ class _MerchantTabState extends State<MerchantTab> {
     valueAwal = valueSlideAwal / 1000;
     totalvalueAwal = (valueSlideAwal / 1000).round();
     rangeSlide = totalvalueAwal.toString();
+
     getcekAntar().then((value) {
       valueswitchDiantar = value;
       if(valueswitchDiantar == true) {
@@ -186,13 +224,14 @@ class _MerchantTabState extends State<MerchantTab> {
       textShipment = value;
 
     });
-    // cekValue();
+    cekValue();
   }
 
 
   @override
   Widget build(BuildContext context) {
     return ListView(
+
       children: [
         Padding(
           padding: EdgeInsetsDirectional.fromSTEB(
@@ -412,193 +451,114 @@ class _MerchantTabState extends State<MerchantTab> {
             ),
           ),
         ),
-        // Expanded(
-        //   child: Padding(
-        //     padding: EdgeInsetsDirectional.fromSTEB(
-        //         16, 16, 16, 0),
-        //     child: GridView(
-        //       padding: EdgeInsets.zero,
-        //       gridDelegate:
-        //       SliverGridDelegateWithFixedCrossAxisCount(
-        //         crossAxisCount: 2,
-        //         crossAxisSpacing: 10,
-        //         mainAxisSpacing: 10,
-        //         childAspectRatio: 1,
-        //       ),
-        //       scrollDirection: Axis.vertical,
-        //       children: [
-        //         Card(
-        //           clipBehavior:
-        //           Clip.antiAliasWithSaveLayer,
-        //           color: Color(0xFFF5F5F5),
-        //           shape: RoundedRectangleBorder(
-        //             borderRadius:
-        //             BorderRadius.circular(16),
-        //           ),
-        //           child: Column(
-        //             mainAxisSize: MainAxisSize.max,
-        //             children: [
-        //               Stack(
-        //                 alignment:
-        //                 AlignmentDirectional(0, 1),
-        //                 children: [
-        //                   Image.network(
-        //                     'https://picsum.photos/seed/624/600',
-        //                     width: double.infinity,
-        //                     height: 100,
-        //                     fit: BoxFit.cover,
-        //                   ),
-        //                 ],
-        //               ),
-        //               Padding(
-        //                 padding: EdgeInsetsDirectional
-        //                     .fromSTEB(8, 8, 8, 0),
-        //                 child: Column(
-        //                   mainAxisSize: MainAxisSize.max,
-        //                   crossAxisAlignment:
-        //                   CrossAxisAlignment.start,
-        //                   children: [
-        //                     Text(
-        //                       'Baju Batik Oke',
-        //                       style: FlutterFlowTheme
-        //                           .bodyText1
-        //                           .override(
-        //                         fontFamily: 'Poppins',
-        //                         fontSize: 12,
-        //                       ),
-        //                     ),
-        //                     Padding(
-        //                       padding:
-        //                       EdgeInsetsDirectional
-        //                           .fromSTEB(
-        //                           0, 4, 0, 0),
-        //                       child: Row(
-        //                         mainAxisSize:
-        //                         MainAxisSize.max,
-        //                         mainAxisAlignment:
-        //                         MainAxisAlignment
-        //                             .spaceBetween,
-        //                         children: [
-        //                           Text(
-        //                             'Rp100.000',
-        //                             style:
-        //                             FlutterFlowTheme
-        //                                 .bodyText1
-        //                                 .override(
-        //                               fontFamily:
-        //                               'Poppins',
-        //                               fontSize: 11,
-        //                             ),
-        //                           ),
-        //                           Text(
-        //                             'Rp10.000',
-        //                             style:
-        //                             FlutterFlowTheme
-        //                                 .bodyText1
-        //                                 .override(
-        //                               fontFamily:
-        //                               'Poppins',
-        //                               fontSize: 11,
-        //                             ),
-        //                           )
-        //                         ],
-        //                       ),
-        //                     )
-        //                   ],
-        //                 ),
-        //               )
-        //             ],
-        //           ),
-        //         ),
-        //         Card(
-        //           clipBehavior:
-        //           Clip.antiAliasWithSaveLayer,
-        //           color: Color(0xFFF5F5F5),
-        //           shape: RoundedRectangleBorder(
-        //             borderRadius:
-        //             BorderRadius.circular(16),
-        //           ),
-        //           child: Column(
-        //             mainAxisSize: MainAxisSize.max,
-        //             children: [
-        //               Stack(
-        //                 alignment:
-        //                 AlignmentDirectional(0, 1),
-        //                 children: [
-        //                   Image.network(
-        //                     'https://picsum.photos/seed/624/600',
-        //                     width: double.infinity,
-        //                     height: 100,
-        //                     fit: BoxFit.cover,
-        //                   ),
-        //
-        //                 ],
-        //               ),
-        //               Padding(
-        //                 padding: EdgeInsetsDirectional
-        //                     .fromSTEB(8, 8, 8, 0),
-        //                 child: Column(
-        //                   mainAxisSize: MainAxisSize.max,
-        //                   crossAxisAlignment:
-        //                   CrossAxisAlignment.start,
-        //                   children: [
-        //                     Text(
-        //                       'Baju Batik Oke',
-        //                       style: FlutterFlowTheme
-        //                           .bodyText1
-        //                           .override(
-        //                         fontFamily: 'Poppins',
-        //                         fontSize: 12,
-        //                       ),
-        //                     ),
-        //                     Padding(
-        //                       padding:
-        //                       EdgeInsetsDirectional
-        //                           .fromSTEB(
-        //                           0, 4, 0, 0),
-        //                       child: Row(
-        //                         mainAxisSize:
-        //                         MainAxisSize.max,
-        //                         mainAxisAlignment:
-        //                         MainAxisAlignment
-        //                             .spaceBetween,
-        //                         children: [
-        //                           Text(
-        //                             'Rp100.000',
-        //                             style:
-        //                             FlutterFlowTheme
-        //                                 .bodyText1
-        //                                 .override(
-        //                               fontFamily:
-        //                               'Poppins',
-        //                               fontSize: 11,
-        //                             ),
-        //                           ),
-        //                           Text(
-        //                             'Rp10.000',
-        //                             style:
-        //                             FlutterFlowTheme
-        //                                 .bodyText1
-        //                                 .override(
-        //                               fontFamily:
-        //                               'Poppins',
-        //                               fontSize: 11,
-        //                             ),
-        //                           )
-        //                         ],
-        //                       ),
-        //                     )
-        //                   ],
-        //                 ),
-        //               )
-        //             ],
-        //           ),
-        //         ),
-        //
-        //       ],
-        //     ),
-        //   ),
-        // )
+       loading ? CircularProgressIndicator() : Container(
+          width: 300,
+          height: 200,
+          child: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(
+                16, 16, 16, 0),
+            child: GridView.builder(
+
+                padding: EdgeInsets.zero,
+                gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1,
+                ),
+                scrollDirection: Axis.vertical,
+                itemCount: widget.supplierProduct?.objectDatas?.length,
+                itemBuilder: (context, snap){
+                  final card = widget.supplierProduct?.objectDatas?[snap];
+                  return Card(
+                    clipBehavior:
+                    Clip.antiAliasWithSaveLayer,
+                    color: Color(0xFFF5F5F5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Stack(
+                          alignment:
+                          AlignmentDirectional(0, 1),
+                          children: [
+                            Image.network(
+                              '${card?.imageUrl}',
+                              width: double.infinity,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional
+                              .fromSTEB(8, 8, 8, 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Baju Batik Oke',
+                                style: FlutterFlowTheme
+                                    .bodyText1
+                                    .override(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                EdgeInsetsDirectional
+                                    .fromSTEB(
+                                    0, 4, 0, 0),
+                                child: Row(
+                                  mainAxisSize:
+                                  MainAxisSize.max,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Rp100.000',
+                                      style:
+                                      FlutterFlowTheme
+                                          .bodyText1
+                                          .override(
+                                        fontFamily:
+                                        'Poppins',
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Rp10.000',
+                                      style:
+                                      FlutterFlowTheme
+                                          .bodyText1
+                                          .override(
+                                        fontFamily:
+                                        'Poppins',
+                                        fontSize: 11,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }
+            ),
+          ),
+        )
       ],
     );
   }
@@ -667,7 +627,7 @@ class _MerchantTabState extends State<MerchantTab> {
                       children: <Widget>[
                         Text(
                           "Metode Gratis Ongkir :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
-                        fontSize: 16),
+                            fontSize: 16),
                         ),
                         Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -735,37 +695,37 @@ class _MerchantTabState extends State<MerchantTab> {
                   ),
                 ),
                 actions: [
-                TextButton(
-                    child: Text('CANCEL'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    }),
-                TextButton(
-                    child: Text('SIMPAN'),
-                    onPressed: () {
-                      widget.parseRadius!(parseInt);
-                      getcekAntar().then((value) {
-                        valueswitchDiantar = value;
-                        if(valueswitchDiantar == true) {
-                          diantar = 'Diantar Mogawers';
-                        }
-                        else{
-                          diantar = '';
-                        }
-                      });
-                      getcekKurirToko().then((value) {
-                        valueswitchKurir = value;
-                        if(valueswitchKurir == true){
-                          kurir = 'Kurir Toko,';
-                        }
-                        else{
-                          kurir = '';
-                        }
-                      });
-                      // var token = await AuthRepository().readSecureData('token');
-                      // await ProfileRepository().updateselPickup(realToken: token.toString(), radius: parseInt );
-                    })
-              ],
+                  TextButton(
+                      child: Text('CANCEL'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }),
+                  TextButton(
+                      child: Text('SIMPAN'),
+                      onPressed: () {
+                        widget.parseRadius!(parseInt);
+                        getcekAntar().then((value) {
+                          valueswitchDiantar = value;
+                          if(valueswitchDiantar == true) {
+                            diantar = 'Diantar Mogawers';
+                          }
+                          else{
+                            diantar = '';
+                          }
+                        });
+                        getcekKurirToko().then((value) {
+                          valueswitchKurir = value;
+                          if(valueswitchKurir == true){
+                            kurir = 'Kurir Toko,';
+                          }
+                          else{
+                            kurir = '';
+                          }
+                        });
+                        // var token = await AuthRepository().readSecureData('token');
+                        // await ProfileRepository().updateselPickup(realToken: token.toString(), radius: parseInt );
+                      })
+                ],
               );
             }));
   }
@@ -791,36 +751,45 @@ class _MerchantTabState extends State<MerchantTab> {
                           "Pilih Jasa Ekspedisi :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
                             fontSize: 16),
                         ),
-                         Expanded(
-                           child: Container(
-                             width: 300,
-                             height:  MediaQuery.of(context).size.height * 0.6,
-                             child: ListView.builder(
-                                 itemCount: widget.objectShipment?.length,
-                                 itemBuilder: (context, snap){
-                                   final listValue = widget.objectShipment?[snap];
-                                   valuesShipment = selectShipment.contains(listValue?.code);
-                               return Container(
-                                 width: 300,
-                                 child: CheckboxListTile(
-                                     value: valuesShipment,
-                                   onChanged: (selected) {
-                                       stateSetter(() {
-                                         shipmentSelectedBool(selected!,
-                                             listValue?.code);
-                                         shipmentSelected(selected!,
-                                             listValue?.code);
-                                         getShipmentName(selected!,
-                                             listValue?.name);
-                                       });
+                        Expanded(
+                          child: Container(
+                            width: 300,
+                            height:  MediaQuery.of(context).size.height * 0.6,
+                            child: ListView.builder(
+                                itemCount: widget.objectShipment?.length,
+                                itemBuilder: (context, snap){
+                                  final listValue = widget.objectShipment?[snap];
+                                  //valuesShipment = selectShipment.contains(listValue?.code);
+                                  codeShipment = listValue?.code ?? '';
+                                  return Container(
+                                    width: 300,
+                                    child: CheckboxListTile(
 
-                                   },
-                                   title: Text('${listValue?.name}'),
-                                 ),
-                               );
-                             }),
-                           ),
-                         )
+                                      value: selectShipment.contains(listValue?.code),
+                                      onChanged: (selected) {
+                                        valuesShipment = selected!;
+
+                                        a.add(listValue?.code);
+                                        String isi = a.toString().replaceAll('[', '').replaceAll(']', '');
+
+                                        stateSetter(() {
+                                          shipmentSelectedBool(selected!,
+                                              listValue?.code);
+                                          shipmentSelected(selected!,
+                                              listValue?.code);
+                                          getShipmentName(selected!,
+                                              listValue?.name);
+                                          setShipmentBool(isi);
+                                          setShipmentSelect(selected);
+                                        });
+
+                                      },
+                                      title: Text('${listValue?.name}'),
+                                    ),
+                                  );
+                                }),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -834,17 +803,23 @@ class _MerchantTabState extends State<MerchantTab> {
                   TextButton(
                       child: Text('SIMPAN'),
                       onPressed: () {
+                        print('aadd');
+                        print(a);
                         String convertValue = selectShipment.toString();
+                        codeNameShipment = convertValue.replaceAll('[', '').replaceAll(']', '');
                         String convertValueName = selectShipmentName.toString();
                         String convertnonfinal = convertValueName.replaceAll('[', '').replaceAll(']', '');
                         String convertValueFinal = convertValue.replaceAll('[', '').replaceAll(']', '').replaceAll(', ', ':');
                         print(convertValueFinal);
-                        setShipmentBool(selectShipment.contains(convertValue));
+                        // setShipmentBool(codeShipment);
+                        // setShipmentSelect(valuesShipment);
                         setShipment(convertnonfinal);
+
                         getShipmentValue().then((value) {
                           textShipment = value;
 
                         });
+
                         // getShipmentValueBool().then((value) {
                         //   selectShipment = value;
                         //   print('ini isi');
@@ -854,7 +829,7 @@ class _MerchantTabState extends State<MerchantTab> {
                         var field = "shippingExpeditionServices";
 
                         map.clear();
-                          if (field == "shippingExpeditionServices") {
+                        if (field == "shippingExpeditionServices") {
                           map["shippingExpeditionServices"] = convertValueFinal;
                           widget.updateShipmet!(map);
                         }

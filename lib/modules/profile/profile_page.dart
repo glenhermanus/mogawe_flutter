@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
+import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -41,9 +42,10 @@ class ProfilePage extends StatefulWidget {
   final TextEditingController? emailCtrl;
   final TextEditingController? phoneCtrl;
   final int? taskReminder;
+  final SupplierProduct? supplierProduct;
 
   ProfilePage({Key? key, required this.data, required this.dataMerchant, this.updateProfile,
-    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.onFotoChangedMerchant, this.parseRadius, this.histories,
+    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.supplierProduct, this.onFotoChangedMerchant, this.parseRadius, this.histories,
   this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl, this.objectShipment, this.updateShipment,
     this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder}) : super(key: key);
 
@@ -267,6 +269,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           parseRadius: widget.parseRadius,
                           updateShipmet: widget.updateShipment,
                           objectShipment: widget.objectShipment,
+                          supplierProduct: widget.supplierProduct,
                         ),
                         SettingTab(logoutProfile: logoutProfile,)
                       ],

@@ -115,7 +115,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       yield ShowLoadingMerchantState();
       try {
         var data = await _repo.getProfileMerchant(realToken: _userToken);
-        yield ShowProfileMerchant(data.object!);
+        var datas = await AuthRepository().getSupplierProducts(_userToken);
+        yield ShowProfileMerchant(data.object!, datas.objectDatas!);
       } catch(ex) {
         yield ShowErrorGetMerchantState("$ex");
       }

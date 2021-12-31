@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
+import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/screens/login/login_page.dart';
 import 'package:mogawe/modules/home/home_page.dart';
 import 'package:mogawe/modules/profile/blocs/profile_event.dart';
@@ -39,6 +41,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController emailCtrl = TextEditingController();
   TextEditingController phoneCtrl = TextEditingController();
   int? taskReminder;
+  SupplierProduct? supplierProduct;
+  var token;
+
+  getData()async{
+
+    token = await AuthRepository().readSecureData('token');
+    supplierProduct = await AuthRepository().getSupplierProducts(token);
+
+  }
 
   @override
   void initState() {
@@ -48,6 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     bloc.add(GetMerchantEvent());
     bloc.add(GetProfileHistoryEvent());
     bloc.add(GetShipmentCourierEvent());
+    getData();
   }
 
   @override
@@ -332,6 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     data: data,
     dataMerchant: dataMerchant,
     objectShipment: objectShipment,
+    supplierProduct: supplierProduct,
     updateShipment: (map) {
       Navigator.pop(context);
       bloc.add(DoUpdateShippingExpeditionEvent(map));},
