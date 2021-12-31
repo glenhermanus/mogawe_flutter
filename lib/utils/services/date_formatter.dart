@@ -6,4 +6,10 @@ class DateFormatter {
     final String formatted = formatter.format(datetime);
     return formatted;
   }
+
+  String formatDateMMMddyyyy(DateTime datetime) {
+    final DateFormat formatter = DateFormat('MMM dd, yyyy');
+    final String formatted = formatter.format(datetime);
+    return formatted;
+  }
 }

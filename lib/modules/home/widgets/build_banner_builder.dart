@@ -71,7 +71,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
 
   Widget _buildAdsBanner(List<Ads> ads) {
     return SizedBox(
-      height: 140,
+      height: 175,
       child: GestureDetector(
         onTap: () async {
           await Navigator.push(
@@ -93,11 +93,13 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
             return GestureDetector(
               onTap: () => _handleBannerClick(ads[index]),
               child: Container(
-                  width: 270,
+                  width: 330,
                   margin: const EdgeInsets.symmetric(horizontal: 12),
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(image, fit: BoxFit.fill))),
+                      child: Image.network(
+                          image,
+                          fit: BoxFit.fill))),
             );
           },
         ),

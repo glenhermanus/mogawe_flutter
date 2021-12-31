@@ -13,13 +13,11 @@ import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 import 'package:mogawe/modules/home/widgets/build_gawean_item.dart';
 import 'package:mogawe/modules/home/widgets/build_mogawers_target.dart';
 import 'package:mogawe/modules/home/widgets/build_product_item.dart';
-import 'package:mogawe/modules/inbox_notif/inbox/inbox/inbox_page.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
 
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
-import '../hire_me/hire_me_page.dart';
 import 'gawean/bloc/gawean_bloc.dart';
 import 'gawean/bloc/gawean_event.dart';
 import 'gawean/bloc/gawean_state.dart';
@@ -120,9 +118,8 @@ class _HomePageState extends State<HomePage> {
             },
           )
               : GridView.builder(
-            itemCount: state.list[1].products!.length == 5
-                ? 5
-                : state.list[1].products!.length,
+            itemCount: state.list[1].products!.length > 6 ? 6
+                : state.list[1].products?.length ?? 0,
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             physics: NeverScrollableScrollPhysics(),
@@ -130,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: 0.9
+              childAspectRatio: 0.4,
             ),
             itemBuilder: (ctx, index) {
               return BuildProductItem(productModel : state.list[1].products![index]);
@@ -317,19 +314,12 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: FlutterFlowTheme.secondaryColor,
       body: Stack(
         children: [
-          Align(
-            alignment: AlignmentDirectional(0, -1),
-            child: Container(
-              width: double.infinity,
-              height: 100,
-              decoration: BoxDecoration(
-                color: FlutterFlowTheme.primaryColor,
-              ),
-            ),
-          ),
           Column(
             children: [
-              Padding(
+              Container(
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.primaryColor,
+                ),
                 padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -359,127 +349,137 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.only(top: 16),
-                          child: BuildBannerBuilder(),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Text(
-                                'Target Harian',
-                                style: FlutterFlowTheme.subtitle2.override(
-                                  fontFamily: 'Poppins',
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Stack(
+                          children: [
+                            Align(
+                              alignment: AlignmentDirectional(0, -1),
+                              child: Container(
+                                width: double.infinity,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.primaryColor,
                                 ),
-                              )
-                            ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top : 16.0),
+                              child: BuildBannerBuilder(),
+                            )
+                          ],
                           ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              'Target Harian',
+                              style: FlutterFlowTheme.subtitle2.override(
+                                fontFamily: 'Poppins',
+                              ),
+                            )
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: BuildMogawersTarget(),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      gaweanMenu = 0;
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 100,
-                                    height: 52,
-                                    decoration: BoxDecoration(
-                                      color: gaweanMenu == 0 ? FlutterFlowTheme.primaryColor : FlutterFlowTheme.secondaryColor,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(16),
-                                        bottomRight: Radius.circular(0),
-                                        topLeft: Radius.circular(16),
-                                        topRight: Radius.circular(0),
-                                      ),
-                                      border: Border.all(
-                                        color: FlutterFlowTheme.primaryColor,
-                                      ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        child: BuildMogawersTarget(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    gaweanMenu = 0;
+                                  });
+                                },
+                                child: Container(
+                                  width: 100,
+                                  height: 52,
+                                  decoration: BoxDecoration(
+                                    color: gaweanMenu == 0 ? FlutterFlowTheme.primaryColor : FlutterFlowTheme.secondaryColor,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(16),
+                                      bottomRight: Radius.circular(0),
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(0),
                                     ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional(0, 0),
-                                      child: Text(
-                                        'Penugasan',
-                                        style:
-                                        FlutterFlowTheme.subtitle2.override(
-                                          fontFamily: 'Poppins',
-                                          color:
-                                          gaweanMenu == 0 ? FlutterFlowTheme.secondaryColor : FlutterFlowTheme.primaryColor,
-                                        ),
+                                    border: Border.all(
+                                      color: FlutterFlowTheme.primaryColor,
+                                    ),
+                                  ),
+                                  child: Align(
+                                    alignment: AlignmentDirectional(0, 0),
+                                    child: Text(
+                                      'Penugasan',
+                                      style:
+                                      FlutterFlowTheme.subtitle2.override(
+                                        fontFamily: 'Poppins',
+                                        color:
+                                        gaweanMenu == 0 ? FlutterFlowTheme.secondaryColor : FlutterFlowTheme.primaryColor,
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      gaweanMenu = 1;
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 100,
-                                    height: 52,
-                                    decoration: BoxDecoration(
-                                      color: gaweanMenu == 0 ? FlutterFlowTheme.secondaryColor : FlutterFlowTheme.primaryColor,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(0),
-                                        bottomRight: Radius.circular(16),
-                                        topLeft: Radius.circular(0),
-                                        topRight: Radius.circular(16),
-                                      ),
-                                      border: Border.all(
-                                        color: FlutterFlowTheme.primaryColor,
-                                      ),
+                            ),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    gaweanMenu = 1;
+                                  });
+                                },
+                                child: Container(
+                                  width: 100,
+                                  height: 52,
+                                  decoration: BoxDecoration(
+                                    color: gaweanMenu == 0 ? FlutterFlowTheme.secondaryColor : FlutterFlowTheme.primaryColor,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(0),
+                                      bottomRight: Radius.circular(16),
+                                      topLeft: Radius.circular(0),
+                                      topRight: Radius.circular(16),
                                     ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional(0, 0),
-                                      child: Text(
-                                        'Etalase',
-                                        style:
-                                        FlutterFlowTheme.subtitle2.override(
-                                          fontFamily: 'Poppins',
-                                          color: gaweanMenu == 0 ? FlutterFlowTheme.primaryColor : FlutterFlowTheme.secondaryColor,
-                                        ),
+                                    border: Border.all(
+                                      color: FlutterFlowTheme.primaryColor,
+                                    ),
+                                  ),
+                                  child: Align(
+                                    alignment: AlignmentDirectional(0, 0),
+                                    child: Text(
+                                      'Etalase',
+                                      style:
+                                      FlutterFlowTheme.subtitle2.override(
+                                        fontFamily: 'Poppins',
+                                        color: gaweanMenu == 0 ? FlutterFlowTheme.primaryColor : FlutterFlowTheme.secondaryColor,
                                       ),
                                     ),
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            )
+                          ],
                         ),
-
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              blocListener(blocBuilder())
-                            ],
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            blocListener(blocBuilder())
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
