@@ -142,5 +142,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       }
     }
+    if (event is GetShipmentCourierEvent) {
+
+      try {
+        var data = await _repo.getShipmentMerchant(realToken: _userToken);
+        yield ShowShipmentMerchant(data.object!);
+      } catch(ex) {
+        yield ShowErrorShipmentCourierState("$ex");
+      }
+    }
+    if (event is DoUpdateShippingExpeditionEvent) {
+
+      try {
+        var msg = await _repo.updateShipment(event.shipping, realToken: _userToken);
+        var data = await _repo.getProfileMerchant(realToken: _userToken);
+        yield SuccessUpdateshippingExpeditionState(msg.message);
+      } catch(ex) {
+        yield ShowErrorShipmentCourierState("$ex");
+      }
+    }
   }
 }

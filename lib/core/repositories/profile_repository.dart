@@ -4,6 +4,7 @@ import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'package:mogawe/core/data/response/merchant/response_update.dart';
 import 'package:mogawe/core/data/response/merchant/selfpick_radius_response.dart';
+import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/data/response/register/register_response.dart';
@@ -40,6 +41,13 @@ class ProfileRepository extends NetworkService {
     var header = {token: realToken!}; //Use realToken when implement get from original token
     var map = await getMethod("${BASE_URL}api/mogawers/supplier/profile/me", header);
     return MerchantProfileResponse.fromJson(map);
+  }
+
+  Future<ShipmentCourier> getShipmentMerchant({String? realToken}) async {
+    print(realToken);
+    var header = {token: realToken!}; //Use realToken when implement get from original token
+    var map = await getMethod("${BASE_URL}api/sales/shipment/courier", header);
+    return ShipmentCourier.fromJson(map);
   }
 
   Future<List<ProfileHistoryData>> getProfileHistory({String? realToken,
@@ -83,6 +91,17 @@ class ProfileRepository extends NetworkService {
     var map = await putMethod("${BASE_URL}api/mogawers/config/update",
         header: header, body: body);
     return RegisterResponse.fromJsonMap(map);
+  }
+
+  Future<SelfpickRadiusResponse> updateShipment(Map<String, String>? body, {String? realToken}) async {
+    print(realToken);
+    var header = {
+      token: realToken!, //Use realToken when implement get from original token
+      contentType: applicationJson
+    };
+    var map = await putMethod("${BASE_URL}api/mogawers/supplier/profile/update",
+        header: header, body: body);
+    return SelfpickRadiusResponse.fromJson(map);
   }
 
   Future<RegisterResponse> updatePhotoProfile(Map<String, File> body, {String? realToken}) async {

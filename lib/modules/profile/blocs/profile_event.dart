@@ -8,6 +8,8 @@ class GetMerchantEvent extends ProfileEvent {}
 
 class GetProfileHistoryEvent extends ProfileEvent {}
 
+class GetShipmentCourierEvent extends ProfileEvent {}
+
 class SearchProfileHistoryEvent extends ProfileEvent {
   String? q;
   String? periode;
@@ -70,4 +72,10 @@ class DoUpdateSelfPickRadiusEvent extends ProfileEvent {
   Map<String,int> radius;
 
   DoUpdateSelfPickRadiusEvent(this.radius);
+}
+
+class DoUpdateShippingExpeditionEvent extends ProfileEvent {
+  Map<String,String> shipping;
+
+  DoUpdateShippingExpeditionEvent(this.shipping);
 }

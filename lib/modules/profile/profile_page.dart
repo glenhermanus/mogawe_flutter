@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/auth/screens/login/login_page.dart';
 import 'package:mogawe/modules/profile/id_card_profile.dart';
 import 'package:mogawe/modules/profile/tab_widgets/history_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
@@ -21,10 +24,12 @@ class ProfilePage extends StatefulWidget {
 
   final ObjectData? data;
   final Object? dataMerchant;
+  final List<ObjectShipment>? objectShipment;
   final List<ProfileHistoryData>? histories;
   final Function(Map<String, String> map)? updateProfile;
   final Function(Map<String, dynamic> map)? updateTarget;
   final Function(Map<String, dynamic> map)? updateSelfReminder;
+  final Function(Map<String, String> map)? updateShipment;
   final Function(File photo)? onFotoChanged;
   final Function(File photo)? onFotoChangedMerchant;
   final Function(int selfPick)? parseRadius;
@@ -39,7 +44,7 @@ class ProfilePage extends StatefulWidget {
 
   ProfilePage({Key? key, required this.data, required this.dataMerchant, this.updateProfile,
     this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.onFotoChangedMerchant, this.parseRadius, this.histories,
-  this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
+  this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl, this.objectShipment, this.updateShipment,
     this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder}) : super(key: key);
 
   @override
@@ -47,7 +52,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin{
-  
+
+  final AuthRepository _authRepository = AuthRepository.instance;
   late TabController tabController;
   int currTab = 0;
   final picker = ImagePicker();
@@ -75,12 +81,6 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     }
   }
 
-  void logout(){
-    setState(() {
-
-    });
-
-  }
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -265,8 +265,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           dataMerchant: widget.dataMerchant,
                           onFotoChangedMerchant: widget.onFotoChangedMerchant,
                           parseRadius: widget.parseRadius,
+                          updateShipmet: widget.updateShipment,
+                          objectShipment: widget.objectShipment,
                         ),
-                        SettingTab(logoutProfile: ()=>logout(),)
+                        SettingTab(logoutProfile: logoutProfile,)
                       ],
                     ),
                   ),
@@ -305,6 +307,34 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           fontSize: 10
         ))
       ]),
+    );
+  }
+
+  void logoutProfile() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Konfirmasi"),
+        content: const Text("Anda yakin ingin keluar ?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              _authRepository.deleteSecureData('token');
+              _authRepository.saveLoginStatus(false);
+
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                      (Route<dynamic> route) => false);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+
+      ),
     );
   }
 
@@ -352,4 +382,5 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       )
     );
   }
+
 }

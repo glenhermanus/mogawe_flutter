@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -27,6 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late ProfileBloc bloc;
   ObjectData? data;
   Object? dataMerchant;
+  List<ObjectShipment>? objectShipment;
   bool isLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<ProfileHistoryData> histories = [];
@@ -45,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     bloc.add(GetProfileEvent());
     bloc.add(GetMerchantEvent());
     bloc.add(GetProfileHistoryEvent());
+    bloc.add(GetShipmentCourierEvent());
   }
 
   @override
@@ -81,6 +84,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return layout();
         }
         if (state is ShowLoadingSelfPickRadiusState) {
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            AppUtil.show(context);
+          });
+          isLoading = true;
+          return layout();
+        }
+        if (state is ShowLoadingShipmentState) {
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             AppUtil.show(context);
           });
@@ -154,6 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           });
           return layout();
         }
+
         if (state is SuccessUpdatePhotoProfileState) {
           checkLoading();
           data = state.data;
@@ -187,6 +198,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return layout();
         }
         if (state is SuccessUpdateSelfPickRadiusState) {
+          checkLoading();
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+
+          });
+          return layout();
+        }
+        if (state is SuccessUpdateshippingExpeditionState) {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
 
@@ -233,6 +251,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           });
           return layout();
         }
+        if (state is ShowErrorShipmentCourierState) {
+          checkLoading();
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.message,
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white
+                ),
+              ),
+              backgroundColor: FlutterFlowTheme.primaryColor,
+            ));
+          });
+          return layout();
+        }
         if (state is ShowErrorProfileState) {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
@@ -252,6 +286,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (state is ShowProfileMerchant) {
           checkLoading();
           dataMerchant = state.data;
+          return layout();
+        }
+        if (state is ShowShipmentMerchant) {
+          checkLoading();
+          objectShipment = state.data;
           return layout();
         }
         if (state is ShowErrorGetMerchantState) {
@@ -292,6 +331,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget layout() => ProfilePage(
     data: data,
     dataMerchant: dataMerchant,
+    objectShipment: objectShipment,
+    updateShipment: (map) {
+      Navigator.pop(context);
+      bloc.add(DoUpdateShippingExpeditionEvent(map));},
     histories: histories,
     updateProfile: (map) => bloc.add(DoUpdateProfileEvent(map)),
     updateTarget: (map) => bloc.add(DoUpdateTargetRevenueEvent(map)),
