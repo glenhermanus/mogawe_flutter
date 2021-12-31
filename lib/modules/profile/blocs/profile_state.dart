@@ -1,5 +1,6 @@
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
+import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 
 abstract class ProfileState {}
@@ -9,6 +10,8 @@ class InitProfileState extends ProfileState {}
 class ShowLoadingProfileState extends ProfileState {}
 
 class ShowLoadingSelfPickRadiusState extends ProfileState {}
+
+class ShowLoadingShipmentState extends ProfileState {}
 
 class ShowLoadingMerchantState extends ProfileState {}
 
@@ -22,6 +25,12 @@ class ShowProfileMerchant extends ProfileState {
   Object data;
 
   ShowProfileMerchant(this.data);
+}
+
+class ShowShipmentMerchant extends ProfileState {
+  List<ObjectShipment> data;
+
+  ShowShipmentMerchant(this.data);
 }
 
 class ShowProfileHistoryDataState extends ProfileState {
@@ -84,6 +93,12 @@ class SuccessUpdateSelfPickRadiusState extends ProfileState {
   SuccessUpdateSelfPickRadiusState(this.messages);
 }
 
+class SuccessUpdateshippingExpeditionState extends ProfileState {
+  String messages;
+
+  SuccessUpdateshippingExpeditionState(this.messages);
+}
+
 class ShowErrorGetProfileState extends ProfileState {
   String message;
 
@@ -112,4 +127,10 @@ class ShowErrorSelfPickRadiusState extends ProfileState {
   String message;
 
   ShowErrorSelfPickRadiusState(this.message);
+}
+
+class ShowErrorShipmentCourierState extends ProfileState {
+  String message;
+
+  ShowErrorShipmentCourierState(this.message);
 }

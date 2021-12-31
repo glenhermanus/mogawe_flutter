@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -16,15 +17,22 @@ import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/personal_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/setting_tab.dart';
 
+import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 
 class ProfilePage extends StatefulWidget {
+
   final ObjectData? data;
+  final Object? dataMerchant;
+  final List<ObjectShipment>? objectShipment;
   final List<ProfileHistoryData>? histories;
   final Function(Map<String, String> map)? updateProfile;
   final Function(Map<String, dynamic> map)? updateTarget;
   final Function(Map<String, dynamic> map)? updateSelfReminder;
+  final Function(Map<String, String> map)? updateShipment;
   final Function(File photo)? onFotoChanged;
+  final Function(File photo)? onFotoChangedMerchant;
+  final Function(int selfPick)? parseRadius;
   final Function(int p, String q)? historyPageListen;
   final Function(String f, String q)? filter;
   final Function(String q)? searchListen;
@@ -34,19 +42,18 @@ class ProfilePage extends StatefulWidget {
   final TextEditingController? phoneCtrl;
   final int? taskReminder;
 
-  ProfilePage({Key? key, required this.data, this.updateProfile,
-    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.histories,
-  this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl,
+  ProfilePage({Key? key, required this.data, required this.dataMerchant, this.updateProfile,
+    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.onFotoChangedMerchant, this.parseRadius, this.histories,
+  this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl, this.objectShipment, this.updateShipment,
     this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
-    with SingleTickerProviderStateMixin {
-  final AuthRepository _authRepository = AuthRepository.instance;
+class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin{
 
+  final AuthRepository _authRepository = AuthRepository.instance;
   late TabController tabController;
   int currTab = 0;
   final picker = ImagePicker();
@@ -73,6 +80,7 @@ class _ProfilePageState extends State<ProfilePage>
       setState(() {});
     }
   }
+
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -128,10 +136,8 @@ class _ProfilePageState extends State<ProfilePage>
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                       ),
-                      child: widget.data == null
-                          ? Container()
-                          : Image.network(
-                        widget.data?.profilePicture ?? "",
+                      child: widget.data == null? Container(): Image.network(
+                        widget.data?.profilePicture ?? "https://sbu.co.id/info/wp-content/themes/easymag/images/no-image.png",
                       ),
                     ),
                   ),
@@ -145,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.data != null ? widget.data!.fullName! : "",
+                          widget.data != null? widget.data!.fullName!: "",
                           style: FlutterFlowTheme.bodyText1.override(
                             fontFamily: 'Poppins',
                             color: FlutterFlowTheme.secondaryColor,
@@ -155,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage>
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                           child: Text(
-                            widget.data != null ? widget.data!.email! : "",
+                            widget.data != null? widget.data!.email!: "",
                             style: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Poppins',
                               color: FlutterFlowTheme.secondaryColor,
@@ -181,21 +187,22 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                     onPressed: () {
                       showDialog(
-                          context: context,
-                          builder: (ctx) => Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: Material(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(12)),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: IdCardProfile(data: widget.data!),
-                                ),
+                        context: context,
+                        builder: (ctx) => Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Material(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: IdCardProfile(data: widget.data!),
                               ),
                             ),
-                          ));
+                          ),
+                        )
+                      );
                     },
                   ),
                 )
@@ -212,12 +219,13 @@ class _ProfilePageState extends State<ProfilePage>
                     margin: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                         color: FlutterFlowTheme.primaryColor,
-                        borderRadius: BorderRadius.circular(24)),
+                        borderRadius: BorderRadius.circular(24)
+                    ),
                     child: TabBar(
                       labelStyle: GoogleFonts.getFont(
                         'Roboto',
                       ),
-                      // padding: EdgeInsets.fromLTRB(2, 4, 4, 2),
+                      padding: EdgeInsets.fromLTRB(2, 4, 4, 2),
                       indicatorPadding: EdgeInsets.zero,
                       labelPadding: EdgeInsets.symmetric(horizontal: 2),
                       indicatorColor: Colors.transparent,
@@ -237,14 +245,14 @@ class _ProfilePageState extends State<ProfilePage>
                         SingleChildScrollView(
                           child: PersonalTab(
                             data: widget.data,
-                            dataReminder: widget.taskReminder ?? 0,
+                            dataReminder: widget.taskReminder,
                             updateProfile: widget.updateProfile!,
                             updateTarget: widget.updateTarget!,
-                            updateSelfReminder: widget.updateSelfReminder!,
-                            targetCtrl: widget.targetCtrl,
-                            namaCtrl: widget.namaCtrl,
-                            emailCtrl: widget.emailCtrl,
-                            phoneCtrl: widget.phoneCtrl,
+                              updateSelfReminder: widget.updateSelfReminder!,
+                              targetCtrl: widget.targetCtrl,
+                              namaCtrl: widget.namaCtrl,
+                              emailCtrl: widget.emailCtrl,
+                              phoneCtrl: widget.phoneCtrl,
                           ),
                         ),
                         HistoryTab(
@@ -253,10 +261,14 @@ class _ProfilePageState extends State<ProfilePage>
                           filter: widget.filter,
                           searchListen: widget.searchListen,
                         ),
-                        MerchantTab(),
-                        SettingTab(
-                          logoutProfile: logoutProfile,
-                        )
+                        MerchantTab(
+                          dataMerchant: widget.dataMerchant,
+                          onFotoChangedMerchant: widget.onFotoChangedMerchant,
+                          parseRadius: widget.parseRadius,
+                          updateShipmet: widget.updateShipment,
+                          objectShipment: widget.objectShipment,
+                        ),
+                        SettingTab(logoutProfile: logoutProfile,)
                       ],
                     ),
                   ),
@@ -282,14 +294,18 @@ class _ProfilePageState extends State<ProfilePage>
     return Container(
       width: 150,
       padding: EdgeInsets.all(8),
-      decoration:
-      BoxDecoration(color: colTab, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        color: colTab,
+        borderRadius: BorderRadius.circular(16)
+      ),
       child: Row(children: [
         Icon(icon, size: 11, color: colText),
         SizedBox(width: 8),
-        Text(title,
-            style: TextStyle(
-                color: colText, fontWeight: FontWeight.w600, fontSize: 10))
+        Text(title, style: TextStyle(
+          color: colText,
+          fontWeight: FontWeight.w600,
+          fontSize: 10
+        ))
       ]),
     );
   }
@@ -312,7 +328,7 @@ class _ProfilePageState extends State<ProfilePage>
 
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => LoginPage()),
-                  (Route<dynamic> route) => false);
+                      (Route<dynamic> route) => false);
             },
             child: const Text('OK'),
           ),
@@ -324,42 +340,47 @@ class _ProfilePageState extends State<ProfilePage>
 
   void chooseImage() {
     showDialog(
-        context: context,
-        builder: (ctx) => Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Center(
-            child: Material(
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: () => getImageCamera(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(children: [
-                        Icon(Icons.photo_camera,
-                            size: 24, color: Colors.black),
-                        SizedBox(width: 16),
-                        Text("Ambil Foto", style: TextStyle(fontSize: 16))
-                      ]),
-                    ),
+      context: context,
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Material(
+            borderRadius: BorderRadius.circular(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  onTap: () => getImageCamera(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(children: [
+                      Icon(Icons.photo_camera, size: 24, color: Colors.black),
+                      SizedBox(width: 16),
+                      Text("Ambil Foto", style: TextStyle(
+                          fontSize: 16
+                      ))
+                    ]),
                   ),
-                  InkWell(
-                    onTap: () => getImageGallery(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(children: [
-                        Icon(Icons.image, size: 24, color: Colors.black),
-                        SizedBox(width: 16),
-                        Text("Dari Galeri", style: TextStyle(fontSize: 16))
-                      ]),
-                    ),
-                  )
-                ],
-              ),
+                ),
+                InkWell(
+                  onTap: () => getImageGallery(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(children: [
+                      Icon(Icons.image, size: 24, color: Colors.black),
+                      SizedBox(width: 16),
+                      Text("Dari Galeri", style: TextStyle(
+                        fontSize: 16
+                      ))
+                    ]),
+                  ),
+                )
+              ],
             ),
           ),
-        ));
+        ),
+      )
+    );
   }
+
 }
