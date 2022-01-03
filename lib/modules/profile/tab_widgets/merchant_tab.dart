@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/profile_repository.dart';
+import 'package:mogawe/modules/profile/page_merchant/product_merchant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MerchantTab extends StatefulWidget {
@@ -446,7 +448,82 @@ class _MerchantTabState extends State<MerchantTab> {
                       ),
                     )
                   ],
-                )
+                ),
+                InkWell(
+                  onTap: (){
+                    openAlertBox();
+                  },
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(
+                        0, 16, 0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Text('Tambah Produk',
+                            style: FlutterFlowTheme.bodyText1
+                                .override(
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '$kurir $diantar',
+                          style: FlutterFlowTheme.bodyText1
+                              .override(
+                            fontFamily: 'Poppins',
+                            fontSize: 12,
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.black,
+                          size: 24,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductMerchantPage(supplierProduct: widget.supplierProduct,),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(
+                        0, 16, 0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Text('Semua Produk',
+                            style: FlutterFlowTheme.bodyText1
+                                .override(
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '$kurir $diantar',
+                          style: FlutterFlowTheme.bodyText1
+                              .override(
+                            fontFamily: 'Poppins',
+                            fontSize: 12,
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.black,
+                          size: 24,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -470,95 +547,106 @@ class _MerchantTabState extends State<MerchantTab> {
                 scrollDirection: Axis.vertical,
                 itemCount: widget.supplierProduct?.objectDatas?.length,
                 itemBuilder: (context, snap){
-                  final card = widget.supplierProduct?.objectDatas?[snap];
-                  return Card(
-                    clipBehavior:
-                    Clip.antiAliasWithSaveLayer,
-                    color: Color(0xFFF5F5F5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Stack(
-                          alignment:
-                          AlignmentDirectional(0, 1),
-                          children: [
-                            Image.network(
-                              '${card?.imageUrl}',
-                              width: double.infinity,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
 
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional
-                              .fromSTEB(8, 8, 8, 0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                  final card = widget.supplierProduct?.objectDatas?[snap];
+                  var currencyFormatter = NumberFormat.currency(locale: 'ID');
+                  var price = currencyFormatter.format(card?.price);
+                  var komisi = currencyFormatter.format(card?.commission);
+
+                  return InkWell(
+                    onTap: (){
+
+                    },
+                    child: Card(
+                      clipBehavior:
+                      Clip.antiAliasWithSaveLayer,
+                      color: Color(0xFFF5F5F5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Stack(
+                            alignment:
+                            AlignmentDirectional(0, 1),
                             children: [
-                              Text(
-                                'Baju Batik Oke',
-                                style: FlutterFlowTheme
-                                    .bodyText1
-                                    .override(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 12,
-                                ),
+                              Image.network(
+                                '${card?.imageUrl}',
+                                width: double.infinity,
+                                height: 100,
+                                fit: BoxFit.cover,
                               ),
-                              Padding(
-                                padding:
-                                EdgeInsetsDirectional
-                                    .fromSTEB(
-                                    0, 4, 0, 0),
-                                child: Row(
-                                  mainAxisSize:
-                                  MainAxisSize.max,
-                                  mainAxisAlignment:
-                                  MainAxisAlignment
-                                      .spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Rp100.000',
-                                      style:
-                                      FlutterFlowTheme
-                                          .bodyText1
-                                          .override(
-                                        fontFamily:
-                                        'Poppins',
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Rp10.000',
-                                      style:
-                                      FlutterFlowTheme
-                                          .bodyText1
-                                          .override(
-                                        fontFamily:
-                                        'Poppins',
-                                        fontSize: 11,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
+
                             ],
                           ),
-                        )
-                      ],
+                          Padding(
+                            padding: EdgeInsetsDirectional
+                                .fromSTEB(8, 8, 8, 0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${card?.name}',
+                                  style: FlutterFlowTheme
+                                      .bodyText1
+                                      .override(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                  EdgeInsetsDirectional
+                                      .fromSTEB(
+                                      0, 4, 0, 0),
+                                  child: Row(
+                                    mainAxisSize:
+                                    MainAxisSize.max,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Rp${price.replaceAll('IDR', '').replaceAll(',00', '')}',
+                                        style:
+                                        FlutterFlowTheme
+                                            .bodyText1
+                                            .override(
+                                          fontFamily:
+                                          'Poppins',
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Rp${komisi.replaceAll('IDR', '').replaceAll(',00', '')}',
+                                        style:
+                                        FlutterFlowTheme
+                                            .bodyText1
+                                            .override(
+                                          fontFamily:
+                                          'Poppins',
+                                          fontSize: 11,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   );
                 }
             ),
           ),
-        )
+        ),
+        SizedBox(height: 10,)
       ],
     );
   }

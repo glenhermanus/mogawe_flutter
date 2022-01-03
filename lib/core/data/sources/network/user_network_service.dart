@@ -173,6 +173,22 @@ class UserNetworkService {
     }
   }
 
+  Future<SupplierProduct> SearchProductMerchant(token, string) async {
+    final requestUrl = '$BASE_URL/api/supplier/product/get?q=$string&page=1&offset=30';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return SupplierProduct.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
+    }
+  }
+
   Future<FavHireMeSalesResponses> favhiremeSalesresponse(token) async {
 
     print(token);

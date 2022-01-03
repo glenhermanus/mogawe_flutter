@@ -109,6 +109,10 @@ class AuthRepository extends NetworkService {
     return _apiService.SearchhiremeSalesresponse(token, string);
   }
 
+  Future<SupplierProduct> SearchProductMerchants(token, string) async {
+    return _apiService.SearchProductMerchant(token, string);
+  }
+
   Future<FavHireMeSalesResponses> favhiremeSalesdata(token) async {
     return _apiService.favhiremeSalesresponse(token);
   }
