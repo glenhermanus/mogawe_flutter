@@ -11,6 +11,8 @@ import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/data/response/hire_me/seller_addres_response.dart';
 import 'package:mogawe/core/data/response/hire_me/servis_ekspedisi_response.dart';
 import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
+import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
+import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
@@ -151,6 +153,23 @@ class UserNetworkService {
     final maps = json.decode(response.body);
     if (maps.isNotEmpty) {
       return HireMeSalesResponses.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future<AddressPickupMerchant> AddressPickupMerchants(token) async {
+    print(token);
+    final requestUrl = '$BASE_URL/api/mogawers/supplier/address/get';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return AddressPickupMerchant.fromJson(maps);
     }
     else {
       throw Exception('not found');

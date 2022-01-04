@@ -1,10 +1,17 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
+import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/profile/page_merchant/atur_pengiriman.dart';
 
 class AddProductMerchant extends StatefulWidget {
   const AddProductMerchant({Key? key}) : super(key: key);
@@ -17,9 +24,10 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
   bool _loadingButton = false;
   TextEditingController textController = new TextEditingController();
   TextEditingController hargactrl = new TextEditingController();
-
+  TextEditingController komisictrl = new TextEditingController();
   CategoryListResponse? category;
-  int?  indexSelect;
+  AddressPickupMerchant? addressPickupMerchant;
+  int?  indexSelect, indexSelectAddress, indexSelectDanger, indexSelectStok;
   var listcategory_, valuelist =
   {
     'name' : 'Semua Kategori',
@@ -27,12 +35,57 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
   };
   var token;
   bool loading_category = false;
-  var nameCategory, uuidCategory, nameCategoryValue, uuidCategoryValue, name;
+  var nameCategory, uuidCategory, nameCategoryValue, uuidCategoryValue, name, stokValue;
   var value;
   bool loading = false;
-  var categoryValue;
-  String? harga;
+  var categoryValue, addresValue, dangerValue;
+  String? harga, komisi;
+  var ProdukBerbahayalist =
+  [{
+    'name' : 'Ya (Mengandung magnet/baterai\n/cairan/bahan mudah terbakar',
+    'isDangerous' : 'true',
+  },
+    {
+      'name' : 'Tidak',
+      'isDangerous' : 'false',
+    },
 
+  ];
+  var stock =[
+    {
+      'name' : 'Tersedia',
+      'stock' : 'true',
+    },
+    {
+      'name' : 'Tidak Tersedia',
+      'stok' : 'false',
+    },
+  ];
+  final picker = ImagePicker();
+  File? photo;
+  String? path;
+
+  Future getImageGallery() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      photo = File(pickedFile.path);
+      path = photo?.path.split('/').last;
+      //widget.onFotoChangedMerchant!(photo!);
+    } else {
+      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
+    }
+  }
+
+  Future getImageCamera() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      photo = File(pickedFile.path);
+      path = photo!.path.split('/').last;
+      //  widget.onFotoChangedMerchant!(photo!);
+    } else {
+      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
+    }
+  }
 
   Future getCategory()async{
     setState(() {
@@ -42,6 +95,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
 
     token = await AuthRepository().readSecureData('token');
     category = await AuthRepository().getCategorydata(token);
+    addressPickupMerchant = await AuthRepository().getAddresPickupMerchant(token);
 
     setState(() {
       loading = false;
@@ -121,6 +175,66 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
             }));
   }
 
+  openAlertBoxAlamat() {
+    final node = FocusScope.of(context);
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return AlertDialog(
+                contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
+
+                content: Container(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Text(
+                          "Alamat Pickup", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
+                            fontSize: 16),
+                        ),
+                        SizedBox(height: 10,),
+                        Container(
+                          width: 300,
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          child: ListView.builder(
+                              itemCount: addressPickupMerchant?.object.length,
+                              itemBuilder: (context, snap){
+                                final listValue = addressPickupMerchant?.object[snap];
+
+                                return InkWell(
+                                  onTap: (){
+                                    stateSetter(() {
+                                      addresValue = addressPickupMerchant?.object[snap];
+                                      indexSelectAddress = snap;
+                                      node.nextFocus();
+                                      Navigator.pop(context);
+                                    });
+
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                    child: Container(
+                                        width: 300,
+                                        child: Text('${listValue?.name}')
+                                    ),
+                                  ),
+                                );
+                              }),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+
+              );
+            }));
+  }
+
   openAlertBoxProdukBerbahaya() {
     final node = FocusScope.of(context);
     return showDialog(
@@ -149,16 +263,14 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                             width: 300,
                             height:  MediaQuery.of(context).size.height * 0.6,
                             child: ListView.builder(
-                                itemCount: category?.object?.length,
+                                itemCount: ProdukBerbahayalist.length,
                                 itemBuilder: (context, snap){
-                                  final listValue = category?.object?[snap];
-
-
+                                  final listValue = ProdukBerbahayalist[snap];
                                   return InkWell(
                                     onTap: (){
                                       stateSetter(() {
-                                        categoryValue = category?.object?[snap];
-                                        indexSelect = snap;
+                                        dangerValue = ProdukBerbahayalist[snap];
+                                        indexSelectDanger = snap;
                                         node.nextFocus();
                                         Navigator.pop(context);
                                       });
@@ -168,7 +280,68 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                                       padding: const EdgeInsets.only(top: 10, bottom: 10),
                                       child: Container(
                                           width: 300,
-                                          child: Text('${listValue?.name}')
+                                          child: Text('${listValue['name']}')
+                                      ),
+                                    ),
+                                  );
+                                }),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+
+              );
+            }));
+  }
+
+  openAlertBoxStok() {
+    final node = FocusScope.of(context);
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return AlertDialog(
+                contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
+
+                content: Container(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Text(
+                          "Kategori Produk", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
+                            fontSize: 16),
+                        ),
+                        SizedBox(height: 10,),
+                        Expanded(
+                          child: Container(
+                            width: 300,
+                            height:  MediaQuery.of(context).size.height * 0.6,
+                            child: ListView.builder(
+                                itemCount: stock.length,
+                                itemBuilder: (context, snap){
+                                  final listValue = stock[snap];
+                                  return InkWell(
+                                    onTap: (){
+                                      stateSetter(() {
+                                        stokValue = stock[snap];
+                                        indexSelectStok = snap;
+                                        node.nextFocus();
+                                        Navigator.pop(context);
+                                      });
+
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                      child: Container(
+                                          width: 300,
+                                          child: Text('${listValue['name']}')
                                       ),
                                     ),
                                   );
@@ -187,6 +360,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
   void showEditDialog(BuildContext ctx,
       {String? title, Function(String v)? onChanged, TextInputType? type,
         String? value, bool isGender = false, String? field, TextEditingController? ctrl}) {
+    var maskFormatter = new NumberFormat.currency(locale: 'id');
     showDialog(
         context: ctx,
         builder: (ctx) => AlertDialog(
@@ -225,8 +399,19 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
               child: Text("OK"),
               onPressed: () {
                 if (value != null) {
-                  harga = hargactrl.text;
-                  Navigator.pop(context);
+                  setState(() {
+                    var formatterKomisi;
+                    final formatter = new NumberFormat.currency(locale: 'id', symbol: 'Rp', decimalDigits: 0).format(double.parse(hargactrl.text??''));
+                    harga = formatter;
+                    Navigator.pop(context);
+                  });
+                }
+                if(komisictrl.text != null){
+                  setState(() {
+                    var formatterKomisi;
+                    formatterKomisi = new NumberFormat.currency(locale: 'id', symbol: 'Rp', decimalDigits: 0).format(double.parse(komisictrl.text??''));
+                    komisi = formatterKomisi;
+                  });
                 }
                 else Fluttertoast.showToast(msg: "Harus diisi");
               },
@@ -540,35 +725,46 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.home_outlined),
-                          SizedBox(width: 10,),
-                          Text('Alamat PickUp*'),
-                        ],
-                      ),
-                      Icon(Icons.arrow_forward_ios, size: 14,)
-                    ],
+                  InkWell(
+                    onTap: ()=> openAlertBoxAlamat(),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.home_outlined),
+                            SizedBox(width: 10,),
+                            Text('Alamat PickUp*'),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              child: addresValue  == null ? Text('') : Text('${addresValue.name}'),
+                            ),
+                            SizedBox(width: 10,),
+                            Icon(Icons.arrow_forward_ios, size: 14,),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(height: 16,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.list),
-                          SizedBox(width: 10,),
-                          Text('Kategori *'),
-                        ],
-                      ),
-                      InkWell(
-                        onTap: () {
-                              openAlertBoxKategori();
-                          },
-                        child: Row(
+                  InkWell(
+                    onTap: () {
+                      openAlertBoxKategori();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.list),
+                            SizedBox(width: 10,),
+                            Text('Kategori *'),
+                          ],
+                        ),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
@@ -577,30 +773,43 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                             SizedBox(width: 10,),
                             Icon(Icons.arrow_forward_ios, size: 14,),
                           ],
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(height: 16,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.info_outline),
-                          SizedBox(width: 10,),
-                          Text('Produk Berbahaya *'),
-                        ],
-                      ),
-                      Icon(Icons.arrow_forward_ios, size: 14,)
-                    ],
+                  InkWell(
+                    onTap: (){
+                      openAlertBoxProdukBerbahaya();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.info_outline),
+                            SizedBox(width: 10,),
+                            Text('Produk Berbahaya *'),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              child: dangerValue  == null ? Text('') : Text('${dangerValue['name'].split('(').first}'),
+                            ),
+                            SizedBox(width: 10,),
+                            Icon(Icons.arrow_forward_ios, size: 14,),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(height: 16,),
                   InkWell(
                     onTap: ()=> showEditDialog(
                         context,
                         title: "Rekomendasi Harga Produk ",
-                        type: TextInputType.number,
+                        type: TextInputType.numberWithOptions(),
                         value: harga,
                         field: "phone",
                         ctrl: hargactrl,
@@ -624,7 +833,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              child: Text('$harga'),
+                              child: harga != null ? Text('$harga') : Text(''),
                             ),
                             SizedBox(width: 10,),
                             Icon(Icons.arrow_forward_ios, size: 14,),
@@ -639,9 +848,9 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                         context,
                         title: "Komisi Produk ",
                         type: TextInputType.number,
-                        value: harga,
+                        value: komisi,
                         field: "phone",
-                        ctrl: hargactrl,
+                        ctrl: komisictrl,
                         onChanged: (v) {
                           // phone = v;
                           // if (v.isEmpty) phone = null;
@@ -658,37 +867,64 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                             Text('Komisi *'),
                           ],
                         ),
-                        Icon(Icons.arrow_forward_ios, size: 14,)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: komisi != null ? Text('$komisi') : Text(''),
+                            ),
+                            SizedBox(width: 10,),
+                            Icon(Icons.arrow_forward_ios, size: 14,),
+                          ],
+                        )
                       ],
                     ),
                   ),
                   SizedBox(height: 16,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.category),
-                          SizedBox(width: 10,),
-                          Text('Stok *'),
-                        ],
-                      ),
-                      Icon(Icons.arrow_forward_ios, size: 14,)
-                    ],
+                  InkWell(
+                    onTap: ()=> openAlertBoxStok(),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.category),
+                            SizedBox(width: 10,),
+                            Text('Stok *'),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: stokValue != null ? Text('${stokValue['name']}') : Text(''),
+                            ),
+                            SizedBox(width: 10,),
+                            Icon(Icons.arrow_forward_ios, size: 14,),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(height: 16,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.inbox),
-                          SizedBox(width: 10,),
-                          Text('Pengiriman *'),
-                        ],
-                      ),
-                      Icon(Icons.arrow_forward_ios, size: 14,)
-                    ],
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) => AturPengiriman()));
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.inbox),
+                            SizedBox(width: 10,),
+                            Text('Pengiriman *'),
+                          ],
+                        ),
+                        Icon(Icons.arrow_forward_ios, size: 14,)
+                      ],
+                    ),
                   ),
                   SizedBox(height: 16,),
 
@@ -728,3 +964,5 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
 
 
 }
+
+
