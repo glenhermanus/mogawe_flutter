@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,10 +9,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
 import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
+import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/page_merchant/atur_pengiriman.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddProductMerchant extends StatefulWidget {
   const AddProductMerchant({Key? key}) : super(key: key);
@@ -24,6 +28,10 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
   bool _loadingButton = false;
   TextEditingController textController = new TextEditingController();
   TextEditingController hargactrl = new TextEditingController();
+  TextEditingController namactrl = new TextEditingController();
+  TextEditingController deskripsictrl = new TextEditingController();
+  TextEditingController youtubeUrlctrl = new TextEditingController();
+  TextEditingController brandctrl = new TextEditingController();
   TextEditingController komisictrl = new TextEditingController();
   CategoryListResponse? category;
   AddressPickupMerchant? addressPickupMerchant;
@@ -40,6 +48,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
   bool loading = false;
   var categoryValue, addresValue, dangerValue;
   String? harga, komisi;
+  List ValueImage=[];
   var ProdukBerbahayalist =
   [{
     'name' : 'Ya (Mengandung magnet/baterai\n/cairan/bahan mudah terbakar',
@@ -63,28 +72,76 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
   ];
   final picker = ImagePicker();
   File? photo;
-  String? path;
+  List<File>? photos;
+  String? path, fileName;
+
+  // Future getImageGallery() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, type: FileType.image);
+  //
+  //   if(result != null) {
+  //     photos = result.paths.map((path) => File(path!)).toList();
+  //   } else {
+  //     // User canceled the picker
+  //   }
+  //   if (!mounted) return;
+  //
+  //   setState(() {
+  //     fileName = photos != null ? photos!.map((e) => e.toString()).toString() : 'error';
+  //     uploadFoto(photo, token);
+  //   });
+  // }
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      photo = File(pickedFile.path);
-      path = photo?.path.split('/').last;
-      //widget.onFotoChangedMerchant!(photo!);
-    } else {
-      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
-    }
+    setState(() {
+      if (pickedFile != null) {
+        photo = File(pickedFile.path);
+        path = photo?.path.split('/').last;
+        uploadFoto(photo!, token);
+        Navigator.pop(context);
+      } else {
+        Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
+      }
+    });
+
   }
 
+  void uploadFoto(File foto, token)async{
+    var map = {
+      "file": foto
+    };
+   var res= await ProfileRepository().addPhotoProduct(map, realToken: token);
+   setState(() {
+     print('qbc');
+     ValueImage.add({
+       "uuid":"",
+       "uuidProduct":"",
+       "value":res.object,
+       "mainPicture":false,
+       "sequence":0
+     });
+     print(ValueImage);
+   });
+
+  }
+  Future<String> getShipmentValue ()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('shipmenttoApi') ?? '';
+  }
   Future getImageCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      photo = File(pickedFile.path);
-      path = photo!.path.split('/').last;
-      //  widget.onFotoChangedMerchant!(photo!);
-    } else {
-      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
-    }
+    setState(() {
+      if (pickedFile != null) {
+        photo = File(pickedFile.path);
+        path = photo?.path.split('/').last;
+        uploadFoto(photo!, token);
+        Navigator.pop(context);
+        //  widget.onFotoChangedMerchant!(photo!);
+      } else {
+        Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
+      }
+    });
+
   }
 
   Future getCategory()async{
@@ -422,6 +479,22 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
     );
   }
 
+  Widget munculingambar(BuildContext context){
+    var size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width / 2;
+    return Stack(
+      children: [
+        SafeArea(
+            child: Image.file(File(photo!.path), height: 50, fit: BoxFit.fill,
+            ),
+          ),
+      ],
+    );
+
+
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -460,17 +533,36 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                 children: [
                   Text('Gambar Produk *'),
                   SizedBox(height: 10,),
-                  DottedBorder(
-                    borderType: BorderType.RRect,
-                    strokeWidth: 1,
-                    color: Colors.black54,
-                    child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Icon(
-                          Icons.add, color: Colors.red,
+                  InkWell(
+                    onTap: ()=> chooseImage(),
+                    child: Row(
+                      children: [
+                        photo != null ? DottedBorder(
+                          borderType: BorderType.RRect,
+                          strokeWidth: 1,
+                          color: Colors.black54,
+                          child: Container(
+                            width: 40,
+                            height: 50,
+                            child: munculingambar(context),
+                          ),
+                        ) : Container(),
+                        SizedBox(width: 10,),
+                        DottedBorder(
+                          borderType: BorderType.RRect,
+                          strokeWidth: 1,
+                          color: Colors.black54,
+                          child: Container(
+                            height: 50,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.add, color: Colors.red,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   )
                 ],
@@ -487,15 +579,15 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Gambar Produk *'),
+                  Text('Nama Produk *'),
                   SizedBox(height: 10,),
                   Container(
                     decoration: BoxDecoration(),
                     child: TextFormField(
-                      controller: textController,
+                      controller: namactrl,
                       obscureText: false,
                       decoration: InputDecoration(
-                        hintText: 'search',
+                        hintText: 'Nama Produk',
                         hintStyle: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                         ),
@@ -551,10 +643,10 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                   Container(
                     decoration: BoxDecoration(),
                     child: TextFormField(
-                      controller: textController,
+                      controller: deskripsictrl,
                       obscureText: false,
                       decoration: InputDecoration(
-                        hintText: 'search',
+                        hintText: 'Deskripsi',
                         hintStyle: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                         ),
@@ -612,10 +704,10 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                   Container(
                     decoration: BoxDecoration(),
                     child: TextFormField(
-                      controller: textController,
+                      controller: youtubeUrlctrl,
                       obscureText: false,
                       decoration: InputDecoration(
-                        hintText: 'search',
+                        hintText: 'Youtube Url',
                         hintStyle: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                         ),
@@ -671,10 +763,10 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                   Container(
                     decoration: BoxDecoration(),
                     child: TextFormField(
-                      controller: textController,
+                      controller: brandctrl,
                       obscureText: false,
                       decoration: InputDecoration(
-                        hintText: 'search',
+                        hintText: 'Brand',
                         hintStyle: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                         ),
@@ -936,7 +1028,30 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 16),
             child: FFButtonWidget(
-              onPressed: () {
+              onPressed: ()async{
+                String shipping ='';
+                setState(() {
+                  getShipmentValue().then((value) {
+                    setState(() {
+                      shipping = value;
+                    });
+                  });
+                });
+                var berat = await AuthRepository().readSecureData('beratbarang');
+
+                try{
+                  await UserNetworkService().InputProduct(token, categoryValue.uuid, namactrl.text, deskripsictrl.text, brandctrl.text, dangerValue['isDangerous'],
+                      berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text), stokValue['stok'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
+                      true, ValueImage, false, false, true,
+                      true, true, shipping);
+                  Fluttertoast.showToast(msg: "Berhasil");
+                }catch(e){
+
+                  Fluttertoast.showToast(msg: "$e");
+                }
+
+
+
 
               },
               text: 'Simpan',
@@ -962,6 +1077,50 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
     );
   }
 
+  void chooseImage() {
+    showDialog(
+        context: context,
+        builder: (ctx) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Material(
+              borderRadius: BorderRadius.circular(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () => getImageCamera(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(children: [
+                        Icon(Icons.photo_camera, size: 24, color: Colors.black),
+                        SizedBox(width: 16),
+                        Text("Ambil Foto", style: TextStyle(
+                            fontSize: 16
+                        ))
+                      ]),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => getImageGallery(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(children: [
+                        Icon(Icons.image, size: 24, color: Colors.black),
+                        SizedBox(width: 16),
+                        Text("Dari Galeri", style: TextStyle(
+                            fontSize: 16
+                        ))
+                      ]),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        )
+    );
+  }
 
 }
 

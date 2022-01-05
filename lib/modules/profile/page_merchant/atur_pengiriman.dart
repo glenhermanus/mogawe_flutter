@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/profile/page_merchant/add_product_merchant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AturPengiriman extends StatefulWidget {
@@ -18,38 +21,24 @@ class _AturPengirimanState extends State<AturPengiriman> {
   TextEditingController textController = new TextEditingController();
   bool valueswitchDiantar = false;
   bool valueswitchKurir = false;
+  bool valueswitchEkspedisi = false;
   bool loading = false;
+  bool _loadingButton =false;
   final picker = ImagePicker();
   File? photo;
   String? path;
   String diantar ='';
   String kurir ='';
-
-  Future getImageGallery() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      photo = File(pickedFile.path);
-      path = photo?.path.split('/').last;
-      //widget.onFotoChangedMerchant!(photo!);
-    } else {
-      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
-    }
-  }
-
-  Future getImageCamera() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      photo = File(pickedFile.path);
-      path = photo!.path.split('/').last;
-    //  widget.onFotoChangedMerchant!(photo!);
-    } else {
-      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
-    }
-  }
+  String textShipment ='';
 
   void setisDiantar(bool antar) async{
     SharedPreferences cekAntar = await SharedPreferences.getInstance();
     cekAntar.setBool('diantar', antar);
+  }
+
+  void valueEkspedisi(bool ekspedisi) async{
+    SharedPreferences cekAntar = await SharedPreferences.getInstance();
+    cekAntar.setBool('valueEkspedisi', ekspedisi);
   }
 
   void setisKurirToko(bool antar) async{
@@ -67,27 +56,34 @@ class _AturPengirimanState extends State<AturPengiriman> {
     return prefs.getBool('diantar') ?? false;
   }
 
+  Future<String> getShipmentValue()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('shipment') ?? '';
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getcekAntar().then((value) {
       valueswitchDiantar = value;
-      if(valueswitchDiantar == true) {
-        diantar = 'Diantar Mogawers';
-      }
-      else{
-        diantar = '';
-      }
+
     });
     getcekKurirToko().then((value) {
       valueswitchKurir = value;
-      if(valueswitchKurir == true){
-        kurir = 'Kurir Toko,';
-      }
-      else{
-        kurir = '';
-      }
+
+    });
+    getShipmentValue().then((value) {
+      textShipment = value;
+      setState(() {
+        if (textShipment == null){
+          valueswitchEkspedisi = false;
+        }else{
+          valueswitchEkspedisi = true;
+        }
+      });
+
+
     });
   }
 
@@ -231,8 +227,64 @@ class _AturPengirimanState extends State<AturPengiriman> {
                       ),
                     ],
                   ),
+                  Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+
+                        children: [
+                          Image.asset('assets/icon/ic_kurir_toko.png', width: 20,),
+                          SizedBox(width: 10,),
+                          Row(
+                            children: [
+                              Text('Ekspedisi', style: FlutterFlowTheme.bodyText1,),
+                              SizedBox(width: 10,),
+                              Text('$textShipment', style: FlutterFlowTheme.bodyText1.copyWith(fontSize: 12, color: Colors.red),)
+                            ],
+                          ),
+                        ],
+                      ),
+                      Switch(
+                          value: valueswitchEkspedisi,
+                          onChanged: (v){
+                            setState(() {
+                              valueswitchEkspedisi = v;
+
+                            });
+
+                          }
+                      ),
+                    ],
+                  ),
                 ],
               ),
+            ),
+          ),
+          SizedBox(height: 10,),
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(16, 30, 16, 16),
+            child: FFButtonWidget(
+              onPressed: () async{
+                valueEkspedisi(valueswitchEkspedisi);
+                await AuthRepository().writeSecureData('beratbarang', textController.text);
+                Navigator.pop(context);
+
+              },
+              text: 'Simpan',
+              options: FFButtonOptions(
+                width: double.infinity,
+                height: 56,
+                color: FlutterFlowTheme.primaryColor,
+                textStyle: FlutterFlowTheme.subtitle2.override(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                ),
+                borderSide: BorderSide(
+                  color: Colors.transparent,
+                  width: 1,
+                ),
+                borderRadius: 12,
+              ),
+              loading: _loadingButton,
             ),
           )
         ],

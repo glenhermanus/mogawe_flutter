@@ -120,6 +120,14 @@ class ProfileRepository extends NetworkService {
     return UpdateResponseMerchant.fromJson(map);
   }
 
+  Future<UpdateResponseMerchant> addPhotoProduct(Map<String, File> body, {String? realToken}) async {
+    print(realToken);
+    var header = { token: realToken! }; //Use realToken when implement get from original token
+    var map = await multipartUpdate("${BASE_URL}api/supplier/product/image/upload",
+        files: body, header: header);
+    return UpdateResponseMerchant.fromJson(map);
+  }
+
   Future<SelfpickRadiusResponse> updateselPickup(Map<String, int> body, {String? realToken}) async {
     print(realToken);
     var header = {

@@ -94,6 +94,13 @@ class _MerchantTabState extends State<MerchantTab> {
     shipmentValue.setString('shipment', shipment);
   }
 
+  void setShipmentStringtoApi (shipment) async{
+    SharedPreferences shipmentValue = await SharedPreferences.getInstance();
+    shipmentValue.setString('shipmenttoApi', shipment);
+  }
+
+
+
   void setShipmentBool(shipment) async{
     SharedPreferences shipmentValue = await SharedPreferences.getInstance();
     shipmentValue.setString('shipmentString', shipment);
@@ -902,6 +909,7 @@ class _MerchantTabState extends State<MerchantTab> {
                         // setShipmentBool(codeShipment);
                         // setShipmentSelect(valuesShipment);
                         setShipment(convertnonfinal);
+                        setShipmentStringtoApi(convertValueFinal);
 
                         getShipmentValue().then((value) {
                           textShipment = value;

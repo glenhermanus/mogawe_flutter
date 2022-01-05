@@ -208,6 +208,40 @@ class UserNetworkService {
     }
   }
 
+  Future  InputProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
+      isPublished, images, isFavorite, isFreeOngkir, isShippingTakeAway, isShippingOwnCourier, isShippingExpedition, shippingExpeditionService) async {
+    final requestUrl = '$BASE_URL/api/supplier/product';
+    final response = await http.post(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+        body: jsonEncode(<String, dynamic>{
+          "uuidCategory": uuidCategory,
+          "name":name,
+          "description":desk,
+          "brand":brand,
+          "isDangerous": isDangerous,
+          "weight":berat,
+          "width":0.0,
+          "height":0.0,
+          "length":0.0,
+          "condition":"new",
+          "price":price,
+          "commission":commission,
+          "stock":stock,
+          "youtubeUrl":youtubeurl,
+          "isPublished":true,
+          "images":images,
+          "isFavorite":false,
+          "isFreeOngkir":false,
+          "isShippingTakeAway":isShippingTakeAway,
+          "isShippingOwnCourier": isShippingOwnCourier,
+          "isShippingExpedition": isShippingExpedition,
+          "shippingExpeditionServices":shippingExpeditionService}
+    ));
+    return json.decode(response.body);
+  }
+
   Future<FavHireMeSalesResponses> favhiremeSalesresponse(token) async {
 
     print(token);
