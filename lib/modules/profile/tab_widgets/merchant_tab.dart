@@ -11,7 +11,10 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/profile_repository.dart';
+import 'package:mogawe/modules/profile/page_merchant/add_product_merchant.dart';
 import 'package:mogawe/modules/profile/page_merchant/product_merchant.dart';
+import 'package:mogawe/modules/profile/screens/address_pickup_screen.dart';
+import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MerchantTab extends StatefulWidget {
@@ -452,22 +455,17 @@ class _MerchantTabState extends State<MerchantTab> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Text(
-                      'Semua Produk',
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
-                        fontFamily: 'Poppins',
-                        color:
-                        FlutterFlowTheme.primaryColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
+
                   ],
                 ),
-                InkWell(
+                BounceTap(
                   onTap: (){
-                    openAlertBox();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddProductMerchant(),
+                      ),
+                    );
                   },
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(
@@ -483,14 +481,7 @@ class _MerchantTabState extends State<MerchantTab> {
                             ),
                           ),
                         ),
-                        Text(
-                          '$kurir $diantar',
-                          style: FlutterFlowTheme.bodyText1
-                              .override(
-                            fontFamily: 'Poppins',
-                            fontSize: 12,
-                          ),
-                        ),
+
                         Icon(
                           Icons.chevron_right,
                           color: Colors.black,
@@ -500,7 +491,7 @@ class _MerchantTabState extends State<MerchantTab> {
                     ),
                   ),
                 ),
-                InkWell(
+                BounceTap(
                   onTap: (){
                     Navigator.push(
                       context,
@@ -523,14 +514,7 @@ class _MerchantTabState extends State<MerchantTab> {
                             ),
                           ),
                         ),
-                        Text(
-                          '$kurir $diantar',
-                          style: FlutterFlowTheme.bodyText1
-                              .override(
-                            fontFamily: 'Poppins',
-                            fontSize: 12,
-                          ),
-                        ),
+
                         Icon(
                           Icons.chevron_right,
                           color: Colors.black,
