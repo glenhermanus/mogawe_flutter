@@ -329,10 +329,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
         if (state is ShowErrorGetMerchantState) {
           checkLoading();
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>
-                HomePage()), (route) => false);
-          });
+          // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>
+          //       HomePage()), (route) => false);
+          // });
           return layout();
         }
         return Container();

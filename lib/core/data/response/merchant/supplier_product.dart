@@ -30,7 +30,7 @@ class SupplierProduct {
     rowCount: json["rowCount"],
     pageCount: json["pageCount"],
     offset: json["offset"],
-    objectDatas: List<ObjectDatas>.from(json["object"].map((x) => ObjectDatas.fromJson(x))),
+    objectDatas: json["object"] == null? null: List<ObjectDatas>.from(json["object"].map((x) => ObjectDatas.fromJson(x))),
     res: json["res"],
   );
 

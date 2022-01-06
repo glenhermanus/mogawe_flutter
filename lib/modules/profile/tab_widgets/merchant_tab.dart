@@ -9,6 +9,7 @@ import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
+import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/page_merchant/add_product_merchant.dart';
@@ -31,7 +32,7 @@ class MerchantTab extends StatefulWidget {
 }
 
 class _MerchantTabState extends State<MerchantTab> {
-
+  bool _loadingButtonMulai = false;
   bool loading = false;
   final picker = ImagePicker();
   File? photo;
@@ -242,7 +243,40 @@ class _MerchantTabState extends State<MerchantTab> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return widget.supplierProduct?.returnValue != '000' ? ListView(children: [
+      Center(
+        child: Column(
+          children: [
+            Image.asset('assets/images/im_no_job.png'),
+            SizedBox(height: 10,),
+            Text('Kamu belum buka toko nih, yuk jualin\ndagangan mu disini', textAlign: TextAlign.center, style: FlutterFlowTheme.bodyText2,),
+            SizedBox(height: 10,),
+            FFButtonWidget(
+              onPressed: () {
+                print('Button pressed ...');
+              },
+              text: 'Mulai Jualan',
+              options: FFButtonOptions(
+
+                height: 32,
+                color: FlutterFlowTheme.secondaryColor,
+                textStyle: FlutterFlowTheme.bodyText1.override(
+                  fontFamily: 'Poppins',
+                  color: FlutterFlowTheme.primaryColor,
+                  fontSize: 12,
+                ),
+                borderSide: BorderSide(
+                  color: FlutterFlowTheme.primaryColor,
+                  width: 1,
+                ),
+                borderRadius: 12,
+              ),
+              loading: _loadingButtonMulai,
+            )
+          ],
+        ),
+      )
+    ],) : ListView(
       children: [
         Padding(
           padding: EdgeInsetsDirectional.fromSTEB(
