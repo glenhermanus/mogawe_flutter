@@ -67,7 +67,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
     },
     {
       'name' : 'Tidak Tersedia',
-      'stok' : 'false',
+      'stock' : 'false',
     },
   ];
   final picker = ImagePicker();
@@ -372,7 +372,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
                         Text(
-                          "Kategori Produk", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
+                          "Stok Produk", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
                             fontSize: 16),
                         ),
                         SizedBox(height: 10,),
@@ -1041,7 +1041,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
 
                 try{
                   await UserNetworkService().InputProduct(token, categoryValue.uuid, namactrl.text, deskripsictrl.text, brandctrl.text, dangerValue['isDangerous'],
-                      berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text), stokValue['stok'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
+                      berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text), stokValue['stock'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
                       true, ValueImage, false, false, true,
                       true, true, shipping);
                   Fluttertoast.showToast(msg: "Berhasil");
