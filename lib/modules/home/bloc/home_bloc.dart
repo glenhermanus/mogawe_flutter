@@ -18,7 +18,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
     _userToken = await AuthRepository().readSecureData('token');
-
+    print("TOken is " + _userToken);
     if (event is GetAdsBanner) {
       yield ShowLoadingAds();
       try {
@@ -38,6 +38,5 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         yield ShowErrorCertificateState("$ex");
       }
     }
-
   }
 }

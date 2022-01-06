@@ -10,7 +10,6 @@ import 'package:mogawe/modules/home/home_page.dart';
 import 'package:mogawe/modules/profile/blocs/profile_event.dart';
 import 'package:mogawe/modules/profile/blocs/profile_state.dart';
 import 'package:mogawe/modules/profile/profile_page.dart';
-import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
 import 'package:mogawe/utils/ui/widgets/app_util.dart';
 
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
@@ -84,6 +83,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return layout();
         }
         if (state is ShowLoadingSelfPickRadiusState) {
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            AppUtil.show(context);
+          });
+          isLoading = true;
+          return layout();
+        }
+        if (state is ShowLoadingShipmentState) {
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             AppUtil.show(context);
           });
@@ -213,9 +219,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
         if (state is ShowErrorGetProfileState) {
           checkLoading();
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) { 
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>
-            LoginPage()), (route) => false);
+                LoginPage()), (route) => false);
           });
           return layout();
         }
@@ -236,6 +242,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return layout();
         }
         if (state is ShowErrorSelfPickRadiusState) {
+          checkLoading();
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.message,
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white
+                ),
+              ),
+              backgroundColor: FlutterFlowTheme.primaryColor,
+            ));
+          });
+          return layout();
+        }
+        if (state is ShowErrorShipmentCourierState) {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -339,10 +361,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     updateProfile: (map) => bloc.add(DoUpdateProfileEvent(map)),
     updateTarget: (map) => bloc.add(DoUpdateTargetRevenueEvent(map)),
     updateSelfReminder: (map) => bloc.add(DoUpdateSelfReminderEvent(map)),
-      targetCtrl: targetCtrl,
-      namaCtrl: namaCtrl,
-      emailCtrl: emailCtrl,
-      phoneCtrl: phoneCtrl,
+    targetCtrl: targetCtrl,
+    namaCtrl: namaCtrl,
+    emailCtrl: emailCtrl,
+    phoneCtrl: phoneCtrl,
     taskReminder: taskReminder,
     onFotoChanged: (v) {
       var map = {

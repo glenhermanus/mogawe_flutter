@@ -32,7 +32,6 @@ class _SalesAddressState extends State<SalesAddress> {
   Future getdata() async{
     setState(() {
       loading = true;
-
     });
 
     token = await AuthRepository().readSecureData('token');
