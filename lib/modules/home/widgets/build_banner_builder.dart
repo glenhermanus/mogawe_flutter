@@ -82,17 +82,20 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
           String image = ads[index].pictureUrl == ""
               ? placeHolder
               : ads[index].pictureUrl;
-          return Container(
-              width: 330,
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              child: BounceTap(
-                onTap: () => _handleBannerClick(ads[index]),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image.network(
-                        image,
-                        fit: BoxFit.fill)),
-              ));
+          return BounceTap(
+            onTap: () => _handleBannerClick(ads[index]),
+            child: Container(
+                width: 330,
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                child: BounceTap(
+                  onTap: () => _handleBannerClick(ads[index]),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.network(
+                          image,
+                          fit: BoxFit.fill)),
+                )),
+          );
         },
       ),
     );
