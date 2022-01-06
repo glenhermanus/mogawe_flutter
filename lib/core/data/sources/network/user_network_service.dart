@@ -210,7 +210,7 @@ class UserNetworkService {
 
   Future  InputProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
       isPublished, images, isFavorite, isFreeOngkir, isShippingTakeAway, isShippingOwnCourier, isShippingExpedition, shippingExpeditionService) async {
-    final requestUrl = '$BASE_URL/swagger-ui.html/sales-product-controller/createUsingPOST_13';
+    final requestUrl = '$BASE_URL/api/supplier/product/create';
     final response = await http.post(Uri.parse(requestUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8','token': '$token'
@@ -222,9 +222,9 @@ class UserNetworkService {
           "brand":brand,
           "isDangerous": isDangerous,
           "weight":berat,
-          "width":0.0,
-          "height":0.0,
-          "length":0.0,
+          "width":0,
+          "height":0,
+          "length":0,
           "condition":"new",
           "price":price,
           "commission":commission,
