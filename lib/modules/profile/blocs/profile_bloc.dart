@@ -113,14 +113,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
     if (event is GetMerchantEvent) {
       yield ShowLoadingMerchantState();
-      var data = await _repo.getProfileMerchant(realToken: _userToken);
-      yield ShowProfileMerchant(data.object!);
-      // try {
-      //   var data = await _repo.getProfileMerchant(realToken: _userToken);
-      //   yield ShowProfileMerchant(data.object!);
-      // } catch(ex) {
-      //   yield ShowErrorGetMerchantState("$ex");
-      // }
+      try {
+        var data = await _repo.getProfileMerchant(realToken: _userToken);
+        var datas = await AuthRepository().getSupplierProducts(_userToken);
+        yield ShowProfileMerchant(data.object!, datas.objectDatas!);
+      } catch(ex) {
+        yield ShowErrorGetMerchantState("$ex");
+      }
     }
     if (event is DoUpdatePhotoMerchantEvent) {
       yield ShowLoadingMerchantState();
@@ -145,6 +144,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }
     if (event is GetShipmentCourierEvent) {
+
       try {
         var data = await _repo.getShipmentMerchant(realToken: _userToken);
         yield ShowShipmentMerchant(data.object!);
@@ -153,6 +153,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }
     if (event is DoUpdateShippingExpeditionEvent) {
+
       try {
         var msg = await _repo.updateShipment(event.shipping, realToken: _userToken);
         var data = await _repo.getProfileMerchant(realToken: _userToken);

@@ -11,6 +11,9 @@ import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/data/response/hire_me/seller_addres_response.dart';
 import 'package:mogawe/core/data/response/hire_me/servis_ekspedisi_response.dart';
 import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
+import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
+import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
+import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
@@ -156,6 +159,23 @@ class UserNetworkService {
     }
   }
 
+  Future<AddressPickupMerchant> AddressPickupMerchants(token) async {
+    print(token);
+    final requestUrl = '$BASE_URL/api/mogawers/supplier/address/get';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return AddressPickupMerchant.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
+    }
+  }
+
   Future<HireMeSalesResponses> SearchhiremeSalesresponse(token, string) async {
     final requestUrl = '$BASE_URL/api/sales/product/get?q=$string&page=1&offset=30';
     final response = await http.get(Uri.parse(requestUrl),
@@ -170,6 +190,56 @@ class UserNetworkService {
     else {
       throw Exception('not found');
     }
+  }
+
+  Future<SupplierProduct> SearchProductMerchant(token, string) async {
+    final requestUrl = '$BASE_URL/api/supplier/product/get?q=$string&page=1&offset=30';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return SupplierProduct.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future  InputProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
+      isPublished, images, isFavorite, isFreeOngkir, isShippingTakeAway, isShippingOwnCourier, isShippingExpedition, shippingExpeditionService) async {
+    final requestUrl = '$BASE_URL/api/supplier/product';
+    final response = await http.post(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+        body: jsonEncode(<String, dynamic>{
+          "uuidCategory": uuidCategory,
+          "name":name,
+          "description":desk,
+          "brand":brand,
+          "isDangerous": isDangerous,
+          "weight":berat,
+          "width":0.0,
+          "height":0.0,
+          "length":0.0,
+          "condition":"new",
+          "price":price,
+          "commission":commission,
+          "stock":stock,
+          "youtubeUrl":youtubeurl,
+          "isPublished":true,
+          "images":images,
+          "isFavorite":false,
+          "isFreeOngkir":false,
+          "isShippingTakeAway":isShippingTakeAway,
+          "isShippingOwnCourier": isShippingOwnCourier,
+          "isShippingExpedition": isShippingExpedition,
+          "shippingExpeditionServices":shippingExpeditionService}
+    ));
+    return json.decode(response.body);
   }
 
   Future<FavHireMeSalesResponses> favhiremeSalesresponse(token) async {
@@ -311,6 +381,23 @@ class UserNetworkService {
     final maps = json.decode(response.body);
     if (maps.isNotEmpty) {
       return ServisEkspedisiResponse.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future<SupplierProduct> getSupplierProduct(token ) async {
+    print(token);
+    final requestUrl = '$BASE_URL/api/supplier/product/get';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return SupplierProduct.fromJson(maps);
     }
     else {
       throw Exception('not found');

@@ -1,3 +1,4 @@
+import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
@@ -23,8 +24,9 @@ class ShowProfileData extends ProfileState {
 
 class ShowProfileMerchant extends ProfileState {
   Object data;
+  List<ObjectDatas> datas;
 
-  ShowProfileMerchant(this.data);
+  ShowProfileMerchant(this.data, this.datas);
 }
 
 class ShowShipmentMerchant extends ProfileState {
