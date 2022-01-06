@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
@@ -165,7 +166,6 @@ class _MerchantTabState extends State<MerchantTab> {
     if (selected == true) {
       setState(() {
         selectShipmentName.add(name);
-
       });
     } else {
       setState(() {
@@ -240,7 +240,6 @@ class _MerchantTabState extends State<MerchantTab> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-
       children: [
         Padding(
           padding: EdgeInsetsDirectional.fromSTEB(
@@ -272,76 +271,86 @@ class _MerchantTabState extends State<MerchantTab> {
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(
                     0, 16, 0, 0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Nama Toko',
-                        style: FlutterFlowTheme.bodyText1
-                            .override(
-                          fontFamily: 'Poppins',
+                child: BounceTap(
+                  onTap: (){},
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Nama Toko',
+                          style: FlutterFlowTheme.bodyText1
+                              .override(
+                            fontFamily: 'Poppins',
+                          ),
                         ),
                       ),
-                    ),
-                    Text(
-                      widget.dataMerchant != null? ' ${widget.dataMerchant!.storeName}': "",
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.black,
-                      size: 24,
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(
-                    0, 16, 0, 0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Alamat Pickup',
-                        style: FlutterFlowTheme.bodyText1
-                            .override(
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.dataMerchant != null? ' ${widget.dataMerchant!.storeAddress}': "",
+                      Text(
+                        widget.dataMerchant != null? ' ${widget.dataMerchant!.storeName}': "",
                         style: FlutterFlowTheme.bodyText1
                             .override(
                           fontFamily: 'Poppins',
                           fontSize: 12,
                         ),
-                        textAlign: TextAlign.right,
-                        maxLines: 5,
                       ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.black,
+                        size: 24,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              BounceTap(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddressPickupScreen(),
                     ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.black,
-                      size: 24,
-                    )
-                  ],
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Alamat Pickup',
+                          style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          widget.dataMerchant != null
+                              ? ' ${widget.dataMerchant!.storeAddress}'
+                              : "",
+                          style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.right,
+                          maxLines: 5,
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.black,
+                        size: 24,
+                      )
+                    ],
+                  ),
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(
-                    0, 24, 0, 16),
+                padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 16),
                 child: Text(
                   'Metode Pengiriman',
-                  style:
-                  FlutterFlowTheme.bodyText1.override(
+                  style: FlutterFlowTheme.bodyText1.override(
                     fontFamily: 'Poppins',
                     color: FlutterFlowTheme.primaryColor,
                     fontSize: 12,
@@ -349,7 +358,7 @@ class _MerchantTabState extends State<MerchantTab> {
                   ),
                 ),
               ),
-              InkWell(
+              BounceTap(
                 onTap: (){
                   openAlertBox();
                 },
@@ -383,7 +392,7 @@ class _MerchantTabState extends State<MerchantTab> {
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(
                     0, 16, 0, 0),
-                child: InkWell(
+                child: BounceTap(
                   onTap: (){
                     openAlertBoxShipment();
                   },
@@ -915,7 +924,6 @@ class _MerchantTabState extends State<MerchantTab> {
                           textShipment = value;
 
                         });
-
                         // getShipmentValueBool().then((value) {
                         //   selectShipment = value;
                         //   print('ini isi');

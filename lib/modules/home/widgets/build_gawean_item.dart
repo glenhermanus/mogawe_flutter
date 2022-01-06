@@ -67,7 +67,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  widget.gaweanModel.jobPicture ?? "https://sbu.co.id/info/wp-content/themes/easymag/images/no-image.png",
+                  widget.gaweanModel.jobPicture ?? "https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg",
                   width: 92,
                   height: 114,
                   fit: BoxFit.cover,

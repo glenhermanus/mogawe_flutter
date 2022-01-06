@@ -228,7 +228,7 @@ class _WalletPageState extends State<WalletPage> {
     return GroupedListView<dynamic, String>(
         elements: list,
         groupBy: (element) =>
-            new DateFormatter().formatDateTime(element.trxTime),
+            new DateFormatter().formatDateMMMddyyyy(element.trxTime),
         groupComparator: (date1, date2) => date2.compareTo(date1),
         order: GroupedListOrder.ASC,
         groupSeparatorBuilder: (date) => _buildItemDateWallet(date.toString()),

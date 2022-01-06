@@ -2,7 +2,7 @@ class UpdateResponseMerchant {
   String returnValue;
   String message;
   dynamic uuid;
-  String object;
+  dynamic object;
 
   UpdateResponseMerchant.fromJson(Map<String, dynamic> json):
     returnValue= json["returnValue"],

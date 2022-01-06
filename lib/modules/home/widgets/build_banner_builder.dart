@@ -8,6 +8,7 @@ import 'package:mogawe/modules/home/bloc/home_event.dart';
 import 'package:mogawe/modules/home/bloc/home_state.dart';
 import 'package:mogawe/modules/pesona/pesona_page.dart';
 import 'package:mogawe/utils/global/webview.dart';
+import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BuildBannerBuilder extends StatefulWidget {
@@ -71,7 +72,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
 
   Widget _buildAdsBanner(List<Ads> ads) {
     return SizedBox(
-      height: 140,
+      height: 175,
       child: GestureDetector(
         onTap: () async {
           await Navigator.push(
@@ -90,14 +91,16 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
             String image = ads[index].pictureUrl == ""
                 ? placeHolder
                 : ads[index].pictureUrl;
-            return GestureDetector(
+            return BounceTap(
               onTap: () => _handleBannerClick(ads[index]),
               child: Container(
-                  width: 270,
+                  width: 330,
                   margin: const EdgeInsets.symmetric(horizontal: 12),
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(image, fit: BoxFit.fill))),
+                      child: Image.network(
+                          image,
+                          fit: BoxFit.fill))),
             );
           },
         ),
