@@ -11,6 +11,7 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/hire_me/sales/favorite_page.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_detail/sales_detail_page.dart';
 import 'package:mogawe/modules/profile/page_merchant/add_product_merchant.dart';
+import 'package:mogawe/modules/profile/page_merchant/edit_product_merchant.dart';
 
 class ProductMerchantPage extends StatefulWidget {
   SupplierProduct? supplierProduct;
@@ -193,6 +194,8 @@ class _ProductMerchantPageState extends State<ProductMerchantPage> {
 
                       return InkWell(
                         onTap: (){
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) => EditProductMerchant(id: card?.uuid,)));
 
                         },
                         child: Card(

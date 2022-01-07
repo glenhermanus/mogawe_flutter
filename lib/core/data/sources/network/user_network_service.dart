@@ -14,6 +14,7 @@ import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
 import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
 import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
+import 'package:mogawe/core/data/response/merchant/supplier_product_detail.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/reset_password_response.dart';
@@ -398,6 +399,23 @@ class UserNetworkService {
     final maps = json.decode(response.body);
     if (maps.isNotEmpty) {
       return SupplierProduct.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future<SupplierProductDetail> getSupplierProductId(token,id ) async {
+    print(token);
+    final requestUrl = '$BASE_URL/api/supplier/product/get/$id';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return SupplierProductDetail.fromJson(maps);
     }
     else {
       throw Exception('not found');

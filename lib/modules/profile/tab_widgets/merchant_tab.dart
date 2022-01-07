@@ -13,6 +13,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/page_merchant/add_product_merchant.dart';
+import 'package:mogawe/modules/profile/page_merchant/edit_product_merchant.dart';
 import 'package:mogawe/modules/profile/page_merchant/product_merchant.dart';
 import 'package:mogawe/modules/profile/screens/address_pickup_screen.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
@@ -589,6 +590,8 @@ class _MerchantTabState extends State<MerchantTab> {
 
                   return InkWell(
                     onTap: (){
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) => EditProductMerchant(id: card?.uuid,)));
 
                     },
                     child: Card(
