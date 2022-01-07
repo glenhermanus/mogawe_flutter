@@ -1,12 +1,14 @@
 import 'dart:io';
-
+import 'package:logger/logger.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
+import 'package:mogawe/core/data/response/hire_me/seller_addres_response.dart';
 import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
+import 'package:mogawe/core/data/response/merchant/category_response.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product_detail.dart';
 import 'package:mogawe/core/data/sources/network/user_network_service.dart';
@@ -36,11 +38,13 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
   TextEditingController youtubeUrlctrl = new TextEditingController();
   TextEditingController brandctrl = new TextEditingController();
   TextEditingController komisictrl = new TextEditingController();
-  var token;
+  var token, hargaApi, komisiApi, stockValueApi, beratApi;
   SupplierProductDetail? supplierProduct;
   CategoryListResponse? category;
+  CategoryResponse? categoryResponse;
   AddressPickupMerchant? addressPickupMerchant;
   int?  indexSelect, indexSelectAddress, indexSelectDanger, indexSelectStok;
+  var logger = Logger(printer: PrettyPrinter());
   var listcategory_, valuelist =
   {
     'name' : 'Semua Kategori',
@@ -52,6 +56,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
   var categoryValue, addresValue, dangerValue;
   String? harga, komisi;
   List ValueImage=[];
+  SellerAddress? sellerAddress;
   var ProdukBerbahayalist =
   [{
     'name' : 'Ya (Mengandung magnet/baterai\n/cairan/bahan mudah terbakar',
@@ -77,6 +82,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
   File? photo;
   List<File>? photos;
   String? path, fileName;
+  var addresValueGet, categorydetail, isDangerousValue;
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -139,6 +145,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
     token = await AuthRepository().readSecureData('token');
     category = await AuthRepository().getCategorydata(token);
     addressPickupMerchant = await AuthRepository().getAddresPickupMerchant(token);
+
 
     setState(() {
       loading = false;
@@ -481,12 +488,31 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
 
   }
 
+  Widget munculingambarAPI(BuildContext context){
+
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: supplierProduct?.images?.length,
+      itemBuilder: (context, snap){
+        return SafeArea(
+          child: Image.network('${supplierProduct?.images?[snap].value}', height: 50, fit: BoxFit.fill,
+          ),
+        );
+      },
+
+    );
+
+
+  }
+
   getData()async{
     setState(() {
       loading = true;
     });
     token = await AuthRepository().readSecureData('token');
     supplierProduct = await UserNetworkService().getSupplierProductId(token, widget.id);
+    sellerAddress = await AuthRepository().getSellerAddress(token, supplierProduct?.uuidSupplierAddress);
+    categoryResponse = await UserNetworkService().getCategoryDetail(token, supplierProduct?.uuidCategory);
     setState(() {
       loading = false;
       // textController.text = supplierProduct.objectDatas
@@ -496,7 +522,16 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
       deskripsictrl.text = supplierProduct?.description ??'';
       youtubeUrlctrl.text = supplierProduct?.youtubeUrl??'';
       brandctrl.text = supplierProduct?.brand??'';
-
+      addresValueGet = sellerAddress?.name;
+      uuidCategoryValue = supplierProduct?.uuidCategory;
+      nameCategoryValue = categoryResponse?.name;
+      isDangerousValue = supplierProduct?.isDangerous;
+      final formatterkomisi = new NumberFormat.currency(locale: 'id', symbol: 'Rp', decimalDigits: 0).format(supplierProduct?.commission);
+      komisiApi = formatterkomisi;
+      final formatter = new NumberFormat.currency(locale: 'id', symbol: 'Rp', decimalDigits: 0).format(supplierProduct?.price);
+      hargaApi = formatter;
+      beratApi = AuthRepository().writeSecureData('beratApi', supplierProduct?.weight.toString().replaceAll('.0', '')??'');
+      stockValueApi = supplierProduct?.stock;
     });
   }
 
@@ -541,17 +576,40 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                 children: [
                   Text('Gambar Produk *'),
                   SizedBox(height: 10,),
-                  DottedBorder(
-                    borderType: BorderType.RRect,
-                    strokeWidth: 1,
-                    color: Colors.black54,
-                    child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Icon(
-                          Icons.add, color: Colors.red,
+                  InkWell(
+                    onTap: ()=> chooseImage(),
+                    child: Row(
+                      children: [
+                        photo != null ? DottedBorder(
+                          borderType: BorderType.RRect,
+                          strokeWidth: 1,
+                          color: Colors.black54,
+                          child: Container(
+                            width: 40,
+                            height: 50,
+                            child: munculingambar(context),
+                          ),
+                        ) : Container(),
+                        supplierProduct?.images?.length != 0 ? Container(
+                            width: 40,
+                            height: 50,
+                            child: munculingambarAPI(context)) : Container(),
+                        SizedBox(width: 10,),
+                        DottedBorder(
+                          borderType: BorderType.RRect,
+                          strokeWidth: 1,
+                          color: Colors.black54,
+                          child: Container(
+                            height: 50,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.add, color: Colors.red,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   )
                 ],
@@ -821,7 +879,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                         Row(
                           children: [
                             Container(
-                              child: addresValue  == null ? Text('') : Text('${addresValue.name}'),
+                              child: addresValue  == null ? addresValueGet == null ? Text('') : Text('$addresValueGet') : Text('${addresValue.name}'),
                             ),
                             SizedBox(width: 10,),
                             Icon(Icons.arrow_forward_ios, size: 14,),
@@ -849,7 +907,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              child: categoryValue == null ? Text('') : Text('${categoryValue.name}'),
+                              child: categoryValue == null ? nameCategoryValue == null ? Text('') : Text('$nameCategoryValue') : Text('${categoryValue.name}')
                             ),
                             SizedBox(width: 10,),
                             Icon(Icons.arrow_forward_ios, size: 14,),
@@ -876,7 +934,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                         Row(
                           children: [
                             Container(
-                              child: dangerValue  == null ? Text('') : Text('${dangerValue['name'].split('(').first}'),
+                              child: dangerValue  == null ? isDangerousValue != false ? Text('Tidak')  : Text('Ya') : Text('${dangerValue['name'].split('(').first}'),
                             ),
                             SizedBox(width: 10,),
                             Icon(Icons.arrow_forward_ios, size: 14,),
@@ -914,7 +972,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              child: harga != null ? Text('$harga') : Text(''),
+                              child: harga != null ? Text('$harga') : hargaApi != null ? Text('$hargaApi') : Text(''),
                             ),
                             SizedBox(width: 10,),
                             Icon(Icons.arrow_forward_ios, size: 14,),
@@ -952,7 +1010,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              child: komisi != null ? Text('$komisi') : Text(''),
+                              child: komisi != null ? Text('$komisi') : komisiApi != null ? Text('$komisiApi') : Text(''),
                             ),
                             SizedBox(width: 10,),
                             Icon(Icons.arrow_forward_ios, size: 14,),
@@ -978,7 +1036,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              child: stokValue != null ? Text('${stokValue['name']}') : Text(''),
+                              child: stokValue != null ? Text('${stokValue['name']}') : stockValueApi == true ? Text('Tersedia') : Text(''),
                             ),
                             SizedBox(width: 10,),
                             Icon(Icons.arrow_forward_ios, size: 14,),
@@ -1017,7 +1075,29 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 16),
             child: FFButtonWidget(
-              onPressed: () {
+              onPressed: () async{
+                String shipping ='';
+                setState(() {
+                  getShipmentValue().then((value) {
+                    setState(() {
+                      shipping = value;
+                    });
+                  });
+                });
+                var berat = await AuthRepository().readSecureData('beratbarang');
+
+                try{
+                  await UserNetworkService().UpdateProduct(token, uuidCategoryValue != null ? uuidCategoryValue : categoryValue.uuid, namactrl.text, deskripsictrl.text, brandctrl.text,
+                  isDangerousValue != null ? isDangerousValue : dangerValue['isDangerous'], berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text),
+                       stockValueApi != null ? stockValueApi : stokValue['stock'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
+                      true, ValueImage, false, false, true,
+                      true, true, shipping);
+                  Fluttertoast.showToast(msg: "Berhasil");
+                }catch(e){
+                  print(e);
+                  logger.d(e);
+                  Fluttertoast.showToast(msg: "$e");
+                }
 
               },
               text: 'Simpan',

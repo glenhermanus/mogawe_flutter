@@ -27,9 +27,17 @@ class _AturPengirimanState extends State<AturPengiriman> {
   final picker = ImagePicker();
   File? photo;
   String? path;
+  var beratApi;
   String diantar ='';
   String kurir ='';
   String textShipment ='';
+
+  getData()async{
+    beratApi = await AuthRepository().readSecureData('beratApi');
+    setState(() {
+      textController.text = beratApi;
+    });
+  }
 
   void setisDiantar(bool antar) async{
     SharedPreferences cekAntar = await SharedPreferences.getInstance();
@@ -65,6 +73,7 @@ class _AturPengirimanState extends State<AturPengiriman> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getData();
     getcekAntar().then((value) {
       valueswitchDiantar = value;
 

@@ -1,3 +1,5 @@
+import 'package:mogawe/core/data/response/merchant/model_image.dart';
+
 class SupplierProductDetail{
   String? returnValue;
   String? message;
@@ -30,7 +32,7 @@ class SupplierProductDetail{
   bool? isPublished;
   String? imageUrl;
   List<dynamic>? commissions;
-  dynamic? images;
+  List<ModelGambar>? images;
   bool? isFavorite;
   bool? isFreeOngkir;
   bool? isShippingTakeaway;
@@ -110,7 +112,8 @@ class SupplierProductDetail{
     isPublished: json["object"]["isPublished"],
     imageUrl: json["object"]["imageUrl"],
     commissions: List<dynamic>.from(json["object"]["commissions"].map((x) => x)),
-    images: json["object"]["images"],
+    images: json["object"]["images"] != null ? json["object"]["images"].map<ModelGambar>((json)=> ModelGambar.fromJson(json)).toList()
+        : [],
     isFavorite: json["object"]["isFavorite"],
     isFreeOngkir: json["object"]["isFreeOngkir"],
     isShippingTakeaway: json["object"]["isShippingTakeaway"],

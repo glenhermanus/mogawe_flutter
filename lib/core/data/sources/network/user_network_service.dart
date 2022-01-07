@@ -13,6 +13,7 @@ import 'package:mogawe/core/data/response/hire_me/servis_ekspedisi_response.dart
 import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
 import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
 import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
+import 'package:mogawe/core/data/response/merchant/category_response.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product_detail.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
@@ -243,6 +244,41 @@ class UserNetworkService {
     return json.decode(response.body);
   }
 
+  Future UpdateProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
+      isPublished, images, isFavorite, isFreeOngkir, isShippingTakeAway, isShippingOwnCourier, isShippingExpedition, shippingExpeditionService) async {
+    final requestUrl = '$BASE_URL/api/supplier/product/update';
+    final response = await http.put(Uri.parse(requestUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          "uuidCategory": uuidCategory,
+          "name":name,
+          "description":desk,
+          "brand":brand,
+          "isDangerous": isDangerous,
+          "weight":berat,
+          "width":0,
+          "height":0,
+          "length":0,
+          "condition":"new",
+          "price":price,
+          "commission":commission,
+          "stock":stock,
+          "youtubeUrl":youtubeurl,
+          "isPublished":true,
+          "images":images,
+          "isFavorite":false,
+          "isFreeOngkir":false,
+          "isShippingTakeAway":isShippingTakeAway,
+          "isShippingOwnCourier": isShippingOwnCourier,
+          "isShippingExpedition": isShippingExpedition,
+          "shippingExpeditionServices":shippingExpeditionService}
+        ));
+    return json.decode(response.body);
+  }
+
+
   Future<FavHireMeSalesResponses> favhiremeSalesresponse(token) async {
 
     print(token);
@@ -295,6 +331,25 @@ class UserNetworkService {
     final maps = json.decode(response.body);
     if (maps.isNotEmpty) {
       return CategoryListResponse.fromJson(maps);
+    }
+
+    else {
+      throw Exception('not found');
+    }
+  }
+
+  Future<CategoryResponse> getCategoryDetail(String token, uuid) async {
+    final requestUrl = '$BASE_URL/api/sales/product/category/get/$uuid';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8', 'token': '$token'
+      },
+
+    );
+
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return CategoryResponse.fromJson(maps);
     }
 
     else {
