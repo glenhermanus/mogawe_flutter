@@ -120,6 +120,12 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('shipmenttoApi') ?? '';
   }
+
+  Future<int> getcekRadius()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('radius') ?? 0;
+  }
+
   Future getImageCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     setState(() {
@@ -1077,10 +1083,16 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
             child: FFButtonWidget(
               onPressed: () async{
                 String shipping ='';
+                int? valueRadius;
                 setState(() {
                   getShipmentValue().then((value) {
                     setState(() {
                       shipping = value;
+                    });
+                  });
+                  getcekRadius().then((value) {
+                    setState(() {
+                      valueRadius = value;
                     });
                   });
                 });
@@ -1090,8 +1102,8 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                   await UserNetworkService().UpdateProduct(token, uuidCategoryValue != null ? uuidCategoryValue : categoryValue.uuid, namactrl.text, deskripsictrl.text, brandctrl.text,
                   isDangerousValue != null ? isDangerousValue : dangerValue['isDangerous'], berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text),
                        stockValueApi != null ? stockValueApi : stokValue['stock'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
-                      true, ValueImage, false, false, true,
-                      true, true, shipping);
+                      true, ValueImage, false, false, supplierProduct?.images?[0].value,true,
+                      true, true, shipping, addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].notes, valueRadius, addressPickupMerchant?.object[0].supplierName);
                   Fluttertoast.showToast(msg: "Berhasil");
                 }catch(e){
                   print(e);

@@ -112,7 +112,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }
     if (event is GetMerchantEvent) {
-      yield ShowLoadingMerchantState();
+
       try {
         var data = await _repo.getProfileMerchant(realToken: _userToken);
         var datas = await AuthRepository().getSupplierProducts(_userToken);

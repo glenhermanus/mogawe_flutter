@@ -39,6 +39,11 @@ class _AturPengirimanState extends State<AturPengiriman> {
     });
   }
 
+  void setisDiantarAdd(bool antar) async{
+    SharedPreferences cekAntar = await SharedPreferences.getInstance();
+    cekAntar.setBool('diantarAdd', antar);
+  }
+
   void setisDiantar(bool antar) async{
     SharedPreferences cekAntar = await SharedPreferences.getInstance();
     cekAntar.setBool('diantar', antar);
@@ -52,6 +57,11 @@ class _AturPengirimanState extends State<AturPengiriman> {
   void setisKurirToko(bool antar) async{
     SharedPreferences cekKurirtoko = await SharedPreferences.getInstance();
     cekKurirtoko.setBool('kurirtoko', antar);
+  }
+
+  void setisKurirTokoAdd(bool antar) async{
+    SharedPreferences cekKurirtoko = await SharedPreferences.getInstance();
+    cekKurirtoko.setBool('kurirtokoAdd', antar);
   }
 
   Future<bool> getcekKurirToko()async{
@@ -275,6 +285,8 @@ class _AturPengirimanState extends State<AturPengiriman> {
               onPressed: () async{
                 valueEkspedisi(valueswitchEkspedisi);
                 await AuthRepository().writeSecureData('beratbarang', textController.text);
+                setisDiantarAdd(valueswitchDiantar);
+                setisKurirTokoAdd(valueswitchKurir);
                 Navigator.pop(context);
 
               },

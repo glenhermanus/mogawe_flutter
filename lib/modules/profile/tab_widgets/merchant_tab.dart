@@ -90,6 +90,11 @@ class _MerchantTabState extends State<MerchantTab> {
     cekAntar.setBool('diantar', antar);
   }
 
+  void setRadius(int radius) async{
+    SharedPreferences cekAntar = await SharedPreferences.getInstance();
+    cekAntar.setInt('radius', radius);
+  }
+
   void setisKurirToko(bool antar) async{
     SharedPreferences cekKurirtoko = await SharedPreferences.getInstance();
     cekKurirtoko.setBool('kurirtoko', antar);
@@ -807,6 +812,7 @@ class _MerchantTabState extends State<MerchantTab> {
                               valueAwal = value;
                               rangeSlide =  valueAwal.round().toString();
                               parseInt = int.parse(rangeSlide) * 1000;
+                              setRadius(parseInt);
                             });
                           },
                           max: 150,
