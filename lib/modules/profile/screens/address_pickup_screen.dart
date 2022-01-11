@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mogawe/core/data/response/merchant/address_pickup.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
-import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_address_page.dart';
+import 'package:mogawe/modules/address/AddressScreen.dart';
 import 'package:mogawe/modules/profile/blocs/address_bloc.dart';
 import 'package:mogawe/modules/profile/blocs/address_event.dart';
 import 'package:mogawe/modules/profile/blocs/address_state.dart';
@@ -89,12 +89,15 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 0),
             child: BounceTap(
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                var result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SalesAddress(uuid: ""),
+                      builder: (context) => AddressScreen(),
                     ));
+                if (result == "Berhasil") {
+                  bloc.add(GetAddressEvent());
+                }
               },
               child: Row(
                 children: [
@@ -117,60 +120,6 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
       ),
       body: blocListener(blocBuilder()),
     );
-  }
-
-  List<AddressPickup> _getMockData() {
-    List<AddressPickup> listAddress = [
-      AddressPickup(
-        uuid: "asdas2w3e",
-        latitude: 123123123.123,
-        longitude: 123.123123,
-        shipmentProvinceId: "asd",
-        shipmentProvinceName: "213sa",
-        name: "Gellaps Store",
-        address: "Jl Lenteng Agung Raya 62",
-        isDefault: true,
-        notes: "",
-        shipmentCityId: "",
-        shipmentCityName: "",
-        supplierName: "Ibnu",
-        uuidSupplier: "Asdasd",
-      ),
-      AddressPickup(
-        uuid: "asdas2w3e",
-        latitude: 123123123.123,
-        longitude: 123.123123,
-        shipmentProvinceId: "asd",
-        shipmentProvinceName: "213sa",
-        name: "Mogawe HQ",
-        address:
-            "Jl. O Kavling No.23, RT.8/RW.14, Kb. Baru, Kec. Tebet, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12830",
-        isDefault: false,
-        notes: "",
-        shipmentCityId: "",
-        shipmentCityName: "",
-        supplierName: "Ibnu",
-        uuidSupplier: "Asdasd",
-      ),
-      AddressPickup(
-        uuid: "asdas2w3e",
-        latitude: 123123123.123,
-        longitude: 123.123123,
-        shipmentProvinceId: "asd",
-        shipmentProvinceName: "213sa",
-        name: "Test Alamat Pickup",
-        address:
-            "Graha Obor 3rd Floor Unit E 302, JL. Prapanca Raya, No. 37, Jakarta, RT.2/RW.3, Pulo, Kebayoran Baru, South Jakarta City, Jakarta 12160",
-        isDefault: false,
-        notes: "",
-        shipmentCityId: "",
-        shipmentCityName: "",
-        supplierName: "Ibnu",
-        uuidSupplier: "Asdasd",
-      ),
-    ];
-
-    return listAddress;
   }
 
   Widget _buildItemAddress(AddressPickup address, int index) {

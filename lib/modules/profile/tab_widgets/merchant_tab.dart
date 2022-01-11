@@ -811,7 +811,6 @@ class _MerchantTabState extends State<MerchantTab> {
                           },
                           max: 150,
                           min: 1,
-                          divisions: 150,
                         ),
                         Text('${rangeSlide.split('.').first}km'),
 

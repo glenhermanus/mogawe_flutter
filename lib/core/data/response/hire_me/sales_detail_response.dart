@@ -3,7 +3,8 @@ import 'package:mogawe/core/data/response/hire_me/image_sales_detail.dart';
 import 'package:mogawe/core/data/response/hire_me/product_address.dart';
 
 class SalesDetailResponses{
-  String? returnValue, message, uuid, uuidobj, uuidClient, uuidCategory, uuidJob, uuidSupplier, brand,
+  dynamic uuidobj;
+  String? returnValue, message, uuid, uuidClient, uuidCategory, uuidJob, uuidSupplier, brand,
       name, condition, category, desc, imageUrl, youtubeUrl, shippingExpeditionServices, uuidSupplierAddress, supplierAddressName,
   supplierAddressAddress, supplierAddressNotes;
   int? minimumOrder, supplierAddressShipmentCityId;

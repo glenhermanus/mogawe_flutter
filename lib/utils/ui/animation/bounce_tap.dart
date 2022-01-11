@@ -8,6 +8,7 @@ class BounceTap extends StatefulWidget {
       : assert(child != null),
         super(key: key);
 
+
   @override
   _BounceTapState createState() => _BounceTapState();
 }

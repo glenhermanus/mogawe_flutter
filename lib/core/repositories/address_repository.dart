@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:mogawe/constant/api_path.dart';
+import 'package:mogawe/core/data/response/merchant/add_address_response.dart';
 import 'package:mogawe/core/data/response/merchant/address_pickup_response.dart';
 import 'package:mogawe/core/data/response/merchant/response_update.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
-import 'package:http/http.dart' as http;
 
 
 class AddressRepository extends NetworkService {
@@ -26,26 +27,63 @@ class AddressRepository extends NetworkService {
   Future<AddressPickupResponse> getListPickupAddress({String? realToken}) async {
     print(realToken);
     var header = {token: realToken!};
-    var map = await getMethod("${BASE_URL}api/mogawers/supplier/address/get", header);
+    var map =
+        await getMethod("${BASE_URL}api/mogawers/supplier/address/get", header);
     return AddressPickupResponse.fromJson(map);
   }
 
-  Future<UpdateResponseMerchant> setAddressAsDefault({String? realToken, String? uuid}) async {
+  Future<UpdateResponseMerchant> setAddressAsDefault(
+      {String? realToken, String? uuid}) async {
     print(realToken);
     var header = {token: realToken!};
-    var map = await _putMethodAddress("${BASE_URL}api/mogawers/supplier/address/setDefault/" + uuid!, header);
+    var map = await _putMethodAddress(
+        "${BASE_URL}api/mogawers/supplier/address/setDefault/" + uuid!, header);
     return UpdateResponseMerchant.fromJson(map);
   }
 
-  Future<UpdateResponseMerchant> deletePickupAddress({String? realToken, String? uuid}) async {
+  Future<AddAddressResponse> addAddress(
+      String? realToken,
+      String name,
+      String address,
+      double latitude,
+      double longitude,
+      int shipmentProvinceId,
+      String shipmentProvinceName,
+      int shipmentCityId,
+      String shipmentCityName) async {
+    var body = {
+      'name': name,
+      'address': address,
+      'latitude': latitude,
+      'longitude': longitude,
+      'notes': "",
+      'shipmentProvinceId': shipmentProvinceId,
+      'shipmentProvinceName': shipmentProvinceName,
+      'shipmentCityId': shipmentCityId,
+      'shipmentCityName': shipmentCityName,
+    };
+    var header = {
+      token: realToken!,
+      contentType: applicationJson
+    };
+
+    var map = await postMethod("${BASE_URL}api/mogawers/supplier/address/create",
+        body: body, headers: header);
+
+    return AddAddressResponse.fromJson(map);
+  }
+
+  Future<UpdateResponseMerchant> deletePickupAddress(
+      {String? realToken, String? uuid}) async {
     print(realToken);
     var header = {token: realToken!};
-    var map = await _deleteMethodAddress("${BASE_URL}api/mogawers/supplier/address/delete/" + uuid!, header);
+    var map = await _deleteMethodAddress(
+        "${BASE_URL}api/mogawers/supplier/address/delete/" + uuid!, header);
     return UpdateResponseMerchant.fromJson(map);
   }
 
-
-  Future<dynamic> _putMethodAddress(String endPoint, [Map<String, String>? headers]) async {
+  Future<dynamic> _putMethodAddress(String endPoint,
+      [Map<String, String>? headers]) async {
     try {
       print("Endpoint : $endPoint");
       final response = await http.put(Uri.parse(endPoint), headers: headers);
