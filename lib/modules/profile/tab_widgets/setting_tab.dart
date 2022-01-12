@@ -4,6 +4,9 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/generator/webview_flutter.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
+import 'package:mogawe/modules/profile/screens/about_app.dart';
+import 'package:mogawe/modules/starter/screens/onboarding/onboarding_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingTab extends StatelessWidget {
 
@@ -154,47 +157,62 @@ class SettingTab extends StatelessWidget {
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(
                   0, 16, 0, 0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'About App',
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
-                        fontFamily: 'Poppins',
+              child: InkWell(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AboutAppPage(),
+                    ),
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'About App',
+                        style: FlutterFlowTheme.bodyText1
+                            .override(
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.black,
-                    size: 24,
-                  )
-                ],
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black,
+                      size: 24,
+                    )
+                  ],
+                ),
               ),
             ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(
                   0, 16, 0, 0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Rate App',
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
-                        fontFamily: 'Poppins',
+              child: InkWell(
+                onTap: (){
+                  openRateApp();
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Rate App',
+                        style: FlutterFlowTheme.bodyText1
+                            .override(
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.black,
-                    size: 24,
-                  )
-                ],
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black,
+                      size: 24,
+                    )
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -255,5 +273,13 @@ class SettingTab extends StatelessWidget {
         ),
       ),
     );
+  }
+  openRateApp() async {
+    const url = 'https://play.google.com/store/apps/details?id=com.mogawe.mosurvei&reviewId=0';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

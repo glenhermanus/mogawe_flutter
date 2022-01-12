@@ -568,13 +568,18 @@ class _MerchantTabState extends State<MerchantTab> {
             ),
           ),
         ),
-       loading ? CircularProgressIndicator() : Container(
+       Container(
           width: 300,
           height: 200,
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(
                 16, 16, 16, 0),
-            child: GridView.builder(
+            child: loading ? Center(
+              child: Container(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator()),
+            ) :  GridView.builder(
 
                 padding: EdgeInsets.zero,
                 gridDelegate:
