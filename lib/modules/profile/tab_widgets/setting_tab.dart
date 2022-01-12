@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/generator/webview_flutter.dart';
+import 'package:mogawe/modules/home/faq/faq_webview.dart';
+import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 
 class SettingTab extends StatelessWidget {
 
@@ -62,47 +65,67 @@ class SettingTab extends StatelessWidget {
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(
                   0, 16, 0, 0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Notifikasi',
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
-                        fontFamily: 'Poppins',
+              child: InkWell(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotificationListPage(),
+                    ),
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Notifikasi',
+                        style: FlutterFlowTheme.bodyText1
+                            .override(
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.black,
-                    size: 24,
-                  )
-                ],
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black,
+                      size: 24,
+                    )
+                  ],
+                ),
               ),
             ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(
                   0, 16, 0, 0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'FAQ',
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
-                        fontFamily: 'Poppins',
+              child: InkWell(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WebviewFAQ(),
+                    ),
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'FAQ',
+                        style: FlutterFlowTheme.bodyText1
+                            .override(
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.black,
-                    size: 24,
-                  )
-                ],
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black,
+                      size: 24,
+                    )
+                  ],
+                ),
               ),
             ),
             Padding(
