@@ -10,6 +10,7 @@ import 'package:mogawe/modules/wallet/bloc/wallet_event.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_state.dart';
 import 'package:mogawe/modules/wallet/wiithdrawal/wiithdrawal_page.dart';
 import "package:grouped_list/grouped_list.dart";
+import 'package:mogawe/utils/services/currency_formatter.dart';
 import 'package:mogawe/utils/services/date_formatter.dart';
 
 class WalletPage extends StatefulWidget {
@@ -159,16 +160,16 @@ class _WalletPageState extends State<WalletPage> {
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Text(
-                              loading ? '' : 'Rp',
-                              style: FlutterFlowTheme.subtitle2.override(
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
+                            // Text(
+                            //   loading ? '' : 'Rp',
+                            //   style: FlutterFlowTheme.subtitle2.override(
+                            //     fontFamily: 'Poppins',
+                            //   ),
+                            // ),
                             Text(
                               loading
                                   ? 'loading...'
-                                  : ' ${this.userProfileResponse?.balance}',
+                                  : ' ${stringtoRupiah(this.userProfileResponse?.balance as int)}',
                               style: FlutterFlowTheme.title3.override(
                                 fontFamily: 'Poppins',
                               ),
@@ -217,7 +218,7 @@ class _WalletPageState extends State<WalletPage> {
             ],
           ),
         ),
-        Expanded(child: blocListener(blockBuilder())),
+         Expanded(child: blocListener(blockBuilder())),
       ],
     ));
   }
@@ -328,8 +329,8 @@ class _WalletPageState extends State<WalletPage> {
                         children: [
                           Text(
                             walletHistory.total < 0
-                                ? "${walletHistory.total}"
-                                : "+${walletHistory.total}",
+                                ? "${stringtoRupiah(walletHistory.total.toInt()).replaceAll('Rp', '').replaceAll('R', '-Rp ')}"
+                                : "+${stringtoRupiah(walletHistory.total.toInt())}",
                             style: FlutterFlowTheme.subtitle1.override(
                               fontFamily: 'Poppins',
                               color: walletHistory.total < 0
