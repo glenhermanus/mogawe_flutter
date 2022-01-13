@@ -32,12 +32,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late GaweanBloc bloc;
-
-  bool _loadingButton2 = false;
-  bool _loadingButton3 = false;
-  bool _loadingButton4 = false;
-  bool _loadingButton5 = false;
-  bool _loadingButton6 = false;
   bool loading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
