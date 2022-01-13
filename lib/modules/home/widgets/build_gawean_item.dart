@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/gawean_repository.dart';
 import 'package:mogawe/modules/home/gawean/gawean_detail.dart';
 import 'package:mogawe/utils/services/currency_formatter.dart';
+import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 
 class BuildGaweanItem extends StatefulWidget {
   const BuildGaweanItem({
@@ -25,6 +27,8 @@ class BuildGaweanItem extends StatefulWidget {
 
 class _BuildGaweanItemState extends State<BuildGaweanItem> {
   bool _loadingButtonMulai = false;
+  bool _loadingButtonScheduling = false;
+
   var logger = Logger(printer: PrettyPrinter());
 
 
@@ -65,14 +69,13 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  widget.gaweanModel.jobPicture ?? "https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg",
-                  width: 92,
-                  height: 114,
-                  fit: BoxFit.cover,
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(8),
+                  child: mogaweImageHandler(
+                    url: widget.gaweanModel.jobPicture,
+                    width: 92,
+                    height: 114,
+                    fit: BoxFit.cover,
+                  )),
               Expanded(
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
@@ -244,20 +247,77 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
       onSelected: (value) => selectedMenuItem(value, widget.gaweanModel),
     );
   }
-
-  void datePicker() async {
-    var datetime = await showDatePicker(
-        context: context,
-        firstDate: DateTime.now(),
-        lastDate: DateTime(2023),
-        initialDate: DateTime.now());
-    if (datetime != null) {
-      setState(() {
-        _selectedDate = DateFormat("yyyy-MM-dd").format(datetime);
-      });
-      timePicker();
+   Widget _schedulingTimePicker() {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: double.infinity,
+              height: 300,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.dateAndTime,
+                onDateTimeChanged: (value) {
+                  _selectedDate = DateFormat("yyyy-MM-dd").format(value);
+                  _selectedTime = "${value.hour}:${value.minute}:${value.second}";
+                  _gaweanSchedulingTime = "$_selectedDate $_selectedTime";
+                  print(value);
+                },
+                use24hFormat: true,
+                initialDateTime: DateFormat("yyyy-MM-dd hh:mm:ss").parse(widget.gaweanModel.reminderDate ?? DateTime.now().toString()),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: FFButtonWidget(
+                text: "Konfirmasi",
+                onPressed: () {
+                  try {
+                    _handleUpdateGaweanReminder(token);
+                  } finally {
+                    Navigator.pop(context);
+                  }
+                },
+                options: FFButtonOptions(
+                  width: double.infinity,
+                  height: 40,
+                  color: FlutterFlowTheme.secondaryColor,
+                  textStyle: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: FlutterFlowTheme.primaryColor,
+                    fontSize: 12,
+                  ),
+                  borderSide: BorderSide(
+                    color: FlutterFlowTheme.primaryColor,
+                    width: 1,
+                  ),
+                  borderRadius: 12,
+                ),
+                loading: _loadingButtonScheduling,
+              ),
+            ),
+            SizedBox(height: 24),
+          ],
+        ),
+      );
     }
-  }
+
+  // void datePicker() async {
+  //   var datetime = await showDatePicker(
+  //       context: context,
+  //       firstDate: DateTime.now(),
+  //       lastDate: DateTime(2023),
+  //       initialDate: DateTime.now());
+  //   if (datetime != null) {
+  //     setState(() {
+  //       _selectedDate = DateFormat("yyyy-MM-dd").format(datetime);
+  //     });
+  //     timePicker();
+  //   }
+  // }
 
   void timePicker() async {
     var time = await showTimePicker(
@@ -295,7 +355,12 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
         );
         break;
       case 2:
-        datePicker();
+        showDialog(
+          context: context,
+          builder: (ctx) {
+            return _schedulingTimePicker();
+          },
+        );
     }
   }
 

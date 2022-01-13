@@ -1,4 +1,5 @@
 import 'package:mogawe/core/data/response/home/ads_model.dart';
+import 'package:mogawe/core/data/response/home_content/Revenue.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
 
 abstract class HomeState {}
@@ -31,4 +32,10 @@ class ShowErrorCertificateState extends HomeState {
   String message;
 
   ShowErrorCertificateState(this.message);
+}
+
+class ShowMogawersRevenue extends HomeState {
+  List<GaweanRowModel> list;
+
+  ShowMogawersRevenue(this.list);
 }

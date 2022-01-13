@@ -11,6 +11,7 @@ import 'package:mogawe/modules/wallet/bloc/wallet_state.dart';
 import 'package:mogawe/modules/wallet/wiithdrawal/wiithdrawal_page.dart';
 import "package:grouped_list/grouped_list.dart";
 import 'package:mogawe/utils/services/date_formatter.dart';
+import 'package:mogawe/utils/ui/widgets/MogaweNominalText.dart';
 
 class WalletPage extends StatefulWidget {
   WalletPage({Key? key}) : super(key: key);
@@ -221,8 +222,8 @@ class _WalletPageState extends State<WalletPage> {
       ],
     ));
   }
-
   Widget _buildHistoryWalletList(List<WalletHistoryModel> list) {
+
     print("Wallet size is ${list.length}");
 
     return GroupedListView<dynamic, String>(
@@ -253,7 +254,7 @@ class _WalletPageState extends State<WalletPage> {
 
   Widget _buildItemWallet(WalletHistoryModel walletHistory) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
+      padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 0),
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
         color: Color(0xFFF5F5F5),
@@ -269,6 +270,8 @@ class _WalletPageState extends State<WalletPage> {
             children: [
               Text(
                 walletHistory.description ?? "",
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: FlutterFlowTheme.subtitle2.override(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
@@ -326,16 +329,9 @@ class _WalletPageState extends State<WalletPage> {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            walletHistory.total < 0
-                                ? "${walletHistory.total}"
-                                : "+${walletHistory.total}",
-                            style: FlutterFlowTheme.subtitle1.override(
-                              fontFamily: 'Poppins',
-                              color: walletHistory.total < 0
-                                  ? FlutterFlowTheme.primaryColor
-                                  : FlutterFlowTheme.moGaweGreen,
-                            ),
+                          MogaweNominalText(
+                            nominal: walletHistory.total.toInt(),
+                            isNeedSymbol: true,
                           )
                         ],
                       ),

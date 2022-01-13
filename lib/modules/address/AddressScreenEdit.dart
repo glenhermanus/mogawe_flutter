@@ -3,19 +3,22 @@ import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/hire_me/provinsi_response.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
 import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
+import 'package:mogawe/core/data/response/merchant/address_pickup.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/address_repository.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/address/widgets/maps_location_picker.dart';
 import 'package:mogawe/utils/ui/widgets/MogawePrimaryButton.dart';
 
-class AddressScreen extends StatefulWidget {
-  AddressScreen();
+class AddressScreenEdit extends StatefulWidget {
+  final AddressPickup addressModel;
+
+  AddressScreenEdit(this.addressModel);
   @override
-  _AddressScreenState createState() => _AddressScreenState();
+  _AddressScreenEditState createState() => _AddressScreenEditState();
 }
 
-class _AddressScreenState extends State<AddressScreen> {
+class _AddressScreenEditState extends State<AddressScreenEdit> {
   var logger = Logger(printer: PrettyPrinter());
 
   bool _loadingButton = false;
@@ -60,6 +63,14 @@ class _AddressScreenState extends State<AddressScreen> {
     // TODO: implement initState
     super.initState();
     getdata();
+    address = widget.addressModel.address ?? "";
+    addressLat = widget.addressModel.latitude;
+    addressLng = widget.addressModel.longitude;
+    nameProvince = widget.addressModel.shipmentProvinceName;
+    nameCity = widget.addressModel.shipmentCityName;
+    idProvince = widget.addressModel.shipmentProvinceId;
+    idCity = widget.addressModel.shipmentCityId;
+    _addressName.text = widget.addressModel.name ?? "";
   }
 
   @override

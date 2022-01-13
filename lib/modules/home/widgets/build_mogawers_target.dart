@@ -4,29 +4,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/home_content/Certificate.dart';
+import 'package:mogawe/core/data/response/home_content/Revenue.dart';
+import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
-import 'package:mogawe/modules/home/bloc/home_bloc.dart';
-import 'package:mogawe/modules/home/bloc/home_event.dart';
-import 'package:mogawe/modules/home/bloc/home_state.dart';
 import 'package:mogawe/utils/services/currency_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BuildMogawersTarget extends StatefulWidget {
-  const BuildMogawersTarget({Key? key}) : super(key: key);
+
+  final List<GaweanRowModel> data;
+
+  const BuildMogawersTarget({Key? key, required this.data}) : super(key: key);
 
   @override
   State<BuildMogawersTarget> createState() => _BuildMogawersTargetState();
 }
 
 class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
-  late HomeBloc bloc;
-
   int _target = 0;
   bool loading = false;
   bool _loadingButton1 = false;
+  static const _locale = 'ID';
+
+  String _formatNumber(String s) =>
+      NumberFormat.decimalPattern(_locale).format(int.parse(s));
+  var formatter = NumberFormat('#,###,###');
+
+  String get _currency =>
+      NumberFormat.compactSimpleCurrency(locale: _locale).currencySymbol;
 
   // Text Editing Controller list
   final TextEditingController _targetEditingController =
@@ -35,49 +44,6 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    bloc = HomeBloc();
-    bloc.add(GetCertificate());
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    bloc.close();
-  }
-
-  Widget blocListener(Widget child) {
-    return BlocListener(
-      bloc: bloc,
-      listener: (ctx, state) => print("State : $state"),
-      child: child,
-    );
-  }
-
-  Widget blocBuilder() {
-    return BlocBuilder(
-      bloc: bloc,
-      builder: (ctx, state) {
-        if (state is ShowLoadingCertificate) {
-          print("State : $state");
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (state is ShowHomeCertificate) {
-          print("certificate size is ${state.list[0].myCertificates.length}");
-          if (state.list[0].myCertificates == null || state.list[0].myCertificates.length == 0) {
-            return Container();
-          } else {
-            return _buildCertificatesList(state.list[0].myCertificates);
-          }
-        }
-        if (state is ShowErrorHomeState) {
-          print("error certificate" + state.message);
-          return Container();
-        }
-        return Container();
-      },
-    );
   }
 
   void getDailyTarget() async {
@@ -119,48 +85,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 64,
-              child: Stack(
-                alignment: AlignmentDirectional(0, 0),
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: FlutterFlowTheme.secondaryColor,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.moGaweGreen,
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(16),
-                              bottomRight: Radius.circular(16),
-                              topLeft: Radius.circular(0),
-                              topRight: Radius.circular(0),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Text(
-                    '20%',
-                    style: FlutterFlowTheme.subtitle1.override(
-                      fontFamily: 'Poppins',
-                    ),
-                  )
-                ],
-              ),
-            ),
+            _buildProgressRevenueBar(widget.data[0]!.targetRevenue),
             Expanded(
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
@@ -194,49 +119,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
                                 context: context,
                                 builder: (context) {
                                   return Center(
-                                    child: AlertDialog(
-                                      content: Container(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            TextFormField(
-                                              keyboardType: TextInputType
-                                                  .numberWithOptions(
-                                                  decimal: true),
-                                              controller:
-                                              _targetEditingController,
-                                              validator: (value) {},
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          child: Text("Batal"),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                        ),
-                                        TextButton(
-                                          child: Text("Simpan"),
-                                          onPressed: () => {
-                                            saveDailyTarget(int.parse(
-                                                _targetEditingController
-                                                    .text)),
-                                            Navigator.pop(context),
-                                            setState(() {
-                                              _target = int.parse(
-                                                  _targetEditingController
-                                                      .text);
-                                            }),
-                                            _targetEditingController.text =
-                                            "",
-                                          },
-                                        )
-                                      ],
-                                    ),
+                                    child: _showTargetHarianDialog(),
                                   );
                                 },
                               );
@@ -295,7 +178,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
                         ),
                       ),
                     ),
-                    blocListener(blocBuilder())
+                    _buildCertificatesList(widget.data[0].myCertificates)
                   ],
                 ),
               ),
@@ -349,10 +232,121 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
       ),
       child: Image.network(
         pesona.iconUrl ?? "",
-        color: pesona.status == "pending" ? FlutterFlowTheme.moGaweYellow : FlutterFlowTheme.moGaweGreen,
+        color: pesona.status == "pending"
+            ? FlutterFlowTheme.moGaweYellow
+            : FlutterFlowTheme.moGaweGreen,
         width: 20,
         height: 20,
       ),
+    );
+  }
+
+  Widget _buildProgressRevenueBar(Revenue? revenue) {
+
+    double maxProgressBarHeight = 160.0;
+    double dailyTargetPercentage = _convertTargetAndProgressToPercent(revenue?.todayRevenue.toDouble() ?? 0.0, revenue?.targetRevenue.toDouble() ?? 0.0);
+    double progressBarHeight = _convertPercentToProgressBarHeight(dailyTargetPercentage, maxProgressBarHeight);
+
+    return Container(
+      width: 64,
+      child: Stack(
+        alignment: AlignmentDirectional(0, 0),
+        children: [
+          Container(
+            width: double.infinity,
+            height: maxProgressBarHeight,
+            decoration: BoxDecoration(
+              color: FlutterFlowTheme.secondaryColor,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: progressBarHeight,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.moGaweGreen,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                      topLeft: Radius.circular(0),
+                      topRight: Radius.circular(0),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Text(
+            "$dailyTargetPercentage%",
+            style: FlutterFlowTheme.subtitle1.override(
+              fontFamily: 'Poppins',
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  double _convertTargetAndProgressToPercent(double progress, double target){
+    return (progress / target) * 100.0;
+  }
+
+  double _convertPercentToProgressBarHeight(double percent, double maxHeight) {
+    return (percent / 100.0) * maxHeight;
+  }
+
+  Widget _showTargetHarianDialog() {
+    return AlertDialog(
+      content: Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Target Harian"),
+            TextFormField(
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(prefixText: _currency),
+              onChanged: (string) {
+                string = '${_formatNumber(string.replaceAll('.', ''))}';
+                _targetEditingController.value = TextEditingValue(
+                  text: string,
+                  selection: TextSelection.collapsed(offset: string.length),
+                );
+              },
+              controller: _targetEditingController,
+              validator: (value) {},
+            ),
+            SizedBox(
+              height: 10,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: Text("Batal"),
+          onPressed: () {
+            _targetEditingController.text = "";
+            Navigator.pop(context);
+          },
+        ),
+        TextButton(
+          child: Text("Simpan"),
+          onPressed: () => {
+            saveDailyTarget(
+                int.parse(_targetEditingController.text.replaceAll('.', ''))),
+            Navigator.pop(context),
+            setState(() {
+              _target =
+                  int.parse(_targetEditingController.text.replaceAll('.', ''));
+            }),
+            _targetEditingController.text = "",
+          },
+        )
+      ],
     );
   }
 }

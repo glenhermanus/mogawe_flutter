@@ -1,18 +1,21 @@
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mogawe/core/data/response/home_content/gawean_model.dart';
+import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
+import 'package:mogawe/core/data/response/home_content/product_etalasa_model.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
 import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 import 'package:mogawe/modules/home/widgets/build_gawean_item.dart';
 import 'package:mogawe/modules/home/widgets/build_mogawers_target.dart';
 import 'package:mogawe/modules/home/widgets/build_product_item.dart';
+import 'package:mogawe/modules/home/widgets/gaweanListEmptyView.dart';
+import 'package:mogawe/modules/home/widgets/productListEmptyView.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
@@ -30,11 +33,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late GaweanBloc bloc;
 
-  bool _loadingButton2 = false;
-  bool _loadingButton3 = false;
-  bool _loadingButton4 = false;
-  bool _loadingButton5 = false;
-  bool _loadingButton6 = false;
   bool loading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
@@ -105,38 +103,7 @@ class _HomePageState extends State<HomePage> {
         if (state is ShowListGaweanState) {
           print("State : $state");
           print("State : $state");
-          return gaweanMenu == 0
-              ? ListView.builder(
-            itemCount: state.list[1].jobs!.length < 5 ? state.list[1].jobs!.length : 5,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (ctx, index) {
-              var gawean = state.list[1].jobs![index];
-              return BuildGaweanItem(
-                gaweanModel: gawean,
-              );
-            },
-          )
-              : GridView.builder(
-            itemCount: state.list[1].products!.length > 6 ? 6
-                : state.list[1].products?.length ?? 0,
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              childAspectRatio: 0.4,
-            ),
-            itemBuilder: (ctx, index) {
-              return BuildProductItem(productModel : state.list[1].products![index]);
-            },
-          );
-
-        }
-        if (state is ShowEmptyListState) {
-          return _gaweanListEmptyView();
+          return _buildHomeWidgetContent(state.list);
         }
         if (state is ShowErrorGaweanListState){
           log(state.message);
@@ -337,7 +304,7 @@ class _HomePageState extends State<HomePage> {
                             fontFamily: 'Poppins',
                             color: FlutterFlowTheme.secondaryColor,
                           ))
-                          :  Text(
+                          : Text(
                         '${this.userProfileResponse?.points}pts',
                         style: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
@@ -349,139 +316,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Stack(
-                          children: [
-                            Align(
-                              alignment: AlignmentDirectional(0, -1),
-                              child: Container(
-                                width: double.infinity,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.primaryColor,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top : 16.0),
-                              child: BuildBannerBuilder(),
-                            )
-                          ],
-                          ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              'Target Harian',
-                              style: FlutterFlowTheme.subtitle2.override(
-                                fontFamily: 'Poppins',
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                        child: BuildMogawersTarget(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    gaweanMenu = 0;
-                                  });
-                                },
-                                child: Container(
-                                  width: 100,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: gaweanMenu == 0 ? FlutterFlowTheme.primaryColor : FlutterFlowTheme.secondaryColor,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(16),
-                                      bottomRight: Radius.circular(0),
-                                      topLeft: Radius.circular(16),
-                                      topRight: Radius.circular(0),
-                                    ),
-                                    border: Border.all(
-                                      color: FlutterFlowTheme.primaryColor,
-                                    ),
-                                  ),
-                                  child: Align(
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Text(
-                                      'Penugasan',
-                                      style:
-                                      FlutterFlowTheme.subtitle2.override(
-                                        fontFamily: 'Poppins',
-                                        color:
-                                        gaweanMenu == 0 ? FlutterFlowTheme.secondaryColor : FlutterFlowTheme.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    gaweanMenu = 1;
-                                  });
-                                },
-                                child: Container(
-                                  width: 100,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: gaweanMenu == 0 ? FlutterFlowTheme.secondaryColor : FlutterFlowTheme.primaryColor,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(0),
-                                      bottomRight: Radius.circular(16),
-                                      topLeft: Radius.circular(0),
-                                      topRight: Radius.circular(16),
-                                    ),
-                                    border: Border.all(
-                                      color: FlutterFlowTheme.primaryColor,
-                                    ),
-                                  ),
-                                  child: Align(
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Text(
-                                      'Etalase',
-                                      style:
-                                      FlutterFlowTheme.subtitle2.override(
-                                        fontFamily: 'Poppins',
-                                        color: gaweanMenu == 0 ? FlutterFlowTheme.primaryColor : FlutterFlowTheme.secondaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            blocListener(blocBuilder())
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child:
+                SingleChildScrollView(child: blocListener(blocBuilder())),
               ),
             ],
           )
@@ -490,88 +326,128 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // show when gawean list is empty
-  Widget _gaweanListEmptyView() {
+  Widget _buildHomeWidgetContent(List<GaweanRowModel> homeWidgets) {
     return Column(
+      mainAxisSize: MainAxisSize.max,
       children: [
+        Stack(
+          children: [
+            Align(
+              alignment: AlignmentDirectional(0, -1),
+              child: Container(
+                width: double.infinity,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.primaryColor,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: BuildBannerBuilder(),
+            )
+          ],
+        ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+          padding: const EdgeInsetsDirectional.fromSTEB(18, 16, 16, 0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
               Text(
-                'Gawean',
+                'Target Harian',
                 style: FlutterFlowTheme.subtitle2.override(
                   fontFamily: 'Poppins',
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                child: Icon(
-                  Icons.add_circle,
-                  color: FlutterFlowTheme.primaryColor,
-                  size: 20,
                 ),
               )
             ],
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: BuildMogawersTarget(data: homeWidgets),
+        ),
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(18, 16, 0, 0),
+          child: _buildPlusGawean(),
+        ),
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
-                child: Container(
-                  width: 100,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.primaryColor,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(0),
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(0),
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      gaweanMenu = 0;
+                    });
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: gaweanMenu == 0
+                          ? FlutterFlowTheme.primaryColor
+                          : FlutterFlowTheme.secondaryColor,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(0),
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(0),
+                      ),
+                      border: Border.all(
+                        color: FlutterFlowTheme.primaryColor,
+                      ),
                     ),
-                    border: Border.all(
-                      color: FlutterFlowTheme.primaryColor,
-                    ),
-                  ),
-                  child: Align(
-                    alignment: AlignmentDirectional(0, 0),
-                    child: Text(
-                      'Penugasan',
-                      style: FlutterFlowTheme.subtitle2.override(
-                        fontFamily: 'Poppins',
-                        color: FlutterFlowTheme.secondaryColor,
+                    child: Align(
+                      alignment: AlignmentDirectional(0, 0),
+                      child: Text(
+                        'Penugasan',
+                        style: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Poppins',
+                          color: gaweanMenu == 0
+                              ? FlutterFlowTheme.secondaryColor
+                              : FlutterFlowTheme.primaryColor,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
               Expanded(
-                child: Container(
-                  width: 100,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.secondaryColor,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(0),
-                      bottomRight: Radius.circular(16),
-                      topLeft: Radius.circular(0),
-                      topRight: Radius.circular(16),
-                    ),
-                    border: Border.all(
-                      color: FlutterFlowTheme.primaryColor,
-                    ),
-                  ),
-                  child: Align(
-                    alignment: AlignmentDirectional(0, 0),
-                    child: Text(
-                      'Etalase',
-                      style: FlutterFlowTheme.subtitle2.override(
-                        fontFamily: 'Poppins',
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      gaweanMenu = 1;
+                    });
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: gaweanMenu == 0
+                          ? FlutterFlowTheme.secondaryColor
+                          : FlutterFlowTheme.primaryColor,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(0),
+                        bottomRight: Radius.circular(16),
+                        topLeft: Radius.circular(0),
+                        topRight: Radius.circular(16),
+                      ),
+                      border: Border.all(
                         color: FlutterFlowTheme.primaryColor,
+                      ),
+                    ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0, 0),
+                      child: Text(
+                        'Etalase',
+                        style: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Poppins',
+                          color: gaweanMenu == 0
+                              ? FlutterFlowTheme.primaryColor
+                              : FlutterFlowTheme.secondaryColor,
+                        ),
                       ),
                     ),
                   ),
@@ -581,75 +457,89 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-          child: Image.asset(
-            'assets/images/im_no_job.png',
-            width: double.infinity,
-            height: 242,
-            fit: BoxFit.cover,
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              _buildProductAndGaweanHome(homeWidgets),
+              SizedBox(height: 36)
+            ],
           ),
         ),
-        Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-          child: Text(
-            'Wah, kamu belum punya hire_me\nyang bisa dikerjain lagi.',
-            textAlign: TextAlign.center,
+      ],
+    );
+  }
+
+  Widget _buildPlusGawean() {
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(
+            'Gawean',
             style: FlutterFlowTheme.subtitle2.override(
               fontFamily: 'Poppins',
             ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-          child: FFButtonWidget(
-            onPressed: () {
-              print('Button pressed ...');
-            },
-            text: 'Dapatkan penugasan baru',
-            options: FFButtonOptions(
-              width: 240,
-              height: 48,
-              color: FlutterFlowTheme.secondaryColor,
-              textStyle: FlutterFlowTheme.subtitle2.override(
-                fontFamily: 'Poppins',
-                color: FlutterFlowTheme.primaryColor,
-                fontSize: 12,
-              ),
-              borderSide: BorderSide(
-                color: FlutterFlowTheme.primaryColor,
-                width: 1,
-              ),
-              borderRadius: 12,
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+            child: Icon(
+              Icons.add_circle,
+              color: FlutterFlowTheme.primaryColor,
+              size: 20,
             ),
-            loading: _loadingButton2,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-          child: FFButtonWidget(
-            onPressed: () {
-              print('Button pressed ...');
-            },
-            text: 'Tambahkan pesonamu',
-            options: FFButtonOptions(
-              width: 240,
-              height: 48,
-              color: FlutterFlowTheme.secondaryColor,
-              textStyle: FlutterFlowTheme.subtitle2.override(
-                fontFamily: 'Poppins',
-                color: FlutterFlowTheme.primaryColor,
-                fontSize: 12,
-              ),
-              borderSide: BorderSide(
-                color: FlutterFlowTheme.primaryColor,
-                width: 1,
-              ),
-              borderRadius: 12,
-            ),
-            loading: _loadingButton3,
-          ),
-        ),
-      ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductAndGaweanHome(List<GaweanRowModel> homeWidget) {
+    return gaweanMenu == 0
+        ? _buildGaweanList(homeWidget[1].jobs ?? [])
+        : _buildProductList(homeWidget[1].products ?? []);
+  }
+
+  Widget _buildGaweanList(List<Gawean> jobs) {
+    return jobs.length == 0
+        ? gaweanListEmptyView(
+        onPressedBtnPenugasan: () {}, onPressedBtnPesona: () {})
+        : ListView.builder(
+        itemCount: jobs.length < 5
+            ? jobs.length
+            : 5,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (ctx, index) {
+          var gawean = jobs[index];
+          return BuildGaweanItem(
+            gaweanModel: gawean,
+          );
+        }
+    );
+  }
+
+  Widget _buildProductList(List<ProductModel> products) {
+    return products.length == 0
+        ? productListEmptyView(onPressed: () {})
+        : GridView.builder(
+      itemCount: products.length > 6
+          ? 6
+          : products.length,
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.4,
+      ),
+      itemBuilder: (ctx, index) {
+        return BuildProductItem(
+            productModel: products[index]);
+      },
     );
   }
 }

@@ -1,5 +1,5 @@
+import 'package:mogawe/core/data/response/home_content/Revenue.dart';
 import 'package:mogawe/core/data/response/home_content/product_etalasa_model.dart';
-import 'package:mogawe/core/data/response/pesona/pesona_response_object.dart';
 
 import 'Certificate.dart';
 import 'gawean_model.dart';
@@ -40,7 +40,7 @@ class GaweanRowModel {
     dynamic taskToDos;
     dynamic postTimelines;
     dynamic jobCategories;
-    dynamic targetRevenue;
+    Revenue? targetRevenue;
     List<Certificate> myCertificates;
     dynamic tasks;
     List<ProductModel>? products;
@@ -60,7 +60,7 @@ class GaweanRowModel {
         taskToDos: json["taskToDos"],
         postTimelines: json["postTimelines"],
         jobCategories: json["jobCategories"],
-        targetRevenue: json["targetRevenue"],
+        targetRevenue: json["targetRevenue"] == null ? null : Revenue.fromJson(json["targetRevenue"]),
         myCertificates: json["myCertificates"] == null ? [] : List<Certificate>.from(json["myCertificates"].map((x) => Certificate.fromJson(x))),
         tasks: json["tasks"],
         products: json["products"] == null ? [] : List<ProductModel>.from(json["products"].map((x) => ProductModel.fromJson(x))),

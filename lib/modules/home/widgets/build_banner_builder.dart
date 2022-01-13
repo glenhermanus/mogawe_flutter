@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/home/ads_model.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/home/bloc/home_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:mogawe/modules/home/bloc/home_state.dart';
 import 'package:mogawe/modules/pesona/pesona_page.dart';
 import 'package:mogawe/utils/global/webview.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
+import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BuildBannerBuilder extends StatefulWidget {
@@ -20,6 +22,7 @@ class BuildBannerBuilder extends StatefulWidget {
 
 class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
   late HomeBloc bloc;
+  var logger = Logger(printer: PrettyPrinter());
 
   @override
   void initState() {
@@ -77,24 +80,17 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
         itemCount: ads.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
-          String placeHolder =
-              "https://sbu.co.id/info/wp-content/themes/easymag/images/no-image.png";
-          String image = ads[index].pictureUrl == ""
-              ? placeHolder
-              : ads[index].pictureUrl;
+          String image = ads[index].pictureUrl;
           return BounceTap(
             onTap: () => _handleBannerClick(ads[index]),
             child: Container(
-                width: 330,
-                margin: const EdgeInsets.symmetric(horizontal: 12),
-                child: BounceTap(
-                  onTap: () => _handleBannerClick(ads[index]),
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(
-                          image,
-                          fit: BoxFit.fill)),
-                )),
+              width: 330,
+              margin: const EdgeInsets.symmetric(horizontal: 18),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: mogaweImageHandler(url: image, fit: BoxFit.fill),
+              ),
+            ),
           );
         },
       ),
@@ -104,12 +100,14 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
   void _handleBannerClick(Ads ad) {
     switch (ad.actionType) {
       case "open_webview":
+        logger.d("clicked Open Web");
         _handleOpenWebview(ad.actionValue);
         break;
       case "open_apps":
         _handleOpenApp(ad.actionValue);
         break;
       case "open_activity":
+        logger.d("clicked Open Activity");
         _handleOpenActivity(ad.actionValue, ad.actionParam);
         break;
     }

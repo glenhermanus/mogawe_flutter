@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mogawe/core/data/response/home_content/Revenue.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/gawean_repository.dart';
 import 'package:mogawe/core/repositories/home_repository.dart';
 import 'package:mogawe/core/repositories/pesona_repository.dart';
 import 'package:mogawe/modules/home/bloc/home_event.dart';
@@ -7,12 +9,11 @@ import 'package:mogawe/modules/home/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   late HomeRepository _repo;
-  late PesonaRepository _pesonaRepository;
+
   late var _userToken;
 
   HomeBloc() : super(InitHomeState()) {
     _repo = HomeRepository.instance;
-    _pesonaRepository = PesonaRepository.instance;
   }
 
   @override
@@ -29,7 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       }
     }
 
-    if(event is GetCertificate) {
+    if(event is GetTargetContent) {
       yield ShowLoadingCertificate();
       try {
         var data = await _repo.getHomeContenetRowList(realToken: _userToken);
@@ -38,5 +39,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         yield ShowErrorCertificateState("$ex");
       }
     }
+
   }
 }

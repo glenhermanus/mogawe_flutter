@@ -2,4 +2,6 @@ abstract class HomeEvent {}
 
 class GetAdsBanner extends HomeEvent {}
 
-class GetCertificate extends HomeEvent {}
+class GetTargetContent extends HomeEvent {}
+
+class GetTarget extends HomeEvent {}

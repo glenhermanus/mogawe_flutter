@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mogawe/core/data/response/merchant/address_pickup.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/address/AddressScreen.dart';
+import 'package:mogawe/modules/address/AddressScreenEdit.dart';
 import 'package:mogawe/modules/profile/blocs/address_bloc.dart';
 import 'package:mogawe/modules/profile/blocs/address_event.dart';
 import 'package:mogawe/modules/profile/blocs/address_state.dart';
@@ -164,7 +165,7 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
                       child: _defaultMarkerAddress(),
                       visible: _isAddressDefault(address, index)),
                   Spacer(),
-                  _addressPickupActionMenu(index, address.uuid ?? "")
+                  _addressPickupActionMenu(index, address)
                 ],
               ),
               SizedBox(
@@ -191,7 +192,7 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
     );
   }
 
-  Widget _addressPickupActionMenu(int index, String uuid) {
+  Widget _addressPickupActionMenu(int index, AddressPickup addressPickup) {
     return PopupMenuButton<int>(
       child: FaIcon(
         FontAwesomeIcons.ellipsisV,
@@ -212,16 +213,26 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
           child: Text("Hapus Alamat"),
         ),
       ],
-      onSelected: (value) => selectedMenuItem(value, index, uuid),
+      onSelected: (value) => selectedMenuItem(
+          value, index, addressPickup.uuid ?? "", addressPickup),
     );
   }
 
-  void selectedMenuItem(int value, int index, String uuid) async {
+  void selectedMenuItem(
+      int value, int index, String uuid, AddressPickup addressPickup) async {
     switch (value) {
       case 1:
         bloc.add(UpdateDefaultAddressEvent(uuid));
         break;
       case 2:
+        var result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddressScreenEdit(addressPickup),
+            ));
+        if (result == "Berhasil") {
+          bloc.add(GetAddressEvent());
+        }
         break;
       case 3:
         bloc.add(DeletePickupAddressEvent(uuid));

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mogawe/core/data/response/home_content/product_etalasa_model.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 
 class BuildProductItem extends StatefulWidget {
   const BuildProductItem({
@@ -31,8 +32,8 @@ class _BuildProductItemState extends State<BuildProductItem> {
           children: [
             Stack(
               children: [
-                Image.network(
-                  widget.productModel.imageUrl.toString(),
+                mogaweImageHandler(
+                  url: widget.productModel.imageUrl,
                   width: double.infinity,
                   height: 120,
                   fit: BoxFit.cover,
