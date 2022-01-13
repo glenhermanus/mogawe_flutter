@@ -128,6 +128,27 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('shipmenttoApi') ?? '';
   }
+
+  Future<bool> getcekKurirTokoAdd()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('kurirtokoAdd') ?? false;
+  }
+
+  Future<int> getcekRadius()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('radius') ?? 0;
+  }
+
+  Future<bool> getcekValueEkspAdd()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('valueEkspedisi') ?? false;
+  }
+
+  Future<bool> getcekDiantarAdd()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('diantarAdd') ?? false;
+  }
+
   Future getImageCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     setState(() {
@@ -1030,20 +1051,45 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
             child: FFButtonWidget(
               onPressed: ()async{
                 String shipping ='';
+                int? valueRadius;
+                bool? valueantar, valuekurir, freeongkir, valueeks;
                 setState(() {
                   getShipmentValue().then((value) {
                     setState(() {
                       shipping = value;
                     });
                   });
+                  getcekDiantarAdd().then((value) {
+                    setState(() {
+                      valueantar = value;
+                    });
+                  });
+                  getcekKurirTokoAdd().then((value) {
+                    setState(() {
+                      valuekurir = value;
+                    });
+                  });
+                  getcekValueEkspAdd().then((value) {
+                    setState(() {
+                      valueeks = value;
+                    });
+                  });
+                  getcekRadius().then((value) {
+                    setState(() {
+                      valueRadius = value;
+                    });
+                  });
+                  freeongkir = valueantar == false ? valuekurir == false? false : true : true;
                 });
                 var berat = await AuthRepository().readSecureData('beratbarang');
 
                 try{
                   await UserNetworkService().InputProduct(token, categoryValue.uuid, namactrl.text, deskripsictrl.text, brandctrl.text, dangerValue['isDangerous'],
                       berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text), stokValue['stock'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
-                      true, ValueImage, false, false, true,
-                      true, true, shipping);
+                      true, ValueImage, false, freeongkir, valueantar, ValueImage[0]['value'],
+                      valuekurir, shipping != null ? true : false, shipping,
+                      addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].notes, valueRadius, addressPickupMerchant?.object[0].supplierName
+                  );
                   Fluttertoast.showToast(msg: "Berhasil");
                 }catch(e){
 

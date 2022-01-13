@@ -211,7 +211,8 @@ class UserNetworkService {
   }
 
   Future  InputProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
-      isPublished, images, isFavorite, isFreeOngkir, isShippingTakeAway, isShippingOwnCourier, isShippingExpedition, shippingExpeditionService) async {
+      isPublished, images, isFavorite, isFreeOngkir, isShippingTakeAway, imageUrl, isShippingOwnCourier, isShippingExpedition, shippingExpeditionService,
+      alamat, toko, noteAlamat, radius, tokoSup,) async {
     final requestUrl = '$BASE_URL/api/supplier/product/create';
     final response = await http.post(Uri.parse(requestUrl),
       headers: <String, String>{
@@ -233,19 +234,43 @@ class UserNetworkService {
           "stock":stock,
           "youtubeUrl":youtubeurl,
           "isPublished":true,
+          "minimumOrder": 0,
+          "imageUrl": imageUrl,
           "images":images,
           "isFavorite":false,
-          "isFreeOngkir":false,
+          "isFreeOngkir": isFreeOngkir,
           "isShippingTakeAway":isShippingTakeAway,
           "isShippingOwnCourier": isShippingOwnCourier,
           "isShippingExpedition": isShippingExpedition,
-          "shippingExpeditionServices":shippingExpeditionService}
+          "shippingExpeditionServices":shippingExpeditionService,
+          "supplierAddressAddress": alamat,
+          "supplierAddressName": toko,
+          "supplierAddressNotes": noteAlamat,
+          "supplierSelfPickupRadius": radius,
+          "supplierStoreName": tokoSup,
+          "productAddresses": [
+            {
+              "supplierAddressAddress": "",
+              "supplierAddressLatitude": 0,
+              "supplierAddressLongitude": 0,
+              "supplierAddressName": "",
+              "supplierAddressNotes": "",
+              "supplierAddressShipmentCityId": 0,
+              "supplierAddressShipmentCityName": "",
+              "supplierAddressShipmentProvinceId": 0,
+              "supplierAddressShipmentProvinceName": "",
+              "uuidProduct": "",
+              "uuidSupplierAddress": ""
+            }
+          ],
+        }
     ));
     return json.decode(response.body);
   }
 
   Future UpdateProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
-      isPublished, images, isFavorite, isFreeOngkir, isShippingTakeAway, isShippingOwnCourier, isShippingExpedition, shippingExpeditionService) async {
+      isPublished, images, isFavorite, isFreeOngkir, imageUrl, isShippingTakeAway,  isShippingOwnCourier, isShippingExpedition, shippingExpeditionService,
+      alamat, toko, tokoSup,noteAlamat, radius,) async {
     final requestUrl = '$BASE_URL/api/supplier/product/update';
     final response = await http.put(Uri.parse(requestUrl),
         headers: <String, String>{
@@ -267,13 +292,21 @@ class UserNetworkService {
           "stock":stock,
           "youtubeUrl":youtubeurl,
           "isPublished":true,
+          "minimumOrder": 0,
+          "imageUrl": imageUrl,
           "images":images,
           "isFavorite":false,
-          "isFreeOngkir":false,
+          "isFreeOngkir": isFreeOngkir,
           "isShippingTakeAway":isShippingTakeAway,
           "isShippingOwnCourier": isShippingOwnCourier,
           "isShippingExpedition": isShippingExpedition,
-          "shippingExpeditionServices":shippingExpeditionService}
+          "shippingExpeditionServices":shippingExpeditionService,
+          "supplierAddressAddress": alamat,
+          "supplierAddressName": toko,
+          "supplierAddressNotes": noteAlamat,
+          "supplierSelfPickupRadius": radius,
+          "supplierStoreName": tokoSup,
+        }
         ));
     return json.decode(response.body);
   }

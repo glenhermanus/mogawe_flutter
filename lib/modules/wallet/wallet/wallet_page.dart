@@ -10,6 +10,7 @@ import 'package:mogawe/modules/wallet/bloc/wallet_event.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_state.dart';
 import 'package:mogawe/modules/wallet/wiithdrawal/wiithdrawal_page.dart';
 import "package:grouped_list/grouped_list.dart";
+import 'package:mogawe/utils/services/currency_formatter.dart';
 import 'package:mogawe/utils/services/date_formatter.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweNominalText.dart';
 
@@ -160,16 +161,16 @@ class _WalletPageState extends State<WalletPage> {
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Text(
-                              loading ? '' : 'Rp',
-                              style: FlutterFlowTheme.subtitle2.override(
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
+                            // Text(
+                            //   loading ? '' : 'Rp',
+                            //   style: FlutterFlowTheme.subtitle2.override(
+                            //     fontFamily: 'Poppins',
+                            //   ),
+                            // ),
                             Text(
                               loading
                                   ? 'loading...'
-                                  : ' ${this.userProfileResponse?.balance}',
+                                  : ' ${stringtoRupiah(this.userProfileResponse?.balance as int)}',
                               style: FlutterFlowTheme.title3.override(
                                 fontFamily: 'Poppins',
                               ),
@@ -218,7 +219,7 @@ class _WalletPageState extends State<WalletPage> {
             ],
           ),
         ),
-        Expanded(child: blocListener(blockBuilder())),
+         Expanded(child: blocListener(blockBuilder())),
       ],
     ));
   }

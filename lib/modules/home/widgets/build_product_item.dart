@@ -20,7 +20,7 @@ class _BuildProductItemState extends State<BuildProductItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width / 2,
+
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
         color: Colors.white,

@@ -104,6 +104,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
                       padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             loading ? "--" : stringtoRupiah(_target),
