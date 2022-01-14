@@ -84,7 +84,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           String image = ads[index].pictureUrl;
-          return BounceTap(
+          return GestureDetector(
             onTap: () => _handleBannerClick(ads[index]),
             child: Container(
               width: 330,

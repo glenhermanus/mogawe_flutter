@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class BounceTap extends StatefulWidget {
   final Widget child;
-  final VoidCallback onTap;
+  final GestureTapCallback? onTap;
 
   BounceTap({required this.child, Key? key, required this.onTap})
       : assert(child != null),
@@ -44,7 +44,7 @@ class _BounceTapState extends State<BounceTap>
       onPointerUp: (PointerUpEvent event) {
         _controller.reverse();
         if (widget.onTap == null) return;
-        widget.onTap();
+        widget.onTap!();
       },
       child: ScaleTransition(
         scale: _scale,

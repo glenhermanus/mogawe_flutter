@@ -21,6 +21,7 @@ import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:mogawe/utils/ui/widgets/shimmering_skeleton.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import 'gawean/bloc/gawean_bloc.dart';
@@ -39,6 +40,8 @@ class _HomePageState extends State<HomePage> {
   var token;
   var convertCurrency, balance;
   UserProfileResponse? userProfileResponse;
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
 
   int gaweanMenu = 0;
 
@@ -81,6 +84,12 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     super.dispose();
     bloc.close();
+  }
+
+  void _onRefresh() async{
+    bloc.add(GetGaweanListEvent());
+    _refreshController.refreshCompleted();
+
   }
 
   Widget blocListener(Widget child) {
@@ -278,7 +287,12 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child:
-                SingleChildScrollView(child: blocListener(blocBuilder(context))),
+                SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: true,
+                    controller: _refreshController,
+                    onRefresh: _onRefresh,
+                    child: SingleChildScrollView(child: blocListener(blocBuilder(context)))),
               ),
             ],
           )
