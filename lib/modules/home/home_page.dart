@@ -89,8 +89,12 @@ class _HomePageState extends State<HomePage> {
   void _onRefresh() async{
     bloc.add(GetGaweanListEvent());
     _refreshController.refreshCompleted();
-
   }
+
+  void _onLoading() async{
+    _refreshController.loadComplete();
+  }
+
 
   Widget blocListener(Widget child) {
     return BlocListener(
@@ -292,7 +296,14 @@ class _HomePageState extends State<HomePage> {
                     enablePullUp: true,
                     controller: _refreshController,
                     onRefresh: _onRefresh,
-                    child: SingleChildScrollView(child: blocListener(blocBuilder(context)))),
+                    onLoading: _onLoading,
+                    footer: CustomFooter(
+                      builder: (ctx, mode) {
+                        return SizedBox();
+                      },
+                    ),
+                    child: SingleChildScrollView(
+                        child: blocListener(blocBuilder(context)))),
               ),
             ],
           )
