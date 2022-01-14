@@ -72,7 +72,9 @@ class _NotificationListPageState extends State<NotificationListPage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               SizedBox(height: 8,),
-              loading? CircularProgressIndicator() : CardNotification(notificationResponse: notificationResponse,)
+              loading? Align(
+                  alignment: Alignment.topCenter,
+                  child: CircularProgressIndicator()) : CardNotification(notificationResponse: notificationResponse,)
             ],
           ),
         ),
