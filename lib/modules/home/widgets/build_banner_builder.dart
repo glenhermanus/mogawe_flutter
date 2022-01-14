@@ -51,8 +51,11 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
       builder: (ctx, state) {
         if (state is ShowLoadingAds) {
           print("State : $state");
-          return Center(
-            child: CircularProgressIndicator(),
+          return SizedBox(
+            height: 175,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
         if (state is ShowHomeAds) {
@@ -85,7 +88,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
             onTap: () => _handleBannerClick(ads[index]),
             child: Container(
               width: 330,
-              margin: const EdgeInsets.symmetric(horizontal: 18),
+              margin: const EdgeInsets.only(left: 18),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
                 child: mogaweImageHandler(url: image, fit: BoxFit.fill),

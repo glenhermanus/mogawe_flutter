@@ -19,6 +19,8 @@ import 'package:mogawe/modules/home/widgets/productListEmptyView.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
+import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
+import 'package:mogawe/utils/ui/widgets/shimmering_skeleton.dart';
 
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import 'gawean/bloc/gawean_bloc.dart';
@@ -89,20 +91,18 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget blocBuilder() {
+  Widget blocBuilder(BuildContext context) {
     return BlocBuilder(
       bloc: bloc,
       builder: (ctx, state) {
         if (state is ShowLoadingListGaweanState) {
           print("State : $state");
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return _buildHomeShimmerLoading();
         }
         if (state is ShowListGaweanState) {
           print("State : $state");
           print("State : $state");
-          return _buildHomeWidgetContent(state.list);
+          return _buildHomeWidgetContent(state.list, context);
         }
         if (state is ShowErrorGaweanListState){
           log(state.message);
@@ -179,44 +179,6 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
-          // FlutterFlowIconButton(
-          //   borderColor: Colors.transparent,
-          //   borderRadius: 30,
-          //   borderWidth: 1,
-          //   buttonSize: 44,
-          //   icon: Icon(
-          //     Icons.person_outline,
-          //     color: FlutterFlowTheme.secondaryColor,
-          //     size: 24,
-          //   ),
-          //   onPressed: () async {
-          //     await Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => HireMePage(),
-          //       ),
-          //     );
-          //   },
-          // ),
-          // FlutterFlowIconButton(
-          //   borderColor: Colors.transparent,
-          //   borderRadius: 30,
-          //   borderWidth: 1,
-          //   buttonSize: 44,
-          //   icon: Icon(
-          //     Icons.message_rounded,
-          //     color: FlutterFlowTheme.secondaryColor,
-          //     size: 24,
-          //   ),
-          //   onPressed: () async {
-          //     await Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => InboxPage(),
-          //       ),
-          //     );
-          //   },
-          // ),
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
             child: FlutterFlowIconButton(
@@ -316,7 +278,7 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child:
-                SingleChildScrollView(child: blocListener(blocBuilder())),
+                SingleChildScrollView(child: blocListener(blocBuilder(context))),
               ),
             ],
           )
@@ -325,9 +287,65 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHomeWidgetContent(List<GaweanRowModel> homeWidgets) {
+  Widget _buildHomeShimmerLoading(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Stack(
+          children: [
+            Align(
+              alignment: AlignmentDirectional(0, -1),
+              child: Container(
+                width: double.infinity,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.primaryColor,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                 physics: const NeverScrollableScrollPhysics(),
+                child: Row(children: [
+                  Skeleton(width: 330, height: 175,),
+                  SizedBox(width: 12),
+                  Skeleton(width: 330, height: 175,),
+                ],),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 85),
+        Padding(
+          padding: const EdgeInsets.only(left: 18.0),
+          child: Skeleton(width: 150, height: 24,),
+        ),
+        SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+          child: Skeleton(height: 175,),
+        ),
+        SizedBox(height: 36),
+        Padding(
+          padding: const EdgeInsets.only(left: 18.0),
+          child: Skeleton(width: 150, height: 24,),
+        ),
+        SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+          child: Skeleton(height: 50,),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHomeWidgetContent(List<GaweanRowModel> homeWidgets, BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Stack(
           children: [
@@ -460,7 +478,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              _buildProductAndGaweanHome(homeWidgets),
+              _buildProductAndGaweanHome(homeWidgets, context),
               SizedBox(height: 36)
             ],
           ),
@@ -494,51 +512,67 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildProductAndGaweanHome(List<GaweanRowModel> homeWidget) {
+  Widget _buildProductAndGaweanHome(List<GaweanRowModel> homeWidget, BuildContext context) {
     return gaweanMenu == 0
         ? _buildGaweanList(homeWidget[1].jobs ?? [])
-        : _buildProductList(homeWidget[1].products ?? []);
+        : _buildProductList(homeWidget[1].products ?? [], context);
   }
 
   Widget _buildGaweanList(List<Gawean> jobs) {
     return jobs.length == 0
         ? gaweanListEmptyView(
         onPressedBtnPenugasan: () {}, onPressedBtnPesona: () {})
-        : ListView.builder(
-        itemCount: jobs.length < 5
-            ? jobs.length
-            : 5,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (ctx, index) {
-          var gawean = jobs[index];
-          return BuildGaweanItem(
-            gaweanModel: gawean,
-          );
-        }
+        : Column(
+      children: [
+        ListView.builder(
+            itemCount: jobs.length < 5
+                ? jobs.length
+                : 5,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (ctx, index) {
+              var gawean = jobs[index];
+              return BuildGaweanItem(
+                gaweanModel: gawean,
+              );
+            }
+        ),
+        BounceTap(
+            onTap: (){},
+            child: Text("Lihat Semua", style: TextStyle(color: FlutterFlowTheme.primaryColor, fontWeight: FontWeight.w600))),
+      ],
     );
   }
 
-  Widget _buildProductList(List<ProductModel> products) {
+  Widget _buildProductList(List<ProductModel> products, BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width / 2;
+
     return products.length == 0
         ? productListEmptyView(onPressed: () {})
-        : GridView.builder(
-      itemCount: products.length > 6
-          ? 6
-          : products.length,
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 0.4,
-      ),
-      itemBuilder: (ctx, index) {
-        return BuildProductItem(
-            productModel: products[index]);
-      },
-    );
+        : Column(
+      children: [
+        GridView.builder(
+          itemCount: products.length > 6
+              ? 6
+              : products.length,
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: (itemWidth / itemHeight),
+          ),
+          itemBuilder: (ctx, index) {
+            return BuildProductItem(
+                productModel: products[index]);
+          },
+        ),
+        BounceTap(
+            onTap: (){},
+            child: Text("Lihat Semua",
+                style: TextStyle(color: FlutterFlowTheme.primaryColor, fontWeight: FontWeight.w600),),),
+      ]);
   }
 }

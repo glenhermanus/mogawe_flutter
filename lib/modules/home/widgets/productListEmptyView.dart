@@ -28,7 +28,7 @@ Widget productListEmptyView({required  VoidCallback? onPressed}) {
         padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
         child: FFButtonWidget(
           onPressed: onPressed,
-          text: 'Dapatkan penugasan baru',
+          text: 'Cari di Jualan',
           options: FFButtonOptions(
             width: 240,
             height: 48,

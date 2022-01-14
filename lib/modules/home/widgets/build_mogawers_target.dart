@@ -11,7 +11,9 @@ import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
+import 'package:mogawe/modules/pesona/pesona_page.dart';
 import 'package:mogawe/utils/services/currency_formatter.dart';
+import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BuildMogawersTarget extends StatefulWidget {
@@ -194,10 +196,12 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
     int limitCertificate = 4;
     List<Widget> listCertificateWidget = <Widget>[];
     int counter = 0;
+    int pesonaTakenCounter = 0;
 
     for (var i = 0; i < listPesona.length; i++) {
       if(listPesona[i].status != ""){
         if (counter < limitCertificate){
+          pesonaTakenCounter++;
           listCertificateWidget.add(_buildCertificateItem(listPesona[i]));
         }
         counter++;
@@ -212,7 +216,41 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
       listCertificateWidget.add(SizedBox());
     }
 
-    return Row(children: listCertificateWidget,);
+    return pesonaTakenCounter == 0 ?
+       _buildPluspesona()
+      : Row(children: listCertificateWidget,);
+  }
+
+  Widget _buildPluspesona() {
+    return BounceTap(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PesonaPage(),
+          ),
+        );
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(
+            'Tambah Pesona',
+            style: FlutterFlowTheme.subtitle2.override(
+              fontFamily: 'Poppins',
+            ),
+          ),
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+            child: Icon(
+              Icons.add_circle,
+              color: FlutterFlowTheme.tertiaryColor,
+              size: 20,
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget _buildCertificateItem(Certificate pesona) {
