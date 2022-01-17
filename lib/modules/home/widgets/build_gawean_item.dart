@@ -68,14 +68,16 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: mogaweImageHandler(
-                    url: widget.gaweanModel.jobPicture,
-                    width: 92,
-                    height: 114,
-                    fit: BoxFit.cover,
-                  )),
+              Expanded(
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: mogaweImageHandler(
+                      url: widget.gaweanModel.jobPicture,
+                      width: 92,
+                      height: 114,
+                      fit: BoxFit.cover,
+                    )),
+              ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
@@ -167,16 +169,18 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                                     color: Colors.black,
                                     size: 12,
                                   ),
-                                  Padding(
+                                  Padding( 
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         8, 0, 0, 0),
-                                    child: Text(
-                                      widget.gaweanModel.locationAddress ?? "",
-                                      style:
-                                          FlutterFlowTheme.bodyText2.override(
-                                        fontFamily: 'Poppins',
-                                        color: Color(0xFF8C8C8C),
-                                        fontSize: 12,
+                                    child: Expanded(
+                                      child: Text(
+                                        widget.gaweanModel.locationAddress ?? "",
+                                        style:
+                                            FlutterFlowTheme.bodyText2.override(
+                                          fontFamily: 'Poppins',
+                                          color: Color(0xFF8C8C8C),
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
                                   )

@@ -1,7 +1,11 @@
+import 'package:mogawe/core/data/response/notification/notification_response.dart';
+import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/inbox_notif/notification/notification_card.dart';
 
 class NotificationListPage extends StatefulWidget {
   NotificationListPage({Key? key}) : super(key: key);
@@ -11,9 +15,37 @@ class NotificationListPage extends StatefulWidget {
       _NotificationListPageState();
 }
 
-class _NotificationListPageState
-    extends State<NotificationListPage> {
+class _NotificationListPageState extends State<NotificationListPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  var token;
+  NotificationResponse? notificationResponse;
+  bool loading = false;
+
+  getData()async{
+    setState(() {
+      loading = true;
+    });
+    token = await AuthRepository().readSecureData('token');
+
+
+    print("OUT >> hey");
+    print(token);
+
+    notificationResponse = await UserNetworkService().getListNotification(token);
+
+    setState(() {
+      loading = false;
+
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,221 +71,10 @@ class _NotificationListPageState
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24, 16, 24, 0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Gaweanmu sudah diapprove',
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '12 Okt, 12:00',
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF777777),
-                            fontSize: 11,
-                          ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                      child: Text(
-                        'Kamu mendapatkan Rp20.000 karena hire_me IDM Indomaret kamu sudah berhasil diapprove',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Color(0xFF7E7E7E),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Divider()
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24, 16, 24, 0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Gaweanmu sudah diapprove',
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '12 Okt, 12:00',
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF777777),
-                            fontSize: 11,
-                          ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                      child: Text(
-                        'Kamu mendapatkan Rp20.000 karena hire_me IDM Indomaret kamu sudah berhasil diapprove',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Color(0xFF7E7E7E),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Divider()
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24, 16, 24, 0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Gaweanmu sudah diapprove',
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '12 Okt, 12:00',
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF777777),
-                            fontSize: 11,
-                          ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                      child: Text(
-                        'Kamu mendapatkan Rp20.000 karena hire_me IDM Indomaret kamu sudah berhasil diapprove',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Color(0xFF7E7E7E),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Divider()
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24, 16, 24, 0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Gaweanmu sudah diapprove',
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '12 Okt, 12:00',
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF777777),
-                            fontSize: 11,
-                          ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                      child: Text(
-                        'Kamu mendapatkan Rp20.000 karena hire_me IDM Indomaret kamu sudah berhasil diapprove',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Color(0xFF7E7E7E),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Divider()
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24, 16, 24, 0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Gaweanmu sudah diapprove',
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '12 Okt, 12:00',
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF777777),
-                            fontSize: 11,
-                          ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                      child: Text(
-                        'Kamu mendapatkan Rp20.000 karena hire_me IDM Indomaret kamu sudah berhasil diapprove',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: Color(0xFF7E7E7E),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Divider()
-                  ],
-                ),
-              )
+              SizedBox(height: 8,),
+              loading? Align(
+                  alignment: Alignment.topCenter,
+                  child: CircularProgressIndicator()) : CardNotification(notificationResponse: notificationResponse,)
             ],
           ),
         ),
