@@ -16,7 +16,8 @@ class MogaweNominalText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var formatter = NumberFormat('#,###,###');
-    var formattedNominal = formatter.format(nominal);
+    var rawFormat = formatter.format(nominal);
+    var formattedNominal = rawFormat.replaceAll(",", ".");
     return isNeedSymbol ?
     Text(
         nominal == 0

@@ -4,10 +4,12 @@ Widget mogaweImageHandler(
     {required String? url,
     double? height,
     double? width,
-    required BoxFit fit}) {
+    required bool isProfile,
+      BoxFit? fit}) {
   final String emptyImageAsset = 'assets/images/noimagefound.png';
+  final String emptyProfileAssets = 'assets/images/im_ambar_good_bgwhite.jpg';
 
-  return (url != "" || url != null)
+  return (url != "" && url != null)
       ? Image.network(
           url ?? "",
           fit: fit,
@@ -15,7 +17,7 @@ Widget mogaweImageHandler(
           width: width,
         )
       : Image.asset(
-          emptyImageAsset,
+          isProfile ? emptyProfileAssets : emptyImageAsset,
           fit: fit,
           height: height,
           width: width,

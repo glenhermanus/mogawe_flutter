@@ -18,8 +18,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class BuildMogawersTarget extends StatefulWidget {
 
   final List<GaweanRowModel> data;
+  final BuildContext context;
 
-  const BuildMogawersTarget({Key? key, required this.data}) : super(key: key);
+  const BuildMogawersTarget({Key? key, required this.data, required this.context}) : super(key: key);
 
   @override
   State<BuildMogawersTarget> createState() => _BuildMogawersTargetState();
@@ -118,6 +119,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
                           IconButton(
                             onPressed: () {
                               showDialog(
+                                barrierDismissible: false,
                                 context: context,
                                 builder: (context) {
                                   return Center(
@@ -173,7 +175,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                       child: Text(
-                        'Pesonamu:',
+                        'Personamu:',
                         style: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                           fontSize: 12,
@@ -217,14 +219,23 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
 
     return pesonaTakenCounter == 0 ?
        _buildPluspesona()
-      : Row(children: listCertificateWidget,);
+      : GestureDetector(
+      onTap: (){
+        Navigator.push(
+          widget.context,
+          MaterialPageRoute(
+            builder: (context) => PesonaPage(),
+          ),
+        );
+      },
+        child: Row(children: listCertificateWidget,));
   }
 
   Widget _buildPluspesona() {
     return BounceTap(
       onTap: (){
         Navigator.push(
-          context,
+          widget.context,
           MaterialPageRoute(
             builder: (context) => PesonaPage(),
           ),
@@ -234,7 +245,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Text(
-            'Tambah Pesona',
+            'Tambah Persona',
             style: FlutterFlowTheme.subtitle2.override(
               fontFamily: 'Poppins',
             ),
@@ -339,6 +350,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
 
   Widget _showTargetHarianDialog() {
     return AlertDialog(
+
       content: Container(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -368,7 +380,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
           child: Text("Batal"),
           onPressed: () {
             _targetEditingController.text = "";
-            Navigator.pop(context);
+            Navigator.pop(widget.context);
           },
         ),
         TextButton(
@@ -382,9 +394,9 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
                     int.parse(_targetEditingController.text.replaceAll('.', ''));
               });
               _targetEditingController.text = "";
-              Navigator.pop(context);
+              Navigator.pop(widget.context);
             } else {
-              Navigator.pop(context);
+              Navigator.pop(widget.context);
             }
           },
         )

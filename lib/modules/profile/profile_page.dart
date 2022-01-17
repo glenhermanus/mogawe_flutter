@@ -19,6 +19,7 @@ import 'package:mogawe/modules/profile/tab_widgets/personal_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/setting_tab.dart';
 
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
+import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -137,9 +138,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                       ),
-                      child: widget.data == null? Container(): Image.network(
-                        widget.data?.profilePicture ?? "https://sbu.co.id/info/wp-content/themes/easymag/images/no-image.png",
-                      ),
+                      child: widget.data == null? Container():
+                          mogaweImageHandler(url: widget.data?.profilePicture, isProfile: true, fit: BoxFit.cover)
                     ),
                   ),
                 ),

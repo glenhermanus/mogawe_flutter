@@ -68,16 +68,15 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: mogaweImageHandler(
-                      url: widget.gaweanModel.jobPicture,
-                      width: 92,
-                      height: 114,
-                      fit: BoxFit.cover,
-                    )),
-              ),
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: mogaweImageHandler(
+                    url: widget.gaweanModel.jobPicture,
+                      height: 145,
+                      width: 115,
+                    fit: BoxFit.fitHeight,
+                      isProfile: false
+                  )),
               Expanded(
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
@@ -91,6 +90,8 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                           Expanded(
                             child: Text(
                               widget.gaweanModel.jobName ?? "",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: FlutterFlowTheme.subtitle2.override(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w600,
