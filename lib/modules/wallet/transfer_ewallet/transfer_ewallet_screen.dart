@@ -105,6 +105,11 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
           print("Wallet size is ${state.list.length}");
           return _buildEWalletList(state.list);
         }
+        if (state is ShowEmptyEWalletList) {
+          return Center(
+            child: Text(
+              "Belum Ada E-Wallet ditambahkan"));
+        }
         if (state is ShowErrorGetWalletState) {
           print(state.message);
           return Container();

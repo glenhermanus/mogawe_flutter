@@ -9,6 +9,8 @@ import 'package:mogawe/core/data/response/home_content/product_etalasa_model.dar
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/hire_me/hire_me_page.dart';
+import 'package:mogawe/modules/hire_me/sales/hire_me_sales_page.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
 import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 import 'package:mogawe/modules/home/widgets/build_gawean_item.dart';
@@ -36,15 +38,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late GaweanBloc bloc;
   bool loading = false;
+  bool isOpenDialog = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
   var convertCurrency, balance;
   UserProfileResponse? userProfileResponse;
   RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
   int gaweanMenu = 0;
-
 
   void getToken() async {
     setState(() {
@@ -86,15 +88,14 @@ class _HomePageState extends State<HomePage> {
     bloc.close();
   }
 
-  void _onRefresh() async{
+  void _onRefresh() async {
     bloc.add(GetGaweanListEvent());
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     _refreshController.loadComplete();
   }
-
 
   Widget blocListener(Widget child) {
     return BlocListener(
@@ -130,6 +131,7 @@ class _HomePageState extends State<HomePage> {
     print(userProfileResponse?.full_name);
     return Scaffold(
       key: scaffoldKey,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: FlutterFlowTheme.primaryColor,
         automaticallyImplyLeading: false,
@@ -515,24 +517,34 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPlusGawean() {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Text(
-            'Gawean',
-            style: FlutterFlowTheme.subtitle2.override(
-              fontFamily: 'Poppins',
+      child: BounceTap(
+        onTap: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HireMePage(),
             ),
-          ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-            child: Icon(
-              Icons.add_circle,
-              color: FlutterFlowTheme.primaryColor,
-              size: 20,
+          );
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text(
+              'Gawean',
+              style: FlutterFlowTheme.subtitle2.override(
+                fontFamily: 'Poppins',
+              ),
             ),
-          )
-        ],
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+              child: Icon(
+                Icons.add_circle,
+                color: FlutterFlowTheme.primaryColor,
+                size: 20,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -545,8 +557,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildGaweanList(List<Gawean> jobs) {
     return jobs.length == 0
-        ? gaweanListEmptyView(
-        onPressedBtnPenugasan: () {}, onPressedBtnPesona: () {})
+        ? gaweanListEmptyView(context: context)
         : Column(
       children: [
         ListView.builder(
@@ -575,7 +586,15 @@ class _HomePageState extends State<HomePage> {
     final double itemWidth = size.width / 2;
 
     return products.length == 0
-        ? productListEmptyView(onPressed: () {})
+        ? productListEmptyView(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HireMeSalesPage(),
+            ),
+          );
+        })
         : Column(
       children: [
         GridView.builder(
@@ -594,6 +613,7 @@ class _HomePageState extends State<HomePage> {
                 productModel: products[index]);
           },
         ),
+        SizedBox(height: 18),
         BounceTap(
             onTap: (){},
             child: Text("Lihat Semua",

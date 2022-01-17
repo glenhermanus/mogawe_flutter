@@ -30,6 +30,8 @@ class ShowEWalletList extends WalletState {
   ShowEWalletList(this.list);
 }
 
+class ShowEmptyEWalletList extends WalletState {}
+
 class ShowErrorGetWalletState extends WalletState {
   String message;
 

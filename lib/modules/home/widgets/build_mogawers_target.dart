@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/home_content/Certificate.dart';
 import 'package:mogawe/core/data/response/home_content/Revenue.dart';
@@ -87,7 +86,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProgressRevenueBar(widget.data[0]!.targetRevenue),
+            _buildProgressRevenueBar(widget.data[0].targetRevenue),
             Expanded(
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
@@ -374,15 +373,19 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
         ),
         TextButton(
           child: Text("Simpan"),
-          onPressed: () => {
-            saveDailyTarget(
-                int.parse(_targetEditingController.text.replaceAll('.', ''))),
-            Navigator.pop(context),
-            setState(() {
-              _target =
-                  int.parse(_targetEditingController.text.replaceAll('.', ''));
-            }),
-            _targetEditingController.text = "",
+          onPressed: () {
+            if(_targetEditingController.text.isNotEmpty){
+              saveDailyTarget(
+                  int.parse(_targetEditingController.text.replaceAll('.', '')));
+              setState(() {
+                _target =
+                    int.parse(_targetEditingController.text.replaceAll('.', ''));
+              });
+              _targetEditingController.text = "";
+              Navigator.pop(context);
+            } else {
+              Navigator.pop(context);
+            }
           },
         )
       ],

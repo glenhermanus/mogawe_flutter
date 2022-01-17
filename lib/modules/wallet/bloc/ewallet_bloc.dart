@@ -30,7 +30,11 @@ class EWalletBloc extends Bloc<WalletEvent, WalletState> {
       yield ShowLoadingEWalletState();
       try {
         var data = await _repo.getEWalletList(realToken: _userToken);
-        yield ShowEWalletList(data);
+        if(data.isNotEmpty){
+          yield ShowEWalletList(data);
+        } else {
+          yield ShowEmptyEWalletList();
+        }
       } catch (ex) {
         yield ShowErrorGetWalletState("$ex");
       }

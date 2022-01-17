@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/modules/hire_me/hire_me_page.dart';
+import 'package:mogawe/modules/pesona/pesona_page.dart';
 
-Widget gaweanListEmptyView({required VoidCallback? onPressedBtnPenugasan, required VoidCallback? onPressedBtnPesona }) {
+Widget gaweanListEmptyView({required BuildContext context}) {
   return Column(
     children: [
       Padding(
@@ -17,7 +19,7 @@ Widget gaweanListEmptyView({required VoidCallback? onPressedBtnPenugasan, requir
       Padding(
         padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
         child: Text(
-          'Wah, kamu belum punya hire_me\nyang bisa dikerjain lagi.',
+          'Wah, kamu belum punya gawean\nyang bisa dikerjain lagi.',
           textAlign: TextAlign.center,
           style: FlutterFlowTheme.subtitle2.override(
             fontFamily: 'Poppins',
@@ -28,7 +30,12 @@ Widget gaweanListEmptyView({required VoidCallback? onPressedBtnPenugasan, requir
         padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
         child: FFButtonWidget(
           onPressed: () {
-            print('Button pressed ...');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HireMePage(),
+              ),
+            );
           },
           text: 'Dapatkan penugasan baru',
           options: FFButtonOptions(
@@ -52,7 +59,12 @@ Widget gaweanListEmptyView({required VoidCallback? onPressedBtnPenugasan, requir
         padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
         child: FFButtonWidget(
           onPressed: () {
-            print('Button pressed ...');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PesonaPage(),
+              ),
+            );
           },
           text: 'Tambahkan pesonamu',
           options: FFButtonOptions(
