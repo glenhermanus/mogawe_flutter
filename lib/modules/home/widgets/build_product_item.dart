@@ -37,7 +37,7 @@ class _BuildProductItemState extends State<BuildProductItem> {
                   width: double.infinity,
                   height: 120,
                   fit: BoxFit.cover,
-                ),
+                    isProfile: false),
                 Positioned(
                   bottom: 1,
                   right: 1,

@@ -67,7 +67,7 @@ class _IdCardProfileState extends State<IdCardProfile> {
                   Center(
                     child: CircleAvatar(
                       backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(widget.data!.profilePicture!),
+                      backgroundImage: widget.data?.profilePicture == null ? Image.asset('assets/images/im_ambar_good_bgwhite.jpg').image : NetworkImage(widget.data?.profilePicture ?? ""),
                       radius: 48,
                     ),
                   ),
@@ -122,11 +122,11 @@ class _IdCardProfileState extends State<IdCardProfile> {
                             ))
                           ],
                         )),
-                       rowItem("Telepon",   Text (loading ? '' : widget.data!.phone!)),
+                       rowItem("Telepon",   Text (loading ? '' : widget.data?.phone ?? '-')),
                         rowItem("Jenis Kelamin", Text(
                           widget.data!.gender == "M"? "Laki-laki": "Perempuan"
                         )),
-                        widget.data!.edu! != null ? rowItem("Edukasi", Text( widget.data!.edu!)) :
+                        widget.data!.edu! != null ? rowItem("Edukasi", Text( widget.data?.edu ?? '-')) :
                         rowItem("Edukasi", Text( ''))
                       ],
                     ),

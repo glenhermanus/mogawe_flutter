@@ -91,7 +91,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
               margin: const EdgeInsets.only(left: 18),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
-                child: mogaweImageHandler(url: image, fit: BoxFit.fill),
+                child: mogaweImageHandler(url: image, fit: BoxFit.fill, isProfile: false),
               ),
             ),
           );
@@ -111,6 +111,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
         break;
       case "open_activity":
         logger.d("clicked Open Activity");
+        logger.d(ad.actionParam);
         _handleOpenActivity(ad.actionValue, ad.actionParam);
         break;
     }

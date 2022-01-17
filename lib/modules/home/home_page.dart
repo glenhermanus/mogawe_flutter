@@ -22,9 +22,8 @@ import 'package:mogawe/modules/inbox_notif/notification/notification_list/notifi
 import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
+import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 import 'package:mogawe/utils/ui/widgets/shimmering_skeleton.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import 'gawean/bloc/gawean_bloc.dart';
 import 'gawean/bloc/gawean_event.dart';
@@ -38,13 +37,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late GaweanBloc bloc;
   bool loading = false;
-  bool isOpenDialog = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
-  var convertCurrency, balance;
+  var convertCurrency, balance, point;
   UserProfileResponse? userProfileResponse;
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
 
   int gaweanMenu = 0;
 
@@ -53,7 +49,6 @@ class _HomePageState extends State<HomePage> {
       loading = true;
     });
     token = await AuthRepository().readSecureData('token');
-
 
     print("OUT >> hey");
     print(token);
@@ -65,6 +60,7 @@ class _HomePageState extends State<HomePage> {
       convertCurrency = this.userProfileResponse?.balance;
       var currencyFormatter = NumberFormat.currency(locale: 'ID');
       balance = currencyFormatter.format(convertCurrency);
+      point = currencyFormatter.format(this.userProfileResponse?.points ?? 0);
     });
   }
 
@@ -72,12 +68,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     getToken();
-  }
-
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     bloc = GaweanBloc();
     bloc.add(GetGaweanListEvent());
   }
@@ -86,15 +76,6 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     super.dispose();
     bloc.close();
-  }
-
-  void _onRefresh() async {
-    bloc.add(GetGaweanListEvent());
-    _refreshController.refreshCompleted();
-  }
-
-  void _onLoading() async {
-    _refreshController.loadComplete();
   }
 
   Widget blocListener(Widget child) {
@@ -227,27 +208,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-              child: this.userProfileResponse?.profil_picture == null ? Container(
-                width: 40,
-                height: 40,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: Image.network(
-                  'https://picsum.photos/seed/168/600',
-                ),
-              ) : Container(
-                width: 40,
-                height: 40,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: Image.network(
-                  '${this.userProfileResponse?.profil_picture}',
-                ),
-            ),
+              child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  width: 40,
+                  height: 40,
+                  clipBehavior: Clip.antiAlias,
+                  child: mogaweImageHandler(url: this.userProfileResponse?.profil_picture, isProfile: true))
           ),
           ),
         ],
@@ -281,7 +249,7 @@ class _HomePageState extends State<HomePage> {
                             color: FlutterFlowTheme.secondaryColor,
                           ))
                           : Text(
-                        '${this.userProfileResponse?.points}pts',
+                        '${point.replaceAll('IDR', '').replaceAll(',00', '')} pts',
                         style: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Poppins',
                           color: FlutterFlowTheme.secondaryColor,
@@ -293,17 +261,10 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child:
-                SmartRefresher(
-                    enablePullDown: true,
-                    enablePullUp: true,
-                    controller: _refreshController,
-                    onRefresh: _onRefresh,
-                    onLoading: _onLoading,
-                    footer: CustomFooter(
-                      builder: (ctx, mode) {
-                        return SizedBox();
-                      },
-                    ),
+                RefreshIndicator(
+                    onRefresh: () async {
+                      bloc.add(GetGaweanListEvent());
+                    },
                     child: SingleChildScrollView(
                         child: blocListener(blocBuilder(context)))),
               ),
@@ -408,7 +369,7 @@ class _HomePageState extends State<HomePage> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: BuildMogawersTarget(data: homeWidgets),
+          child: BuildMogawersTarget(data: homeWidgets, context: context),
         ),
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(18, 16, 0, 0),
@@ -606,7 +567,7 @@ class _HomePageState extends State<HomePage> {
           physics: NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: (itemWidth / itemHeight),
+            mainAxisExtent: 230,
           ),
           itemBuilder: (ctx, index) {
             return BuildProductItem(
