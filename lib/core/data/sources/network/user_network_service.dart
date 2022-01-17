@@ -229,7 +229,8 @@ class UserNetworkService {
 
   Future  InputProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
       isPublished, images, isFavorite, isFreeOngkir, isShippingTakeAway, imageUrl, isShippingOwnCourier, isShippingExpedition, shippingExpeditionService,
-      alamat, toko, noteAlamat, radius, tokoSup,) async {
+      alamat, toko, noteAlamat, radius, tokoSup, uuidSupplierAddress,  supplierAddressLatitude, supplierAddressLongitude, supplierAddressShipmentCityId,
+      supplierAddressShipmentCityName, supplierAddressShipmentProvinceId, supplierAddressShipmentProvinceName) async {
     final requestUrl = '$BASE_URL/api/supplier/product/create';
     final response = await http.post(Uri.parse(requestUrl),
       headers: <String, String>{
@@ -267,17 +268,17 @@ class UserNetworkService {
           "supplierStoreName": tokoSup,
           "productAddresses": [
             {
-              "supplierAddressAddress": "",
-              "supplierAddressLatitude": 0,
-              "supplierAddressLongitude": 0,
-              "supplierAddressName": "",
-              "supplierAddressNotes": "",
-              "supplierAddressShipmentCityId": 0,
-              "supplierAddressShipmentCityName": "",
-              "supplierAddressShipmentProvinceId": 0,
-              "supplierAddressShipmentProvinceName": "",
+              "supplierAddressAddress": alamat,
+              "supplierAddressLatitude": supplierAddressLatitude,
+              "supplierAddressLongitude": supplierAddressLongitude,
+              "supplierAddressName": toko,
+              "supplierAddressNotes": noteAlamat,
+              "supplierAddressShipmentCityId": supplierAddressShipmentCityId,
+              "supplierAddressShipmentCityName": supplierAddressShipmentCityName,
+              "supplierAddressShipmentProvinceId": supplierAddressShipmentProvinceId,
+              "supplierAddressShipmentProvinceName": supplierAddressShipmentProvinceName,
               "uuidProduct": "",
-              "uuidSupplierAddress": ""
+              "uuidSupplierAddress": uuidSupplierAddress
             }
           ],
         }

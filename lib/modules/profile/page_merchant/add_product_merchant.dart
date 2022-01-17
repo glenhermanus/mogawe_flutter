@@ -1088,7 +1088,9 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                       berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text), stokValue['stock'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
                       true, ValueImage, false, freeongkir, valueantar, ValueImage[0]['value'],
                       valuekurir, shipping != null ? true : false, shipping,
-                      addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].notes, valueRadius, addressPickupMerchant?.object[0].supplierName
+                      addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].notes, valueRadius,
+                      addressPickupMerchant?.object[0].supplierName, addressPickupMerchant?.object[0].uuidSupplier, addressPickupMerchant?.object[0].latitude, addressPickupMerchant?.object[0].longitude,
+                      addressPickupMerchant?.object[0].shipmentCityId, addressPickupMerchant?.object[0].shipmentCityName, addressPickupMerchant?.object[0].shipmentProvinceId, addressPickupMerchant?.object[0].shipmentProvinceName
                   );
                   Fluttertoast.showToast(msg: "Berhasil");
                 }catch(e){
