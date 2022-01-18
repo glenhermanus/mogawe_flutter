@@ -1103,7 +1103,8 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                   isDangerousValue != null ? isDangerousValue : dangerValue['isDangerous'], berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text),
                        stockValueApi != null ? stockValueApi : stokValue['stock'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
                       true, ValueImage, false, false, supplierProduct?.images?[0].value,true,
-                      true, true, shipping, addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].notes, valueRadius, addressPickupMerchant?.object[0].supplierName);
+                      true, true, shipping, addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].supplierName, addressPickupMerchant?.object[0].notes, valueRadius,
+                      addressPickupMerchant?.object[0].uuid, widget.id);
                   Fluttertoast.showToast(msg: "Berhasil");
                 }catch(e){
                   print(e);

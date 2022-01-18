@@ -233,64 +233,6 @@ class UserNetworkService {
       supplierAddressShipmentCityName, supplierAddressShipmentProvinceId, supplierAddressShipmentProvinceName) async {
     final requestUrl = '$BASE_URL/api/supplier/product/create';
     final response = await http.post(Uri.parse(requestUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8','token': '$token'
-      },
-        body: jsonEncode(<String, dynamic>{
-          "uuidCategory": uuidCategory,
-          "name":name,
-          "description":desk,
-          "brand":brand,
-          "isDangerous": isDangerous,
-          "weight":berat,
-          "width":0,
-          "height":0,
-          "length":0,
-          "condition":"new",
-          "price":price,
-          "commission":commission,
-          "stock":stock,
-          "youtubeUrl":youtubeurl,
-          "isPublished":true,
-          "minimumOrder": 0,
-          "imageUrl": imageUrl,
-          "images":images,
-          "isFavorite":false,
-          "isFreeOngkir": isFreeOngkir,
-          "isShippingTakeAway":isShippingTakeAway,
-          "isShippingOwnCourier": isShippingOwnCourier,
-          "isShippingExpedition": isShippingExpedition,
-          "shippingExpeditionServices":shippingExpeditionService,
-          "supplierAddressAddress": alamat,
-          "supplierAddressName": toko,
-          "supplierAddressNotes": noteAlamat,
-          "supplierSelfPickupRadius": radius,
-          "supplierStoreName": tokoSup,
-          "productAddresses": [
-            {
-              "supplierAddressAddress": alamat,
-              "supplierAddressLatitude": supplierAddressLatitude,
-              "supplierAddressLongitude": supplierAddressLongitude,
-              "supplierAddressName": toko,
-              "supplierAddressNotes": noteAlamat,
-              "supplierAddressShipmentCityId": supplierAddressShipmentCityId,
-              "supplierAddressShipmentCityName": supplierAddressShipmentCityName,
-              "supplierAddressShipmentProvinceId": supplierAddressShipmentProvinceId,
-              "supplierAddressShipmentProvinceName": supplierAddressShipmentProvinceName,
-              "uuidProduct": "",
-              "uuidSupplierAddress": uuidSupplierAddress
-            }
-          ],
-        }
-    ));
-    return json.decode(response.body);
-  }
-
-  Future UpdateProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
-      isPublished, images, isFavorite, isFreeOngkir, imageUrl, isShippingTakeAway,  isShippingOwnCourier, isShippingExpedition, shippingExpeditionService,
-      alamat, toko, tokoSup,noteAlamat, radius,) async {
-    final requestUrl = '$BASE_URL/api/supplier/product/update';
-    final response = await http.put(Uri.parse(requestUrl),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8','token': '$token'
         },
@@ -315,15 +257,81 @@ class UserNetworkService {
           "images":images,
           "isFavorite":false,
           "isFreeOngkir": isFreeOngkir,
-          "isShippingTakeAway":isShippingTakeAway,
-          "isShippingOwnCourier": isShippingOwnCourier,
+          "isShippingTakeaway":isShippingTakeAway,
+          "isShippingOwncourier": isShippingOwnCourier,
           "isShippingExpedition": isShippingExpedition,
           "shippingExpeditionServices":shippingExpeditionService,
           "supplierAddressAddress": alamat,
           "supplierAddressName": toko,
           "supplierAddressNotes": noteAlamat,
           "supplierSelfPickupRadius": radius,
+          "uuidSupplierAddress" : uuidSupplierAddress,
           "supplierStoreName": tokoSup,
+          "productAddresses": [
+            {
+              "supplierAddressAddress": alamat,
+              "supplierAddressLatitude": supplierAddressLatitude,
+              "supplierAddressLongitude": supplierAddressLongitude,
+              "supplierAddressName": toko,
+              "supplierAddressNotes": noteAlamat,
+              "supplierAddressShipmentCityId": supplierAddressShipmentCityId,
+              "supplierAddressShipmentCityName": supplierAddressShipmentCityName,
+              "supplierAddressShipmentProvinceId": supplierAddressShipmentProvinceId,
+              "supplierAddressShipmentProvinceName": supplierAddressShipmentProvinceName,
+              "uuidProduct": "",
+              "uuidSupplierAddress": uuidSupplierAddress
+            }
+          ],
+
+        }
+        ));
+    return json.decode(response.body);
+  }
+
+  Future UpdateProduct(token, uuidCategory, name, desk, brand, isDangerous, berat, width, height, length, condition, price, commission, stock, youtubeurl,
+      isPublished, images, isFavorite, isFreeOngkir, imageUrl, isShippingTakeAway,  isShippingOwnCourier, isShippingExpedition, shippingExpeditionService,
+      alamat, toko, tokoSup,noteAlamat, radius, uuidSupplierAddress, id) async {
+    final requestUrl = '$BASE_URL/api/supplier/product/update';
+    final response = await http.put(Uri.parse(requestUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8','token': '$token'
+        },
+        body: jsonEncode(<String, dynamic>{
+        "brand": brand,
+        "commission": commission,
+        "condition": "new",
+        "description":desk,
+        "height": 0,
+        "imageUrl": imageUrl,
+        "images":images,
+        "isDangerous": isDangerous,
+        "isFavorite": false,
+        "isFreeOngkir": isFreeOngkir,
+        "isPublished": true,
+        "isShippingExpedition":isShippingExpedition,
+        "isShippingOwncourier":  isShippingOwnCourier,
+        "isShippingTakeaway": isShippingTakeAway,
+        "length": 0,
+        "minimumOrder": 0,
+        "name": name,
+        "price": price,
+        "productAddresses": [
+
+        ],
+        "shippingExpeditionServices": shippingExpeditionService,
+        "stock": stock,
+        "supplierAddressAddress": alamat,
+        "supplierAddressName": toko,
+        "supplierAddressNotes": noteAlamat,
+        "supplierSelfPickupRadius": radius,
+        "supplierStoreName": tokoSup,
+        "uuid": id,
+        "uuidCategory":uuidCategory,
+        "uuidSupplierAddress": uuidSupplierAddress,
+        "weight": berat,
+        "width": 0,
+        "youtubeUrl": youtubeurl,
+
         }
         ));
     return json.decode(response.body);
