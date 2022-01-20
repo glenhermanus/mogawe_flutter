@@ -16,11 +16,14 @@ class PersonalTab extends StatefulWidget {
   final TextEditingController? namaCtrl;
   final TextEditingController? emailCtrl;
   final TextEditingController? phoneCtrl;
+  final String? reminder;
+  final String? phone;
+  final String? birthday;
   final int? dataReminder;
 
   const PersonalTab({Key? key, required this.data, this.updateProfile,
     this.updateTarget, this.updateSelfReminder, this.targetCtrl, this.namaCtrl,
-    this.emailCtrl, this.phoneCtrl, this.dataReminder}) : super(key: key);
+    this.emailCtrl, this.phoneCtrl, this.dataReminder, this.phone, this.birthday, this.reminder}) : super(key: key);
 
   @override
   _PersonalTabState createState() => _PersonalTabState();
@@ -175,8 +178,8 @@ class _PersonalTabState extends State<PersonalTab> {
                           ),
                         ),
                       ),
-                      loading ? Text('') : statusselect == null ?  Text(
-                        widget.data!.config!.taskReminderDefault != null? widget.data!.config!.taskReminderDefault.toString()!= '60'? '${widget.data!.config!.taskReminderDefault.toString()} Menit sebelum dimulai' : "1 Jam sebelum dimulai" : "",
+                       statusselect == null ?  Text(
+                        widget.data?.config!.taskReminderDefault != null? widget.data!.config!.taskReminderDefault.toString()!= '60'? '${widget.data!.config!.taskReminderDefault.toString()} Menit sebelum dimulai' : "1 Jam sebelum dimulai" : "",
                         style: FlutterFlowTheme.bodyText1
                             .override(
                           fontFamily: 'Poppins',
@@ -329,7 +332,7 @@ class _PersonalTabState extends State<PersonalTab> {
                           ),
                         ),
                       ),
-                      loading ? Text('') :  Text(
+                       Text(
                         widget.data != null? '${widget.data!.phone}': "",
                         style: FlutterFlowTheme.bodyText1
                             .override(
@@ -363,7 +366,7 @@ class _PersonalTabState extends State<PersonalTab> {
                           ),
                         ),
                       ),
-                      loading ? Text('') :  widget.data!.birthdate! != 0 ? Text(
+                       widget.data?.birthdate != 0 ? Text(
                         widget.data != null ? AppUtil.formatDateTime(
                             dateTime: DateTime.fromMillisecondsSinceEpoch(widget.data!.birthdate!),
                             dateFormat: "yyyy-MM-dd"

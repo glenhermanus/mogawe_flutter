@@ -39,6 +39,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController namaCtrl = TextEditingController();
   TextEditingController emailCtrl = TextEditingController();
   TextEditingController phoneCtrl = TextEditingController();
+   String? reminder;
+   String? phone;
+  String? birthday;
   int? taskReminder;
   SupplierProduct? supplierProduct;
   var token;
@@ -123,6 +126,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           emailCtrl.text = data?.email ?? '';
           phoneCtrl.text = data?.phone ?? '';
           taskReminder = data!.config?.taskReminderDefault ?? 0;
+          reminder = data!.config?.taskReminderDefault.toString() ?? '';
+          phone = data?.phone ?? '';
+          birthday = data?.birthdate.toString();
           return layout();
         }
         if (state is ShowProfileHistoryDataState) {
@@ -378,6 +384,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     namaCtrl: namaCtrl,
     emailCtrl: emailCtrl,
     phoneCtrl: phoneCtrl,
+    reminder: reminder,
+    phone: phone,
+    birthday: birthday,
     taskReminder: taskReminder,
     onFotoChanged: (v) {
       var map = {

@@ -42,13 +42,16 @@ class ProfilePage extends StatefulWidget {
   final TextEditingController? namaCtrl;
   final TextEditingController? emailCtrl;
   final TextEditingController? phoneCtrl;
+  final String? reminder;
+  final String? phone;
+  final String? birthday;
   final int? taskReminder;
   final SupplierProduct? supplierProduct;
 
   ProfilePage({Key? key, required this.data, required this.dataMerchant, this.updateProfile,
     this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.supplierProduct, this.onFotoChangedMerchant, this.parseRadius, this.histories,
   this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl, this.objectShipment, this.updateShipment,
-    this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder}) : super(key: key);
+    this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder, this.reminder, this.birthday, this.phone}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -254,6 +257,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                               namaCtrl: widget.namaCtrl,
                               emailCtrl: widget.emailCtrl,
                               phoneCtrl: widget.phoneCtrl,
+                            phone: widget.phone,
+                            birthday: widget.birthday,
+                            reminder: widget.reminder,
                           ),
                         ),
                         HistoryTab(

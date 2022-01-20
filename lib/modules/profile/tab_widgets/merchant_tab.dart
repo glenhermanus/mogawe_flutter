@@ -214,13 +214,13 @@ class _MerchantTabState extends State<MerchantTab> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    widget.dataMerchant == null ? loading = true :loading = false;
+
     widget.dataMerchant?.selfPickupRadius != null ? valueSlideAwal = widget.dataMerchant?.selfPickupRadius as int
         : 0;
     valueAwal = valueSlideAwal / 1000;
     totalvalueAwal = (valueSlideAwal / 1000).round();
     rangeSlide = totalvalueAwal.toString();
-
+    widget.supplierProduct?.objectDatas?[0].name == null ? loading = true : loading = false;
     getcekAntar().then((value) {
       valueswitchDiantar = value;
       if(valueswitchDiantar == true) {
@@ -568,17 +568,56 @@ class _MerchantTabState extends State<MerchantTab> {
             ),
           ),
         ),
-       Container(
+        Container(
           width: 300,
           height: 200,
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(
                 16, 16, 16, 0),
-            child: loading ? Center(
-              child: Container(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator()),
+            child:
+            // loading ?
+            // Center(
+            //   child: Container(
+            //       width: 20,
+            //       height: 20,
+            //       child: CircularProgressIndicator()),
+            // )
+            widget.supplierProduct?.objectDatas == null ?   Center(
+              child: Column(
+                children: [
+                  Image.asset('assets/images/im_no_job.png'),
+                  SizedBox(height: 10,),
+                  Text('Kamu belum ada produk nih, yuk jualin\ndagangan mu disini', textAlign: TextAlign.center, style: FlutterFlowTheme.bodyText2,),
+                  SizedBox(height: 10,),
+                  FFButtonWidget(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddProductMerchant(),
+                        ),
+                      );
+                    },
+                    text: 'Mulai Jualan',
+                    options: FFButtonOptions(
+
+                      height: 32,
+                      color: FlutterFlowTheme.secondaryColor,
+                      textStyle: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Poppins',
+                        color: FlutterFlowTheme.primaryColor,
+                        fontSize: 12,
+                      ),
+                      borderSide: BorderSide(
+                        color: FlutterFlowTheme.primaryColor,
+                        width: 1,
+                      ),
+                      borderRadius: 12,
+                    ),
+                    loading: _loadingButtonMulai,
+                  )
+                ],
+              ),
             ) :  GridView.builder(
 
                 padding: EdgeInsets.zero,
