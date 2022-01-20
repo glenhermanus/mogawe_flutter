@@ -177,9 +177,6 @@ class _AturPengirimanState extends State<AturPengiriman> {
 
                             });
 
-                            setState(() {
-
-                            });
                           },
                         ),
                       ),
