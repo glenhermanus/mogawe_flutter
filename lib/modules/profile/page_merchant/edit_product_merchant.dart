@@ -17,6 +17,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/page_merchant/atur_pengiriman.dart';
+import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProductMerchant extends StatefulWidget {
@@ -301,7 +302,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                 contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
 
                 content: Container(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.25,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
@@ -362,7 +363,7 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                 contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
 
                 content: Container(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.2,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
@@ -1106,6 +1107,12 @@ class _EditProductMerchantState extends State<EditProductMerchant> {
                       true, true, shipping, addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].supplierName, addressPickupMerchant?.object[0].notes, valueRadius,
                       addressPickupMerchant?.object[0].uuid, widget.id);
                   Fluttertoast.showToast(msg: "Berhasil");
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
+                    ),
+                  );
                 }catch(e){
                   print(e);
                   logger.d(e);

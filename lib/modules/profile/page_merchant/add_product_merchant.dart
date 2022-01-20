@@ -15,6 +15,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/page_merchant/atur_pengiriman.dart';
+import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddProductMerchant extends StatefulWidget {
@@ -323,7 +324,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                 contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
 
                 content: Container(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.25,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
@@ -384,7 +385,7 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                 contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
 
                 content: Container(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.20,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
@@ -1093,6 +1094,12 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
                       addressPickupMerchant?.object[0].shipmentCityId, addressPickupMerchant?.object[0].shipmentCityName, addressPickupMerchant?.object[0].shipmentProvinceId, addressPickupMerchant?.object[0].shipmentProvinceName
                   );
                   Fluttertoast.showToast(msg: "Berhasil");
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
+                    ),
+                  );
                 }catch(e){
 
                   Fluttertoast.showToast(msg: "$e");
