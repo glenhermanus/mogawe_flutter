@@ -1,7 +1,10 @@
+import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/chat_page.dart';
 
 class InboxPage extends StatefulWidget {
@@ -14,9 +17,29 @@ class InboxPage extends StatefulWidget {
 class _InboxPageState extends State<InboxPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _loadingButton = false;
+  UserProfileResponse? userProfileResponse;
 
   TextEditingController judul = new TextEditingController();
   TextEditingController pertanyaan = new TextEditingController();
+  var token;
+  bool loading =false;
+
+  void getToken() async {
+    setState(() {
+      loading = true;
+    });
+    token = await AuthRepository().readSecureData('token');
+
+    print("OUT >> hey");
+    print(token);
+
+    userProfileResponse = await AuthRepository().getProfile(token);
+
+    setState(() {
+      loading = false;
+
+    });
+  }
 
   void bottomNew(){
     final node = FocusScope.of(context);
@@ -153,8 +176,21 @@ class _InboxPageState extends State<InboxPage> {
                       ),
                     ),
                     FFButtonWidget(
-                      onPressed: (){
-                        bottomNew();
+                      onPressed: ()async{
+
+                        try{
+                          var res = await ChatQiscusRepo().createRoom(judul.text, userProfileResponse?.email);
+                          var chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, userProfileResponse?.email);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res,),
+                            ),
+                          );
+                        }catch(e){
+                          print(e);
+                        }
+
                       },
                       text: 'Kirim Pesan',
                       options: FFButtonOptions(
@@ -180,6 +216,13 @@ class _InboxPageState extends State<InboxPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getToken();
   }
 
   @override

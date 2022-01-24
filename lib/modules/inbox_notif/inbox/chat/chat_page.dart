@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
+import 'package:mogawe/core/data/response/qiscus/createm_room_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 
 class ChatPage extends StatefulWidget {
-  ChatPage({Key? key}) : super(key: key);
+  ChatResponse? chatResponse;
+  QiscusRoomResponse? qiscusRoomResponse;
+  ChatPage({this.chatResponse, this.qiscusRoomResponse});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -30,13 +34,13 @@ class _ChatPageState extends State<ChatPage> {
                 shape: BoxShape.circle,
               ),
               child: Image.network(
-                'https://picsum.photos/seed/745/600',
+                '${widget.chatResponse?.results.comment.user.avatarUrl}',
               ),
             ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
               child: Text(
-                'Gawean IDM Asem Baris',
+                '${widget.qiscusRoomResponse?.results.room.roomName}',
                 style: FlutterFlowTheme.subtitle1.override(
                   fontFamily: 'Poppins',
                 ),
@@ -165,7 +169,7 @@ class _ChatPageState extends State<ChatPage> {
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     16, 8, 16, 8),
                                 child: Text(
-                                  'Tanya dong mince',
+                                  '${widget.chatResponse?.results.comment.message}',
                                   style: FlutterFlowTheme.bodyText1.override(
                                     fontFamily: 'Poppins',
                                     fontSize: 14,
