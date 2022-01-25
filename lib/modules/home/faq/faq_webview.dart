@@ -3,6 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
+import 'package:mogawe/core/data/response/user_profile_response.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/chat/chat_page.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/inbox/inbox_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -16,11 +20,33 @@ class WebviewFAQ extends StatefulWidget {
 class _WebviewFAQState extends State<WebviewFAQ> {
   final Completer<WebViewController> _controller = Completer<WebViewController>();
   WebViewController? _myController;
+  UserProfileResponse? userProfileResponse;
+  var token;
+  bool loading =false;
+  ChatRoomList? chatRoomList;
+
+  void getToken() async {
+    setState(() {
+      loading = true;
+    });
+    token = await AuthRepository().readSecureData('token');
+
+    print("OUT >> hey");
+    print(token);
+
+    userProfileResponse = await AuthRepository().getProfile(token);
+
+    setState(() {
+      loading = false;
+
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+    getToken();
   }
 
   @override
@@ -43,7 +69,7 @@ class _WebviewFAQState extends State<WebviewFAQ> {
           onPressed: () => setState(() {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => InboxPage()),
+              MaterialPageRoute(builder: (context) => InboxPage(userProfileResponse: userProfileResponse,)),
             );
           }),
           elevation: 0,

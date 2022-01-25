@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
+import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/createm_room_response.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
 import 'package:http/http.dart' as http;
@@ -56,6 +57,25 @@ class ChatQiscusRepo {
     } else {
 
       throw Exception('Terjadi kegagalan');
+    }
+  }
+
+  Future<ChatRoomList> getRoomList(user_id) async {
+
+    final requestUrl = '$url/get_user_rooms?user_id=$user_id&page=1&limit=2';
+    final response = await http.get(Uri.parse(requestUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
+        'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
+      },
+    );
+    final maps = json.decode(response.body);
+    if (maps.isNotEmpty) {
+      return ChatRoomList.fromJson(maps);
+    }
+    else {
+      throw Exception('not found');
     }
   }
 

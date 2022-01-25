@@ -1,3 +1,4 @@
+import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,8 @@ import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/chat_page.dart';
 
 class InboxPage extends StatefulWidget {
-  InboxPage({Key? key}) : super(key: key);
+  UserProfileResponse? userProfileResponse;
+  InboxPage({this.userProfileResponse});
 
   @override
   _InboxPageState createState() => _InboxPageState();
@@ -17,12 +19,13 @@ class InboxPage extends StatefulWidget {
 class _InboxPageState extends State<InboxPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _loadingButton = false;
-  UserProfileResponse? userProfileResponse;
+
 
   TextEditingController judul = new TextEditingController();
   TextEditingController pertanyaan = new TextEditingController();
   var token;
   bool loading =false;
+  ChatRoomList? chatRoomList;
 
   void getToken() async {
     setState(() {
@@ -33,8 +36,7 @@ class _InboxPageState extends State<InboxPage> {
     print("OUT >> hey");
     print(token);
 
-    userProfileResponse = await AuthRepository().getProfile(token);
-
+    chatRoomList = await ChatQiscusRepo().getRoomList(widget.userProfileResponse?.email);
     setState(() {
       loading = false;
 
@@ -179,8 +181,8 @@ class _InboxPageState extends State<InboxPage> {
                       onPressed: ()async{
 
                         try{
-                          var res = await ChatQiscusRepo().createRoom(judul.text, userProfileResponse?.email);
-                          var chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, userProfileResponse?.email);
+                          var res = await ChatQiscusRepo().createRoom(judul.text, widget.userProfileResponse?.email);
+                          var chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, widget.userProfileResponse?.email);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -245,127 +247,43 @@ class _InboxPageState extends State<InboxPage> {
       ),
       backgroundColor: Color(0xffF2F2F2),
       body: SafeArea(
-        child: Stack(
+        child:Stack(
           children: [
-            ListView(
+            loading ? Align(
+              alignment: Alignment.topCenter,
+                child: CircularProgressIndicator()) : ListView(
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    ListInbox(),
-                    ListInbox(),
-                    ListInbox(),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.40,),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(50, 30, 50, 16),
-                        child: FFButtonWidget(
-                          onPressed: (){
-                            bottomNew();
-                          },
-                          text: 'New Conversation',
-                          options: FFButtonOptions(
-                            width: double.infinity,
-                            height: 56,
-                            color: FlutterFlowTheme.primaryColor,
-                            textStyle: FlutterFlowTheme.subtitle2.override(
-                              fontFamily: 'Poppins',
-                              color: Colors.white,
-                            ),
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: 30,
-                          ),
-                          loading: _loadingButton,
-                        ),
-                      ),
-                    )
-                    // Column(
-                    //   mainAxisSize: MainAxisSize.max,
-                    //   children: [
-                    //     Row(
-                    //       mainAxisSize: MainAxisSize.max,
-                    //       children: [
-                    //         Container(
-                    //           width: 48,
-                    //           height: 48,
-                    //           clipBehavior: Clip.antiAlias,
-                    //           decoration: BoxDecoration(
-                    //             shape: BoxShape.circle,
-                    //           ),
-                    //           child: Image.network(
-                    //             'https://picsum.photos/seed/401/600',
-                    //           ),
-                    //         ),
-                    //         Expanded(
-                    //           child: Padding(
-                    //             padding:
-                    //                 EdgeInsetsDirectional.fromSTEB(
-                    //                     16, 0, 0, 0),
-                    //             child: Column(
-                    //               mainAxisSize: MainAxisSize.max,
-                    //               crossAxisAlignment:
-                    //                   CrossAxisAlignment.start,
-                    //               children: [
-                    //                 Row(
-                    //                   mainAxisSize: MainAxisSize.max,
-                    //                   children: [
-                    //                     Expanded(
-                    //                       child: Text(
-                    //                         'Gawean IDM Asem Baris',
-                    //                         style: FlutterFlowTheme
-                    //                             .bodyText1
-                    //                             .override(
-                    //                           fontFamily: 'Poppins',
-                    //                           fontWeight:
-                    //                               FontWeight.w600,
-                    //                         ),
-                    //                       ),
-                    //                     ),
-                    //                     Text(
-                    //                       '26/08/2021',
-                    //                       style: FlutterFlowTheme
-                    //                           .bodyText1
-                    //                           .override(
-                    //                         fontFamily: 'Poppins',
-                    //                         color: Color(0xFF777777),
-                    //                         fontSize: 11,
-                    //                         fontWeight:
-                    //                             FontWeight.normal,
-                    //                       ),
-                    //                     )
-                    //                   ],
-                    //                 ),
-                    //                 Padding(
-                    //                   padding: EdgeInsetsDirectional
-                    //                       .fromSTEB(0, 4, 0, 0),
-                    //                   child: Text(
-                    //                     'Admin : Sudah bisa dicoba ya',
-                    //                     style: FlutterFlowTheme
-                    //                         .bodyText1
-                    //                         .override(
-                    //                       fontFamily: 'Poppins',
-                    //                       color: Color(0xFF7E7E7E),
-                    //                       fontSize: 12,
-                    //                     ),
-                    //                   ),
-                    //                 )
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         )
-                    //       ],
-                    //     ),
-                    //     Divider()
-                    //   ],
-                    // ),
-                  ],
-                ),
+                 ListInbox(chatRoomList: chatRoomList,),
+
+
               ],
-            )
+            ),Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(50, 30, 50, 16),
+                child: FFButtonWidget(
+                  onPressed: (){
+                    bottomNew();
+                  },
+                  text: 'New Conversation',
+                  options: FFButtonOptions(
+                    width: double.infinity,
+                    height: 56,
+                    color: FlutterFlowTheme.primaryColor,
+                    textStyle: FlutterFlowTheme.subtitle2.override(
+                      fontFamily: 'Poppins',
+                      color: Colors.white,
+                    ),
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                      width: 1,
+                    ),
+                    borderRadius: 30,
+                  ),
+                  loading: _loadingButton,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -373,101 +291,113 @@ class _InboxPageState extends State<InboxPage> {
   }
 }
 
-class ListInbox extends StatelessWidget {
-  const ListInbox({
-    Key? key,
-  }) : super(key: key);
+class ListInbox extends StatefulWidget {
+  ChatRoomList? chatRoomList;
+  ListInbox({this.chatRoomList});
 
   @override
+  State<ListInbox> createState() => _ListInboxState();
+}
+
+class _ListInboxState extends State<ListInbox> {
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-      child: InkWell(
-        onTap: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatPage(),
-            ),
-          );
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: widget.chatRoomList?.results.rooms.length,
+      itemBuilder: (context, snap){
+        final list = widget.chatRoomList?.results.rooms[snap];
+        return InkWell(
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatPage(),
+              ),
+            );
+          },
           child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
+            padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+
                   children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.network(
-                        'https://picsum.photos/seed/401/600',
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.network(
+                            '${list?.roomAvatarUrl}',
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+                            child: Column(
                               mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        '${list?.roomName}',
+                                        style: FlutterFlowTheme.bodyText1.override(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      '26/08/2021',
+                                      style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                        color: Color(0xFF777777),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                                   child: Text(
-                                    'Gawean IDM Asem Baris',
+                                    'Admin : Sudah bisa dicoba ya',
                                     style: FlutterFlowTheme.bodyText1.override(
                                       fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF7E7E7E),
+                                      fontSize: 12,
                                     ),
-                                  ),
-                                ),
-                                Text(
-                                  '26/08/2021',
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: Color(0xFF777777),
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.normal,
                                   ),
                                 )
                               ],
                             ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                              child: Text(
-                                'Admin : Sudah bisa dicoba ya',
-                                style: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Poppins',
-                                  color: Color(0xFF7E7E7E),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
+                          ),
+                        )
+                      ],
+                    ),
+                    // Divider()
                   ],
                 ),
-                // Divider()
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
