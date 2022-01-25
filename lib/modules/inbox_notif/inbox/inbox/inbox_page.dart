@@ -1,3 +1,4 @@
+import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -26,6 +27,9 @@ class _InboxPageState extends State<InboxPage> {
   var token;
   bool loading =false;
   ChatRoomList? chatRoomList;
+  ChatRoomMessage? chatRoomMessage, chatRoomMessage2;
+  var room;
+  var pesan =[{}];
 
   void getToken() async {
     setState(() {
@@ -37,8 +41,23 @@ class _InboxPageState extends State<InboxPage> {
     print(token);
 
     chatRoomList = await ChatQiscusRepo().getRoomList(widget.userProfileResponse?.email);
+    for(var i = 0; i < chatRoomList!.results.rooms.length; i++){
+      room = chatRoomList?.results.rooms[i].roomId;
+      print(room);
+
+      chatRoomMessage = await ChatQiscusRepo().getMessageList(room);
+
+      //print(chatRoomMessage?.results.comments.length);
+      var pesanbaru = {
+        'pesan' : chatRoomMessage
+      };
+      pesan.add(pesanbaru);
+    }
+
     setState(() {
       loading = false;
+      pesan.removeAt(0);
+      print(pesan);
 
     });
   }
@@ -253,7 +272,7 @@ class _InboxPageState extends State<InboxPage> {
               alignment: Alignment.topCenter,
                 child: CircularProgressIndicator()) : ListView(
               children: [
-                 ListInbox(chatRoomList: chatRoomList,),
+                 ListInbox(chatRoomList: chatRoomList, chatRoomMessage: pesan,),
 
 
               ],
@@ -293,13 +312,23 @@ class _InboxPageState extends State<InboxPage> {
 
 class ListInbox extends StatefulWidget {
   ChatRoomList? chatRoomList;
-  ListInbox({this.chatRoomList});
+  List<Map<dynamic, dynamic>>? chatRoomMessage;
+  ListInbox({this.chatRoomList, this.chatRoomMessage});
 
   @override
   State<ListInbox> createState() => _ListInboxState();
 }
 
 class _ListInboxState extends State<ListInbox> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -308,6 +337,9 @@ class _ListInboxState extends State<ListInbox> {
       itemCount: widget.chatRoomList?.results.rooms.length,
       itemBuilder: (context, snap){
         final list = widget.chatRoomList?.results.rooms[snap];
+        final pesan = widget.chatRoomMessage?[snap]['pesan'];
+        print(pesan.results.comments.last.message);
+//        final message = widget.chatRoomMessage?.results.comments.length;
         return InkWell(
           onTap: () async {
             await Navigator.push(
@@ -376,7 +408,7 @@ class _ListInboxState extends State<ListInbox> {
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                                   child: Text(
-                                    'Admin : Sudah bisa dicoba ya',
+                                    'Admin : ${pesan.results.comments.last.message} ',
                                     style: FlutterFlowTheme.bodyText1.override(
                                       fontFamily: 'Poppins',
                                       color: Color(0xFF7E7E7E),
