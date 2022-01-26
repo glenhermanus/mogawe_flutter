@@ -1,4 +1,5 @@
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
+import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -20,7 +21,7 @@ class InboxPage extends StatefulWidget {
 class _InboxPageState extends State<InboxPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _loadingButton = false;
-
+  var chat;
 
   TextEditingController judul = new TextEditingController();
   TextEditingController pertanyaan = new TextEditingController();
@@ -201,7 +202,7 @@ class _InboxPageState extends State<InboxPage> {
 
                         try{
                           var res = await ChatQiscusRepo().createRoom(judul.text, widget.userProfileResponse?.email);
-                          var chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, widget.userProfileResponse?.email);
+                          chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, widget.userProfileResponse?.email);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -272,7 +273,7 @@ class _InboxPageState extends State<InboxPage> {
               alignment: Alignment.topCenter,
                 child: CircularProgressIndicator()) : ListView(
               children: [
-                 ListInbox(chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse,),
+                 ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse,),
 
 
               ],
@@ -312,9 +313,10 @@ class _InboxPageState extends State<InboxPage> {
 
 class ListInbox extends StatefulWidget {
   ChatRoomList? chatRoomList;
+  ChatResponse? chatResponse;
   UserProfileResponse? userProfileResponse;
   List<Map<dynamic, dynamic>>? chatRoomMessage;
-  ListInbox({this.chatRoomList, this.chatRoomMessage, this.userProfileResponse});
+  ListInbox({this.chatResponse, this.chatRoomList, this.chatRoomMessage, this.userProfileResponse});
 
   @override
   State<ListInbox> createState() => _ListInboxState();
@@ -339,14 +341,14 @@ class _ListInboxState extends State<ListInbox> {
       itemBuilder: (context, snap){
         final list = widget.chatRoomList?.results.rooms[snap];
         final pesan = widget.chatRoomMessage?[snap]['pesan'];
-        print(pesan.results.comments.last.message);
+        print(pesan);
 //        final message = widget.chatRoomMessage?.results.comments.length;
         return InkWell(
           onTap: () async {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChatPage(pesan: pesan, userProfileResponse: widget.userProfileResponse,),
+                builder: (context) => ChatPage(chatResponse: widget.chatResponse, pesan: pesan, userProfileResponse: widget.userProfileResponse, id: list?.roomId,),
               ),
             );
           },

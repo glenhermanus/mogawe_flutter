@@ -41,7 +41,7 @@ class Comment {
     id= json["id"],
     message= json["message"],
     payload= Extras.fromJson(json["payload"]),
-    timestamp= DateTime.parse(json["timestamp"]),
+    timestamp= DateTime.parse(json["timestamp"]).toLocal(),
     type= json["type"],
     uniqueId= json["unique_id"],
     user= User.fromJson(json["user"]);

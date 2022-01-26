@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/createm_room_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_received.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_sender.dart';
 
@@ -11,7 +13,8 @@ class ChatPage extends StatefulWidget {
   QiscusRoomResponse? qiscusRoomResponse;
   UserProfileResponse? userProfileResponse;
   dynamic? pesan;
-  ChatPage({this.chatResponse, this.qiscusRoomResponse, this.pesan, this.userProfileResponse});
+  String? id;
+  ChatPage({this.chatResponse, this.qiscusRoomResponse, this.pesan, this.userProfileResponse, this.id});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -19,7 +22,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
+  TextEditingController kirimpesan = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,46 +64,29 @@ class _ChatPageState extends State<ChatPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            ListView(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
-                      child: Card(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        color: Color(0xFFE3E3E3),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
-                          child: Text(
-                            'Kamis, 24 Agustus 2021',
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Poppins',
-                              fontSize: 11,
-                            ),
-                          ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 60),
+              child: ListView(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan, userProfileResponse: widget.userProfileResponse,),
+                          ],
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CardReceived(pesan: widget.pesan, userProfileResponse: widget.userProfileResponse,),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
             Align(
               alignment: Alignment.bottomCenter,
@@ -124,21 +110,50 @@ class _ChatPageState extends State<ChatPage> {
                     Expanded(
                       child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                        child: Text(
-                          'Masukkan pesan',
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF777777),
+                        child: TextFormField(
+                          controller: kirimpesan,
+                          decoration: InputDecoration(
+                            hintText: 'Masukkan Pesan',
+                            enabledBorder:  UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0x00000000),
+                                width: 0,
+                              ),
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0x00000000),
+                                width: 0,
+                              ),
+                              borderRadius: BorderRadius.circular(0),
+                            ),
                           ),
+                          // 'Masukkan pesan',
+                          // style: FlutterFlowTheme.bodyText1.override(
+                          //   fontFamily: 'Poppins',
+                          //   color: Color(0xFF777777),
+                          // ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
-                      child: Icon(
-                        Icons.send,
-                        color: FlutterFlowTheme.primaryColor,
-                        size: 24,
+                    InkWell(
+                      onTap: ()async{
+                        var res = await ChatQiscusRepo().kirimPesan(widget.id, kirimpesan.text, widget.userProfileResponse?.email);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(chatResponse: res, pesan: widget.pesan, userProfileResponse: widget.userProfileResponse, id: widget.id, ),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
+                        child: Icon(
+                          Icons.send,
+                          color: FlutterFlowTheme.primaryColor,
+                          size: 24,
+                        ),
                       ),
                     )
                   ],

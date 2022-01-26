@@ -39,7 +39,7 @@ class Comment {
 
   Comment.fromJson(Map<String, dynamic> json) :
     message= json["message"],
-    timestamp= DateTime.parse(json["timestamp"]),
+    timestamp= DateTime.parse(json["timestamp"]).toLocal(),
     type= json["type"],
     payload= json["payload"],
     user= User.fromJson(json["user"]);
