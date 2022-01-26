@@ -348,7 +348,7 @@ class _ListInboxState extends State<ListInbox> {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChatPage(chatResponse: widget.chatResponse, pesan: pesan, userProfileResponse: widget.userProfileResponse, id: list?.roomId,),
+                builder: (context) => ChatPage(room_name: list?.roomName, avatar: list?.roomAvatarUrl, chatResponse: widget.chatResponse, pesan: pesan, userProfileResponse: widget.userProfileResponse, id: list?.roomId,),
               ),
             );
           },

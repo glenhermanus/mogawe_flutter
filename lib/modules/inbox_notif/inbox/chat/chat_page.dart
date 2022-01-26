@@ -10,11 +10,12 @@ import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_sender.dart';
 
 class ChatPage extends StatefulWidget {
   ChatResponse? chatResponse;
+  String? room_name, avatar;
   QiscusRoomResponse? qiscusRoomResponse;
   UserProfileResponse? userProfileResponse;
   dynamic? pesan;
   String? id;
-  ChatPage({this.chatResponse, this.qiscusRoomResponse, this.pesan, this.userProfileResponse, this.id});
+  ChatPage({this.chatResponse, this.qiscusRoomResponse, this.pesan, this.userProfileResponse, this.id, this.avatar, this.room_name});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -42,13 +43,15 @@ class _ChatPageState extends State<ChatPage> {
                 shape: BoxShape.circle,
               ),
               child: Image.network(
-                '${widget.chatResponse?.results.comment.user.avatarUrl}',
+                widget.chatResponse?.results.comment.user.avatarUrl != null ? '${widget.chatResponse?.results.comment.user.avatarUrl}' :
+                '${widget.avatar}',
               ),
             ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
               child: Text(
-                '${widget.qiscusRoomResponse?.results.room.roomName}',
+                widget.qiscusRoomResponse?.results.room.roomName != null ? '${widget.qiscusRoomResponse?.results.room.roomName}' :
+                '${widget.room_name}',
                 style: FlutterFlowTheme.subtitle1.override(
                   fontFamily: 'Poppins',
                 ),
@@ -143,7 +146,7 @@ class _ChatPageState extends State<ChatPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ChatPage(chatResponse: res, pesan: widget.pesan, userProfileResponse: widget.userProfileResponse, id: widget.id, ),
+                            builder: (context) => ChatPage(room_name: widget.room_name, avatar: widget.avatar, chatResponse: res, pesan: widget.pesan, userProfileResponse: widget.userProfileResponse, id: widget.id, ),
                           ),
                         );
                       },
