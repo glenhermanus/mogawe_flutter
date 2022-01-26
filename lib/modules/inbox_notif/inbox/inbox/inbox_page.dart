@@ -272,7 +272,7 @@ class _InboxPageState extends State<InboxPage> {
               alignment: Alignment.topCenter,
                 child: CircularProgressIndicator()) : ListView(
               children: [
-                 ListInbox(chatRoomList: chatRoomList, chatRoomMessage: pesan,),
+                 ListInbox(chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse,),
 
 
               ],
@@ -312,8 +312,9 @@ class _InboxPageState extends State<InboxPage> {
 
 class ListInbox extends StatefulWidget {
   ChatRoomList? chatRoomList;
+  UserProfileResponse? userProfileResponse;
   List<Map<dynamic, dynamic>>? chatRoomMessage;
-  ListInbox({this.chatRoomList, this.chatRoomMessage});
+  ListInbox({this.chatRoomList, this.chatRoomMessage, this.userProfileResponse});
 
   @override
   State<ListInbox> createState() => _ListInboxState();
@@ -345,7 +346,7 @@ class _ListInboxState extends State<ListInbox> {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChatPage(),
+                builder: (context) => ChatPage(pesan: pesan, userProfileResponse: widget.userProfileResponse,),
               ),
             );
           },
@@ -408,7 +409,7 @@ class _ListInboxState extends State<ListInbox> {
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
                                   child: Text(
-                                    'Admin : ${pesan.results.comments.last.message} ',
+                                    '${pesan.results.comments.first.message} ',
                                     style: FlutterFlowTheme.bodyText1.override(
                                       fontFamily: 'Poppins',
                                       color: Color(0xFF7E7E7E),
