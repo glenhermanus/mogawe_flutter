@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/createm_room_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
+import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_received.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_sender.dart';
@@ -24,6 +30,91 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController kirimpesan = new TextEditingController();
+  final picker = ImagePicker();
+  File? photo;
+  String? path;
+  UserProfileResponse? userdata;
+  var token;
+
+  void chooseImage() {
+    showDialog(
+        context: context,
+        builder: (ctx) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Material(
+              borderRadius: BorderRadius.circular(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () => getImageCamera(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(children: [
+                        Icon(Icons.photo_camera, size: 24, color: Colors.black),
+                        SizedBox(width: 16),
+                        Text("Ambil Foto", style: TextStyle(
+                            fontSize: 16
+                        ))
+                      ]),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => getImageGallery(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(children: [
+                        Icon(Icons.image, size: 24, color: Colors.black),
+                        SizedBox(width: 16),
+                        Text("Dari Galeri", style: TextStyle(
+                            fontSize: 16
+                        ))
+                      ]),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        )
+    );
+  }
+
+  Future getImageGallery() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      photo = File(pickedFile.path);
+      path = photo?.path.split('/').last;
+
+    } else {
+      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
+    }
+  }
+
+  Future getImageCamera() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      photo = File(pickedFile.path);
+      path = photo!.path.split('/').last;
+
+    } else {
+      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
+    }
+  }
+
+  getData()async{
+    token = await AuthRepository().readSecureData('token');
+    userdata = await AuthRepository().getProfile(token);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +126,7 @@ class _ChatPageState extends State<ChatPage> {
         title: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Container(
+             Container(
               width: 48,
               height: 48,
               clipBehavior: Clip.antiAlias,
@@ -49,11 +140,15 @@ class _ChatPageState extends State<ChatPage> {
             ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-              child: Text(
-                widget.qiscusRoomResponse?.results.room.roomName != null ? '${widget.qiscusRoomResponse?.results.room.roomName}' :
-                '${widget.room_name}',
-                style: FlutterFlowTheme.subtitle1.override(
-                  fontFamily: 'Poppins',
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Text(
+                  widget.qiscusRoomResponse?.results.room.roomName != null ? '${widget.qiscusRoomResponse?.results.room.roomName}' :
+                  '${widget.room_name}',
+                  style: FlutterFlowTheme.subtitle2.override(
+                    fontFamily: 'Poppins',
+                  ),
+                  maxLines: 2,
                 ),
               ),
             )
@@ -142,11 +237,18 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     InkWell(
                       onTap: ()async{
-                        var res = await ChatQiscusRepo().kirimPesan(widget.id, kirimpesan.text, widget.userProfileResponse?.email);
+                        var loadpesan;
+                        var res = await ChatQiscusRepo().kirimPesan(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, kirimpesan.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email);
+                        if (widget.id == null){
+                         loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+                        }
+
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatPage(room_name: widget.room_name, avatar: widget.avatar, chatResponse: res, pesan: widget.pesan, userProfileResponse: widget.userProfileResponse, id: widget.id, ),
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: widget.pesan == null ? loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                            transitionDuration: Duration(seconds: 0),
+                            reverseTransitionDuration: Duration(seconds: 0)
                           ),
                         );
                       },

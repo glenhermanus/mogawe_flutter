@@ -65,6 +65,12 @@ class _InboxPageState extends State<InboxPage> {
 
   void bottomNew(){
     final node = FocusScope.of(context);
+    var isipesan;
+    print('a');
+    print(pesan);
+    for(var i =0; i < chatRoomList!.results.rooms.length; i++){
+       isipesan = pesan[i]['pesan'];
+    }
     showModalBottomSheet(
       isScrollControlled: true,
 
@@ -203,7 +209,7 @@ class _InboxPageState extends State<InboxPage> {
                         try{
                           var res = await ChatQiscusRepo().createRoom(judul.text, widget.userProfileResponse?.email);
                           chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, widget.userProfileResponse?.email);
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res,),
