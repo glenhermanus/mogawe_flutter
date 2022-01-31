@@ -35,6 +35,7 @@ class _ChatPageState extends State<ChatPage> {
   String? path;
   UserProfileResponse? userdata;
   var token;
+  var loadpesan;
 
   void chooseImage() {
     showDialog(
@@ -92,6 +93,17 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Future getFile() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      photo = File(pickedFile.path);
+      path = photo?.path.split('/').last;
+
+    } else {
+      Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
+    }
+  }
+
   Future getImageCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
@@ -113,6 +125,126 @@ class _ChatPageState extends State<ChatPage> {
     // TODO: implement initState
     super.initState();
     getData();
+  }
+
+  void bottomFile(){
+    final node = FocusScope.of(context);
+    showModalBottomSheet(
+      isScrollControlled: true,
+
+      context: context,
+      backgroundColor: Colors.white,
+
+      shape : RoundedRectangleBorder(
+          borderRadius : BorderRadius.vertical( top: Radius.circular(30),)
+
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.25,
+        maxChildSize: 0.25,
+        minChildSize: 0.25,
+        builder: (context, scrollController) =>  StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+
+              return Container(
+
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(10),
+                  ),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 10, top: 10),
+                        child: Container(
+                          width: 25,
+                          height: 3,
+                          color: Color(0xffbfbfbf),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 10,),
+                    Expanded(
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16, right: 16),
+                              child: ListView(
+                                children: [
+                                  InkWell(
+                                    onTap: (){
+                                      getImageCamera();
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.camera_alt),
+                                        SizedBox(width: 15,),
+                                        Text('Take Photo'),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 16,),
+                                  InkWell(
+                                    onTap:(){
+                                      getImageGallery();
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.image),
+                                        SizedBox(width: 15,),
+                                        Text('Image From Gallery'),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 16,),
+                                  InkWell(
+                                    onTap: (){
+                                      getFile();
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.file_copy),
+                                        SizedBox(width: 15,),
+                                        Text('File / Document'),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 16,),
+                                  InkWell(
+                                    onTap: ()=> Navigator.pop(context),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.clear),
+                                        SizedBox(width: 15,),
+                                        Text('Cancel', style: TextStyle(color: Colors.red),),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                          ),
+                        )
+                    )
+                  ],
+                ),
+              );
+            }
+        ),
+      ),
+    );
   }
 
   @override
@@ -177,7 +309,7 @@ class _ChatPageState extends State<ChatPage> {
                           mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan, userProfileResponse: widget.userProfileResponse,),
+                            CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ? loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,),
                           ],
                         ),
                       ),
@@ -197,12 +329,17 @@ class _ChatPageState extends State<ChatPage> {
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-                      child: Icon(
-                        Icons.attach_file,
-                        color: Color(0xFF777777),
-                        size: 24,
+                    InkWell(
+                      onTap:(){
+                        bottomFile();
+                      },
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                        child: Icon(
+                          Icons.attach_file,
+                          color: Color(0xFF777777),
+                          size: 24,
+                        ),
                       ),
                     ),
                     Expanded(
@@ -237,7 +374,7 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     InkWell(
                       onTap: ()async{
-                        var loadpesan;
+
                         var res = await ChatQiscusRepo().kirimPesan(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, kirimpesan.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email);
                         if (widget.id == null){
                          loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
