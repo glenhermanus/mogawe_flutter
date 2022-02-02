@@ -44,7 +44,7 @@ abstract class NetworkService {
         });
       }
 
-      request.headers.addAll(header!);
+      if (header != null) request.headers.addAll(header);
       if (body != null) request.fields.addAll(body);
 
       var response = await request.send().then(http.Response.fromStream);

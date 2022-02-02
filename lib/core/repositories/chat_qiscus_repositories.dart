@@ -1,14 +1,57 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:http_parser/http_parser.dart';
+import 'package:dio/dio.dart';
+import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/createm_room_response.dart';
+import 'package:mogawe/core/data/response/qiscus/upload_file.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
 import 'package:http/http.dart' as http;
 
 class ChatQiscusRepo {
   var url = 'https://api.qiscus.com/api/v2.1/rest';
+
+  Future<UploadFotoQiscus> uploadFileChat(Map<String, File?>? body, String? realToken, type) async {
+    print(realToken);
+    var header = { 'token': realToken! }; //Use realToken when implement get from original token
+    var map = await uploadFile("$BASE_URL/api/project/v2/iconUrl/upload/mogawers", type,
+        files: body, header: header);
+    return UploadFotoQiscus.fromJson(map);
+  }
+
+  Future<dynamic> uploadFile(String endpoint, type, {Map<String, String>? body,
+    Map<String, String>? header, Map<String, File?>? files}) async {
+    Response response;
+    Dio dio = Dio();
+
+    try {
+      var uri = Uri.parse(endpoint);
+      var request = http.MultipartRequest("PUT", uri);
+
+      if (files!.isNotEmpty) {
+      files.forEach((key, value) async {
+        print('aas $key bb $value');
+        request.files.add(await http.MultipartFile.fromPath(key, value?.path ??'',
+            contentType: MediaType('$type', '*')));
+      });
+    }
+
+      if (header != null) request.headers.addAll(header);
+      if (body != null)  request.fields.addAll(body);
+
+      var response = await request.send().then(http.Response.fromStream);
+      var res = jsonDecode(response.body);
+      if (res["returnValue"] == "000") return res;
+      else throw Exception(res["message"]);
+    } on SocketException {
+      throw Exception("Connection Failed");
+    }
+
+  }
 
   Future<QiscusRoomResponse> createRoom(judul, user) async {
     var body = {
@@ -41,6 +84,36 @@ class ChatQiscusRepo {
       "room_id": room,
       "user_id": user,
       "message": pesan,
+
+    };
+    final response = await http.post(Uri.parse(
+        "$url/post_comment"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
+          'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
+        },
+        body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+
+      return ChatResponse.fromJson(json.decode(response.body));
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
+  Future<ChatResponse> kirimPesanFile(room, pesan, user, file) async {
+
+    var body = {
+      "room_id": room,
+      "user_id": user,
+      "type": "file_attachment",
+      "payload": {
+        "url" : file,
+        "caption" : pesan
+      }
 
     };
     final response = await http.post(Uri.parse(

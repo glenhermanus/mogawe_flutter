@@ -30,7 +30,7 @@ class Comment {
   Extras extras;
   int id;
   String message;
-  Extras payload;
+  Payload? payload;
   DateTime timestamp;
   String type;
   String uniqueId;
@@ -40,7 +40,7 @@ class Comment {
     extras= Extras.fromJson(json["extras"]),
     id= json["id"],
     message= json["message"],
-    payload= Extras.fromJson(json["payload"]),
+    payload= json["payload"] == null? null : Payload.fromJson(json["payload"]),
     timestamp= DateTime.parse(json["timestamp"]).toLocal(),
     type= json["type"],
     uniqueId= json["unique_id"],
@@ -50,7 +50,7 @@ class Comment {
     "extras": extras.toJson(),
     "id": id,
     "message": message,
-    "payload": payload.toJson(),
+    "payload": payload!.toJson(),
     "timestamp": timestamp.toIso8601String(),
     "type": type,
     "unique_id": uniqueId,
@@ -65,6 +65,33 @@ class Extras {
   );
 
   Map<String, dynamic> toJson() => {
+  };
+}
+
+class Payload {
+
+  String url;
+  String caption;
+  String fileName;
+  int size;
+  int pages;
+  String encryptionKey;
+
+  Payload.fromJson(Map<String, dynamic> json) :
+        url= json["url"] == null ? '' : json["url"],
+        caption= json["caption"]== null ? '' :json["caption"],
+        fileName= json["file_name"]== null ? '' :json["file_name"],
+        size= json["size"]== null ? 0 :json["size"],
+        pages= json["pages"]== null ? 0 :json["pages"],
+        encryptionKey= json["encryption_key"] == null ? '' : json["encryption_key"];
+
+  Map<String, dynamic> toJson() => {
+    "url": url,
+    "caption": caption,
+    "file_name": fileName,
+    "size": size,
+    "pages": pages,
+    "encryption_key": encryptionKey,
   };
 }
 

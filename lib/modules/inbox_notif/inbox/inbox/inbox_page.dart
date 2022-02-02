@@ -209,10 +209,11 @@ class _InboxPageState extends State<InboxPage> {
                         try{
                           var res = await ChatQiscusRepo().createRoom(judul.text, widget.userProfileResponse?.email);
                           chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, widget.userProfileResponse?.email);
+                          var load = await ChatQiscusRepo().getMessageList(res.results.room.roomId);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res,),
+                              builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res, ),
                             ),
                           );
                         }catch(e){

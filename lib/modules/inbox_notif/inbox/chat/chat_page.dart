@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,7 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_received.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_sender.dart';
+import 'package:dio/dio.dart';
 
 class ChatPage extends StatefulWidget {
   ChatResponse? chatResponse;
@@ -30,13 +32,14 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController kirimpesan = new TextEditingController();
+  TextEditingController caption = new TextEditingController();
   final picker = ImagePicker();
   File? photo;
   String? path;
   UserProfileResponse? userdata;
   var token;
   var loadpesan;
-
+  var filePick;
   void chooseImage() {
     showDialog(
         context: context,
@@ -81,24 +84,31 @@ class _ChatPageState extends State<ChatPage> {
         )
     );
   }
+  final FileType pickingType = FileType.any;
+  var type;
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       photo = File(pickedFile.path);
       path = photo?.path.split('/').last;
-
+      type ='image';
+      Navigator.pop(context);
+      viewImage();
     } else {
       Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
     }
   }
 
   Future getFile() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      photo = File(pickedFile.path);
-      path = photo?.path.split('/').last;
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: false, type: pickingType);
 
+    if (result != null) {
+      photo = File(result.files.single.path!);
+      path = photo?.path.split('/').last;
+      type = 'pdf';
+      Navigator.pop(context);
+      viewFile(path);
     } else {
       Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
     }
@@ -109,7 +119,9 @@ class _ChatPageState extends State<ChatPage> {
     if (pickedFile != null) {
       photo = File(pickedFile.path);
       path = photo!.path.split('/').last;
-
+      type ='image';
+      Navigator.pop(context);
+      viewImage();
     } else {
       Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
     }
@@ -238,6 +250,392 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         )
                     )
+                  ],
+                ),
+              );
+            }
+        ),
+      ),
+    );
+  }
+
+  loadingAlert(title, status, loading) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                contentPadding: EdgeInsets.only(top: 0.0, bottom: 20),
+                content: Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+
+                      Divider(
+                        color: Colors.grey,
+                        height: 1.0,
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(19.0),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            status != null ? status == true ? Icon(Icons.check, size: 30,) : Icon(Icons.clear, size: 30,) : Container(),
+                            SizedBox(height: 15,),
+                            Text('$title', style: FlutterFlowTheme.bodyText2,),
+                            SizedBox(height: 15,),
+                            loading == true ? CircularProgressIndicator(color: Colors.red,) : Container(),
+                            SizedBox(height: 10,),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }));
+  }
+
+  void viewImage(){
+    final node = FocusScope.of(context);
+    showModalBottomSheet(
+      isScrollControlled: true,
+
+      context: context,
+      backgroundColor: Colors.white,
+
+      shape : RoundedRectangleBorder(
+          borderRadius : BorderRadius.vertical( top: Radius.circular(30),)
+
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 1,
+        maxChildSize: 1,
+        minChildSize: 1,
+        builder: (context, scrollController) =>  StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+
+              return Container(
+
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(10),
+                  ),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 10, top: 10),
+                        child: Container(
+                          width: 25,
+                          height: 3,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 10,),
+                    Expanded(
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16, right: 16),
+                              child: ListView(
+                                children: [
+                                  InkWell(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.arrow_back, size: 34,),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Image.file(photo!),
+
+                                ],
+                              ),
+                            ),
+
+                          ),
+                        )
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 2,
+                            color: Colors.black12,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+                                  child: TextFormField(
+                                    controller: caption,
+                                    decoration: InputDecoration(
+                                      hintText: 'Add caption',
+                                      enabledBorder:  UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.black12,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(0),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(0),
+                                      ),
+                                    ),
+                                    // 'Masukkan pesan',
+                                    // style: FlutterFlowTheme.bodyText1.override(
+                                    //   fontFamily: 'Poppins',
+                                    //   color: Color(0xFF777777),
+                                    // ),
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: ()async{
+                                  var body = {
+                                    'file' : photo
+                                  };
+                                  try{
+                                    var uploadfile = await ChatQiscusRepo().uploadFileChat(body, token, type);
+                                    loadingAlert('Mohon tunggu sebentar', null, true);
+                                    var res = await ChatQiscusRepo().kirimPesanFile(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, caption.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email, uploadfile.object);
+
+                                    if (widget.id == null){
+                                      loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+                                    }
+
+                                    Navigator.pushReplacement(
+                                      context,
+                                      PageRouteBuilder(
+                                          pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: widget.pesan == null ? loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                                          transitionDuration: Duration(seconds: 0),
+                                          reverseTransitionDuration: Duration(seconds: 0)
+                                      ),
+                                    );
+                                  }catch(e){
+                                    loadingAlert('$e', false, false);
+                                  }
+                                },
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
+                                  child: Icon(
+                                    Icons.send,
+                                    color: FlutterFlowTheme.primaryColor,
+                                    size: 24,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+        ),
+      ),
+    );
+  }
+
+  void viewFile(name){
+    final node = FocusScope.of(context);
+    showModalBottomSheet(
+      isScrollControlled: true,
+
+      context: context,
+      backgroundColor: Colors.white,
+
+      shape : RoundedRectangleBorder(
+          borderRadius : BorderRadius.vertical( top: Radius.circular(30),)
+
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.5,
+        maxChildSize: 0.5,
+        minChildSize: 0.5,
+        builder: (context, scrollController) =>  StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+
+              return Container(
+
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(10),
+                  ),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 10, top: 10),
+                        child: Container(
+                          width: 25,
+                          height: 3,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 10,),
+                    Expanded(
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16, right: 16),
+                              child: ListView(
+                                children: [
+                                  InkWell(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.arrow_back, size: 34,),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Center(child: Icon(Icons.file_copy, size: 50,)),
+                                  SizedBox(height: 10,),
+                                  Center(child: Text(name)),
+
+                                ],
+                              ),
+                            ),
+
+                          ),
+                        )
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 2,
+                            color: Colors.black12,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+                                  child: TextFormField(
+                                    controller: caption,
+                                    decoration: InputDecoration(
+                                      hintText: 'Add caption',
+                                      enabledBorder:  UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.black12,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(0),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(0),
+                                      ),
+                                    ),
+                                    // 'Masukkan pesan',
+                                    // style: FlutterFlowTheme.bodyText1.override(
+                                    //   fontFamily: 'Poppins',
+                                    //   color: Color(0xFF777777),
+                                    // ),
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: ()async{
+
+                                  var body = {
+                                    'file' : photo
+                                  };
+                                  try{
+                                    var uploadfile = await ChatQiscusRepo().uploadFileChat(body, token, type);
+                                    loadingAlert('Mohon tunggu sebentar', null, true);
+                                    var res = await ChatQiscusRepo().kirimPesanFile(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, caption.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email, uploadfile.object);
+
+                                    if (widget.id == null){
+                                      loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+                                    }
+
+                                    Navigator.pushReplacement(
+                                      context,
+                                      PageRouteBuilder(
+                                          pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: widget.pesan == null ? loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                                          transitionDuration: Duration(seconds: 0),
+                                          reverseTransitionDuration: Duration(seconds: 0)
+                                      ),
+                                    );
+                                  }catch(e){
+                                    loadingAlert('$e', false, false);
+                                  }
+                                },
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
+                                  child: Icon(
+                                    Icons.send,
+                                    color: FlutterFlowTheme.primaryColor,
+                                    size: 24,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -376,9 +774,9 @@ class _ChatPageState extends State<ChatPage> {
                       onTap: ()async{
 
                         var res = await ChatQiscusRepo().kirimPesan(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, kirimpesan.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email);
-                        if (widget.id == null){
+
                          loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
-                        }
+
 
                         Navigator.pushReplacement(
                           context,
