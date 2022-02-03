@@ -96,9 +96,9 @@ class CardReceived extends StatelessWidget {
                           ),
                         ),
                       ) : Container(),
-                      Expanded(
-                        child: list?.type == 'text' ? Card(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                      list?.type == 'text' ? Expanded(
+                        child: Card(
+                          clipBehavior: Clip.hardEdge,
                           color: list?.user.userId == this.userProfileResponse?.email? Color(0xFFFFE0E0) : FlutterFlowTheme.secondaryColor,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
@@ -113,9 +113,12 @@ class CardReceived extends StatelessWidget {
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
                               ),
+                              maxLines: 10,
                             ),
                           ),
-                        ) : Card(
+                        ),
+                      ) : Expanded(
+                        child: Card(
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           color: list?.user.userId == this.userProfileResponse?.email? Color(0xFFFFE0E0) : FlutterFlowTheme.secondaryColor,
                           elevation: 0,
