@@ -22,7 +22,7 @@ class _InboxPageState extends State<InboxPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _loadingButton = false;
   var chat;
-
+  bool view = false;
   TextEditingController judul = new TextEditingController();
   TextEditingController pertanyaan = new TextEditingController();
   var token;
@@ -247,6 +247,18 @@ class _InboxPageState extends State<InboxPage> {
     );
   }
 
+  void SelectedItem(BuildContext context, item) {
+    switch (item) {
+      case 0:
+        setState(() {
+          view = true;
+        });
+
+        break;
+
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -268,7 +280,23 @@ class _InboxPageState extends State<InboxPage> {
             fontFamily: 'Poppins',
           ),
         ),
-        actions: [],
+        actions: [
+          PopupMenuButton<int>(
+            color: Colors.white,
+            icon: Icon(Icons.more_vert_rounded, color: Colors.black,),
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(value: 0, child: Row(
+                children: [
+                  Icon(Icons.edit, color: Colors.black,),
+                  SizedBox(width: 20,),
+                  Text('Edit Data'),
+                ],
+              )),
+
+            ],
+           onSelected: (item) => SelectedItem(context, item),
+          )
+        ],
         centerTitle: false,
         elevation: 0,
       ),
@@ -280,7 +308,7 @@ class _InboxPageState extends State<InboxPage> {
               alignment: Alignment.topCenter,
                 child: CircularProgressIndicator()) : ListView(
               children: [
-                 ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse,),
+                 ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
 
 
               ],
@@ -321,9 +349,10 @@ class _InboxPageState extends State<InboxPage> {
 class ListInbox extends StatefulWidget {
   ChatRoomList? chatRoomList;
   ChatResponse? chatResponse;
+  bool? view;
   UserProfileResponse? userProfileResponse;
   List<Map<dynamic, dynamic>>? chatRoomMessage;
-  ListInbox({this.chatResponse, this.chatRoomList, this.chatRoomMessage, this.userProfileResponse});
+  ListInbox({this.chatResponse, this.chatRoomList, this.chatRoomMessage, this.userProfileResponse, this.view});
 
   @override
   State<ListInbox> createState() => _ListInboxState();
@@ -429,7 +458,35 @@ class _ListInboxState extends State<ListInbox> {
                               ],
                             ),
                           ),
-                        )
+                        ),
+                       widget.view == true ? Row(
+                          children: [
+                            InkWell(
+                                onTap: (){
+                                  setState(() {
+                                    widget.view = false;
+                                  });
+                                },
+                                child: Icon(Icons.arrow_back)),
+                            InkWell(
+                                onTap: ()async{
+                                  try {
+                                    await ChatQiscusRepo().deleteroom(
+                                        list?.roomId,
+                                        widget.userProfileResponse?.email);
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => InboxPage(userProfileResponse: widget.userProfileResponse, ),
+                                      ),
+                                    );
+                                  }catch(e){
+                                    print('gagal');
+                                  }
+                                },
+                                child: Icon(Icons.clear))
+                          ],
+                        ) : Container()
                       ],
                     ),
                     // Divider()

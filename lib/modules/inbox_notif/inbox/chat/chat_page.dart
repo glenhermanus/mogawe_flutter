@@ -86,6 +86,7 @@ class _ChatPageState extends State<ChatPage> {
   }
   final FileType pickingType = FileType.any;
   var type;
+  bool view = false;
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -95,6 +96,7 @@ class _ChatPageState extends State<ChatPage> {
       type ='image';
       Navigator.pop(context);
       viewImage();
+      Navigator.pop(context);
     } else {
       Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
     }
@@ -122,6 +124,7 @@ class _ChatPageState extends State<ChatPage> {
       type ='image';
       Navigator.pop(context);
       viewImage();
+
     } else {
       Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
     }
@@ -130,6 +133,7 @@ class _ChatPageState extends State<ChatPage> {
   getData()async{
     token = await AuthRepository().readSecureData('token');
     userdata = await AuthRepository().getProfile(token);
+
   }
 
   @override
@@ -435,19 +439,22 @@ class _ChatPageState extends State<ChatPage> {
                                     var uploadfile = await ChatQiscusRepo().uploadFileChat(body, token, type);
                                     loadingAlert('Mohon tunggu sebentar', null, true);
                                     var res = await ChatQiscusRepo().kirimPesanFile(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, caption.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email, uploadfile.object);
+                                    loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
 
-                                    if (widget.id == null){
-                                      loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
-                                    }
+                                //    Navigator.pop(context);
+                                    stateSetter(() {
+                                      Navigator.pop(context);
+                                      Navigator.pushReplacement(
+                                        context,
+                                        PageRouteBuilder(
+                                            pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: null, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                                            transitionDuration: Duration(seconds: 0),
+                                            reverseTransitionDuration: Duration(seconds: 0)
+                                        ),
+                                      );
+                                      Navigator.pop(context);
+                                    });
 
-                                    Navigator.pushReplacement(
-                                      context,
-                                      PageRouteBuilder(
-                                          pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: widget.pesan == null ? loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
-                                          transitionDuration: Duration(seconds: 0),
-                                          reverseTransitionDuration: Duration(seconds: 0)
-                                      ),
-                                    );
                                   }catch(e){
                                     loadingAlert('$e', false, false);
                                   }
@@ -606,14 +613,12 @@ class _ChatPageState extends State<ChatPage> {
                                     loadingAlert('Mohon tunggu sebentar', null, true);
                                     var res = await ChatQiscusRepo().kirimPesanFile(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, caption.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email, uploadfile.object);
 
-                                    if (widget.id == null){
                                       loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
-                                    }
-
+                                      Navigator.pop(context);
                                     Navigator.pushReplacement(
                                       context,
                                       PageRouteBuilder(
-                                          pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: widget.pesan == null ? loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                                          pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: null, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
                                           transitionDuration: Duration(seconds: 0),
                                           reverseTransitionDuration: Duration(seconds: 0)
                                       ),
@@ -643,6 +648,15 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
     );
+  }
+
+  void SelectedItem(BuildContext context, item) {
+    switch (item) {
+      case 0:
+        view = true;
+        break;
+
+    }
   }
 
   @override
@@ -684,7 +698,9 @@ class _ChatPageState extends State<ChatPage> {
             )
           ],
         ),
-        actions: [],
+        actions: [
+
+        ],
         centerTitle: false,
         elevation: 0,
       ),
@@ -781,7 +797,7 @@ class _ChatPageState extends State<ChatPage> {
                         Navigator.pushReplacement(
                           context,
                           PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: widget.pesan == null ? loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                            pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
                             transitionDuration: Duration(seconds: 0),
                             reverseTransitionDuration: Duration(seconds: 0)
                           ),

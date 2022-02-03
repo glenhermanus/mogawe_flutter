@@ -104,6 +104,30 @@ class ChatQiscusRepo {
     }
   }
 
+  Future deleteroom(room, user) async {
+    var body = {
+      "room_id": room,
+      "user_ids": [user],
+
+    };
+    final response = await http.post(Uri.parse(
+        "$url/remove_room_participants"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
+          'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
+        },
+        body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+
+      print('berhasil');
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
   Future<ChatResponse> kirimPesanFile(room, pesan, user, file) async {
 
     var body = {
