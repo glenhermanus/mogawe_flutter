@@ -31,6 +31,8 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  PersistentBottomSheetController? _controller;
   TextEditingController kirimpesan = new TextEditingController();
   TextEditingController caption = new TextEditingController();
   final picker = ImagePicker();
@@ -432,6 +434,7 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                               InkWell(
                                 onTap: ()async{
+                                  
                                   var body = {
                                     'file' : photo
                                   };
@@ -443,16 +446,24 @@ class _ChatPageState extends State<ChatPage> {
 
                                 //    Navigator.pop(context);
                                     stateSetter(() {
-                                      Navigator.pop(context);
-                                      Navigator.pushReplacement(
-                                        context,
+
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pushReplacement(
                                         PageRouteBuilder(
                                             pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: null, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
                                             transitionDuration: Duration(seconds: 0),
                                             reverseTransitionDuration: Duration(seconds: 0)
                                         ),
                                       );
-                                      Navigator.pop(context);
+                                      Navigator.of(context).pushReplacement(
+                                        PageRouteBuilder(
+                                            pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: null, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                                            transitionDuration: Duration(seconds: 0),
+                                            reverseTransitionDuration: Duration(seconds: 0)
+                                        ),
+                                      );
+                                      _controller?.closed;
                                     });
 
                                   }catch(e){
