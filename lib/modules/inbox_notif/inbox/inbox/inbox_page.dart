@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
@@ -377,7 +378,10 @@ class _ListInboxState extends State<ListInbox> {
       itemBuilder: (context, snap){
         final list = widget.chatRoomList?.results.rooms[snap];
         final pesan = widget.chatRoomMessage?[snap]['pesan'];
-        print(pesan);
+        var date = DateFormat("dd/MM/yyyy").format(pesan?.results.comments.first.timestamp);
+        var time = DateFormat("HH:mm").format((pesan?.results.comments.first.timestamp));
+        var now = DateTime.now();
+        var today =  DateTime(now.year, now.month, now.day);
 //        final message = widget.chatRoomMessage?.results.comments.length;
         return InkWell(
           onTap: () async {
@@ -434,7 +438,7 @@ class _ListInboxState extends State<ListInbox> {
                                       ),
                                     ),
                                     Text(
-                                      '26/08/2021',
+                                      pesan?.results.comments.first.timestamp != DateTime(now.year, now.month, now.day) ? '$date' : '$time',
                                       style: FlutterFlowTheme.bodyText1.override(
                                         fontFamily: 'Poppins',
                                         color: Color(0xFF777777),
@@ -446,14 +450,31 @@ class _ListInboxState extends State<ListInbox> {
                                 ),
                                 Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                                  child: Text(
-                                    '${pesan.results.comments.first.message} ',
+                                  child: pesan.results.comments.first.type == 'text' ? Text(
+                                    pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ${pesan.results.comments.first.message} ' :
+                                    '${pesan.results.comments.first.user.username.split(' ').last}: ${pesan.results.comments.first.message} ',
                                     style: FlutterFlowTheme.bodyText1.override(
                                       fontFamily: 'Poppins',
                                       color: Color(0xFF7E7E7E),
                                       fontSize: 12,
                                     ),
-                                  ),
+                                  ) : Row(children: [
+                                    Text(
+                                      pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ' :
+                                      '${pesan.results.comments.first.user.username.split(' ').last}: ',
+                                      style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                        color: Color(0xFF7E7E7E),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Icon(Icons.camera_alt),
+                                    Text(' send an image', style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      color: Color(0xFF7E7E7E),
+                                      fontSize: 12,
+                                    ), )
+                                  ],),
                                 )
                               ],
                             ),

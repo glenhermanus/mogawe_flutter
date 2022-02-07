@@ -209,7 +209,7 @@ class ChatQiscusRepo {
 
   Future<ChatRoomList> getRoomList(user_id) async {
 
-    final requestUrl = '$url/get_user_rooms?user_id=$user_id&page=1&limit=3';
+    final requestUrl = '$url/get_user_rooms?user_id=$user_id';
     final response = await http.get(Uri.parse(requestUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
