@@ -213,7 +213,7 @@ class _InboxPageState extends State<InboxPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res, ),
+                              builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res, pesan: null,),
                             ),
                           );
                         }catch(e){

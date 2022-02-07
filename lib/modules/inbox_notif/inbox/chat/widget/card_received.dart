@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_downloader/image_downloader.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
@@ -18,6 +23,13 @@ class CardReceived extends StatefulWidget {
 }
 
 class _CardReceivedState extends State<CardReceived> {
+  String _message = "";
+  String _path = "";
+  String _size = "";
+  String _mimeType = "";
+  File? _imageFile;
+  int _progress = 0;
+  var image;
 
   void deleteMessageQ(unique_id) {
     showDialog(
@@ -47,16 +59,106 @@ class _CardReceivedState extends State<CardReceived> {
     );
   }
 
+  Future<void> _downloadImage(
+      String url, {
+        AndroidDestinationType? destination,
+        bool whenError = false,
+        String? outputMimeType,
+      }) async {
+    String? fileName;
+    String? path;
+    int? size;
+    String? mimeType;
+    try {
+      String? imageId;
+
+      if (whenError) {
+        imageId = await ImageDownloader.downloadImage(url,
+            outputMimeType: outputMimeType)
+            .catchError((error) {
+          if (error is PlatformException) {
+            String? path = "";
+            if (error.code == "404") {
+              print("Not Found Error.");
+            } else if (error.code == "unsupported_file") {
+              print("UnSupported FIle Error.");
+              path = error.details["unsupported_file_path"];
+            }
+            setState(() {
+              _message = error.toString();
+              _path = path ?? '';
+            });
+          }
+
+          print(error);
+        }).timeout(Duration(seconds: 10), onTimeout: () {
+          print("timeout");
+          return;
+        });
+      } else {
+        if (destination == null) {
+          imageId = await ImageDownloader.downloadImage(
+            url,
+            outputMimeType: outputMimeType,
+          );
+        } else {
+          imageId = await ImageDownloader.downloadImage(
+            url,
+            destination: destination,
+            outputMimeType: outputMimeType,
+          );
+        }
+      }
+
+      if (imageId == null) {
+        return;
+      }
+      fileName = await ImageDownloader.findName(imageId);
+      path = await ImageDownloader.findPath(imageId);
+      size = await ImageDownloader.findByteSize(imageId);
+      mimeType = await ImageDownloader.findMimeType(imageId);
+      Fluttertoast.showToast(
+          msg: "Image Saved",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0
+      );
+    } on PlatformException catch (error) {
+      setState(() {
+        _message = error.message ?? '';
+      });
+      return;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      var location = Platform.isAndroid ? "Directory" : "Photo Library";
+      _message = 'Saved as "$fileName" in $location.\n';
+      _size = 'size:     $size';
+      _mimeType = 'mimeType: $mimeType';
+      _path = path ?? '';
+
+      if (!_mimeType.contains("video")) {
+        _imageFile = File(path!);
+      }
+      return;
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     String? time2;
-    String? date;
+    String? date, date2;
     var typeFile, typeFile2;
     if(widget.pesan !=null){
       date = DateFormat.yMMMMEEEEd("id").format(this.widget.pesan?.results.comments.last.timestamp);
     }
 
     if(widget.chatResponse != null){
+      date2 = DateFormat.yMMMMEEEEd("id").format(widget.chatResponse?.results.comment.timestamp as DateTime);
       time2 = DateFormat("HH:mm").format(widget.chatResponse?.results.comment.timestamp as DateTime);
       typeFile = widget.chatResponse?.results.comment.payload?.url.split('_').last.split('.').last;
       print('ab ${widget.chatResponse?.results.comment.payload?.url.split('_').last.split('.').last}');
@@ -65,6 +167,29 @@ class _CardReceivedState extends State<CardReceived> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        widget.chatResponse != null ? Center(
+          child: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
+            child: Card(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              color: Color(0xFFE3E3E3),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+                child: Text(
+                  '$date2',
+                  style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ) : Container(),
         widget.pesan != null ? Center(
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
@@ -105,13 +230,7 @@ class _CardReceivedState extends State<CardReceived> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                time == '00:00' ?  Text(
-                  '$date',
-                  style: FlutterFlowTheme.bodyText1.override(
-                    fontFamily: 'Poppins',
-                    fontSize: 11,
-                  ),
-                ) : Container(),
+
                 list?.user.userId != this.widget.userProfileResponse?.email ?  Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(8, 10, 0, 0),
                   child: Text(
@@ -172,6 +291,9 @@ class _CardReceivedState extends State<CardReceived> {
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 16, 8, 16, 8),
                             child: InkWell(
+                              onTap: (){
+                                _downloadImage(list?.payload.url as String);
+                              },
                               onLongPress: list?.user.userId == this.widget.userProfileResponse?.email? ()async{
                                 deleteMessageQ(list?.unique_id);
                               } : (){},
@@ -232,28 +354,27 @@ class _CardReceivedState extends State<CardReceived> {
                 ),
               ),
             ),
-            Expanded(
-              child: widget.chatResponse?.results.comment.type == 'text' ? Card(
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                color: Color(0xFFFFE0E0),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
+            widget.chatResponse?.results.comment.type == 'text' ? 
+            Flexible(
+              child: Container( 
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFE0E0),
                   borderRadius: BorderRadius.circular(16),
-                ),
+                ), 
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(
                       16, 8, 16, 8),
-                  child: Expanded(
-                    child: Text(
-                      '${widget.chatResponse?.results.comment.message}',
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                      ),
+                  child: Text(
+                    '${widget.chatResponse?.results.comment.message}',
+                    style: FlutterFlowTheme.bodyText1.override(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
                     ),
                   ),
                 ),
-              ) : Card(
+              ),
+            ) : Expanded(
+              child: Card(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 color: Color(0xFFFFE0E0),
                 elevation: 0,

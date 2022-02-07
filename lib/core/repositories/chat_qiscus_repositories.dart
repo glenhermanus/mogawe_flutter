@@ -81,7 +81,7 @@ class ChatQiscusRepo {
     var body = {
       "room_name": judul,
       "creator": user,
-      "participants": ["$user", "ambar.sumapradja@mogawe.id", "glen.hermanus@mogawe.id"],
+      "participants": ["$user", "azizahif99@gmail.com" ,"ambar.sumapradja@mogawe.id", "glen.hermanus@mogawe.id"],
       "room_avatar_url": "http://placehold.it/20x20",
       "room_options": "{\"background\":\"green\"}"
     };

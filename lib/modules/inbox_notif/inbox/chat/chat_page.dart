@@ -94,6 +94,7 @@ class _ChatPageState extends State<ChatPage> {
   var type;
   bool view = false;
 
+
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -102,7 +103,6 @@ class _ChatPageState extends State<ChatPage> {
       type ='image';
       Navigator.pop(context);
       viewImage();
-      Navigator.pop(context);
     } else {
       Fluttertoast.showToast(msg: "Tidak ada foto yang dipilih");
     }
@@ -147,26 +147,27 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   getLoadPesan()async{
-    if(mounted){
-      setState(() {
-        Widget listChat (BuildContext context){
+      if(mounted){
+        setState(() {
+          Widget listChat (BuildContext context){
+            return FutureBuilder(
+                future: ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id),
+                builder: (context, snapshot){
 
-          return FutureBuilder(
-              future: ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id),
-              builder: (context, snapshot){
+                  final loadpesans1 = snapshot.data;
+                  if(snapshot.hasData){
+                    return CardReceived( pesan: widget.chatResponse != null ? null : loadpesans1, userProfileResponse: widget.userProfileResponse,);
 
-                final loadpesans1 = snapshot.data;
-                if(snapshot.hasData){
-                  return CardReceived(chatResponse: widget.chatResponse, pesan: loadpesans1, userProfileResponse: widget.userProfileResponse,);
+                  }
+                  return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,);
 
-                }
-                return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,);
+                });
+          }
 
-              });
-        }
-      });
+        });
+      }
 
-    }
+
   }
 
   @override
@@ -800,7 +801,8 @@ class _ChatPageState extends State<ChatPage> {
                           mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            listChat(context)
+                            widget.chatResponse != null ?  CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,)
+                                : listChat(context)
                           ],
                         ),
                       ),
@@ -874,7 +876,7 @@ class _ChatPageState extends State<ChatPage> {
                         Navigator.pushReplacement(
                           context,
                           PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                              pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
                               transitionDuration: Duration(seconds: 0),
                               reverseTransitionDuration: Duration(seconds: 0)
                           ),
