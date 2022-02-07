@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
@@ -35,13 +37,15 @@ class _ChatPageState extends State<ChatPage> {
   PersistentBottomSheetController? _controller;
   TextEditingController kirimpesan = new TextEditingController();
   TextEditingController caption = new TextEditingController();
+  ScrollController _scrollController = new ScrollController();
   final picker = ImagePicker();
   File? photo;
   String? path;
   UserProfileResponse? userdata;
   var token;
-  var loadpesan;
+  var loadpesan, loadpesan1;
   var filePick;
+  Timer? timer, timer2;
   void chooseImage() {
     showDialog(
         context: context,
@@ -135,14 +139,58 @@ class _ChatPageState extends State<ChatPage> {
   getData()async{
     token = await AuthRepository().readSecureData('token');
     userdata = await AuthRepository().getProfile(token);
+    Future.delayed(Duration.zero, () {
+      _scrollController.animateTo( _scrollController.position.maxScrollExtent,
+          duration: const Duration(microseconds: 1),curve: Curves.easeOut);
+    });
 
+  }
+
+  getLoadPesan()async{
+    if(mounted){
+      setState(() {
+        Widget listChat (BuildContext context){
+
+          return FutureBuilder(
+              future: ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id),
+              builder: (context, snapshot){
+
+                final loadpesans1 = snapshot.data;
+                if(snapshot.hasData){
+                  return CardReceived(chatResponse: widget.chatResponse, pesan: loadpesans1, userProfileResponse: widget.userProfileResponse,);
+
+                }
+                return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,);
+
+              });
+        }
+      });
+
+    }
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    callMehtod();
     getData();
+  }
+
+  Future<void> callMehtod() async {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      setState(() {
+        getLoadPesan();
+      });
+
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    timer?.cancel();
   }
 
   void bottomFile(){
@@ -434,7 +482,7 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                               InkWell(
                                 onTap: ()async{
-                                  
+
                                   var body = {
                                     'file' : photo
                                   };
@@ -444,7 +492,7 @@ class _ChatPageState extends State<ChatPage> {
                                     var res = await ChatQiscusRepo().kirimPesanFile(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, caption.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email, uploadfile.object);
                                     loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
 
-                                //    Navigator.pop(context);
+                                    //    Navigator.pop(context);
                                     stateSetter(() {
 
                                       Navigator.of(context).pop();
@@ -624,8 +672,8 @@ class _ChatPageState extends State<ChatPage> {
                                     loadingAlert('Mohon tunggu sebentar', null, true);
                                     var res = await ChatQiscusRepo().kirimPesanFile(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, caption.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email, uploadfile.object);
 
-                                      loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
-                                      Navigator.pop(context);
+                                    loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+                                    Navigator.pop(context);
                                     Navigator.pushReplacement(
                                       context,
                                       PageRouteBuilder(
@@ -670,6 +718,23 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Widget listChat (BuildContext context){
+
+    return FutureBuilder(
+        future: ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id),
+        builder: (context, snapshot){
+
+          final loadpesans1 = snapshot.data;
+          print(loadpesans1);
+          if(snapshot.hasData){
+            return CardReceived(chatResponse: widget.chatResponse, pesan: loadpesans1, userProfileResponse: widget.userProfileResponse,);
+
+          }
+          return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,);
+
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -681,7 +746,7 @@ class _ChatPageState extends State<ChatPage> {
         title: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
-             Container(
+            Container(
               width: 48,
               height: 48,
               clipBehavior: Clip.antiAlias,
@@ -722,6 +787,7 @@ class _ChatPageState extends State<ChatPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 60),
               child: ListView(
+                controller: _scrollController,
                 children: [
                   Column(
                     mainAxisSize: MainAxisSize.max,
@@ -734,7 +800,7 @@ class _ChatPageState extends State<ChatPage> {
                           mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ? loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,),
+                            listChat(context)
                           ],
                         ),
                       ),
@@ -802,15 +868,15 @@ class _ChatPageState extends State<ChatPage> {
 
                         var res = await ChatQiscusRepo().kirimPesan(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, kirimpesan.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email);
 
-                         loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+                        loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
 
 
                         Navigator.pushReplacement(
                           context,
                           PageRouteBuilder(
-                            pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
-                            transitionDuration: Duration(seconds: 0),
-                            reverseTransitionDuration: Duration(seconds: 0)
+                              pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, chatResponse: res, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                              transitionDuration: Duration(seconds: 0),
+                              reverseTransitionDuration: Duration(seconds: 0)
                           ),
                         );
                       },

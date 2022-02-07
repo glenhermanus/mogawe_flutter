@@ -53,6 +53,30 @@ class ChatQiscusRepo {
 
   }
 
+  Future deleteMessage(uniqueid) async {
+    var body = {
+
+      "unique_ids": [uniqueid],
+
+    };
+    final response = await http.delete(Uri.parse(
+        "$url/delete_messages"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
+          'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
+        },
+        body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+
+      print('sukses');
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
   Future<QiscusRoomResponse> createRoom(judul, user) async {
     var body = {
       "room_name": judul,

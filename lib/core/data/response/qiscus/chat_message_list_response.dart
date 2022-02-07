@@ -8,8 +8,8 @@ class ChatRoomMessage {
   int status;
 
   ChatRoomMessage.fromJson(Map<String, dynamic> json) :
-    results= Results.fromJson(json["results"]),
-    status= json["status"];
+        results= Results.fromJson(json["results"]),
+        status= json["status"];
 
   Map<String, dynamic> toJson() => {
     "results": results.toJson(),
@@ -22,7 +22,7 @@ class Results {
   List<Comment> comments;
 
   Results.fromJson(Map<String, dynamic> json) :
-    comments= List<Comment>.from(json["comments"].map((x) => Comment.fromJson(x)));
+        comments= List<Comment>.from(json["comments"].map((x) => Comment.fromJson(x)));
 
   Map<String, dynamic> toJson() => {
     "comments": List<dynamic>.from(comments.map((x) => x.toJson())),
@@ -36,13 +36,15 @@ class Comment {
   String type;
   Payload? payload;
   User user;
+  String? unique_id;
 
   Comment.fromJson(Map<String, dynamic> json) :
-    message= json["message"],
-    timestamp= DateTime.parse(json["timestamp"]).toLocal(),
-    type= json["type"],
-    payload= json["payload"] != null ? Payload.fromJson(json["payload"]) : null,
-    user= User.fromJson(json["user"]);
+        message= json["message"],
+        timestamp= DateTime.parse(json["timestamp"]).toLocal(),
+        type= json["type"],
+        unique_id = json["unique_id"],
+        payload= json["payload"] != null ? Payload.fromJson(json["payload"]) : null,
+        user= User.fromJson(json["user"]);
 
   Map<String, dynamic> toJson() => {
     "message": message,
@@ -62,13 +64,13 @@ class Payload {
   int pages;
   String encryptionKey;
 
-   Payload.fromJson(Map<String, dynamic> json) :
-    url= json["url"] == null ? '' : json["url"],
-    caption= json["caption"]== null ? '' :json["caption"],
-    fileName= json["file_name"]== null ? '' :json["file_name"],
-    size= json["size"]== null ? 0 :json["size"],
-    pages= json["pages"]== null ? 0 :json["pages"],
-    encryptionKey= json["encryption_key"] == null ? '' : json["encryption_key"];
+  Payload.fromJson(Map<String, dynamic> json) :
+        url= json["url"] == null ? '' : json["url"],
+        caption= json["caption"]== null ? '' :json["caption"],
+        fileName= json["file_name"]== null ? '' :json["file_name"],
+        size= json["size"]== null ? 0 :json["size"],
+        pages= json["pages"]== null ? 0 :json["pages"],
+        encryptionKey= json["encryption_key"] == null ? '' : json["encryption_key"];
 
   Map<String, dynamic> toJson() => {
     "url": url,
@@ -89,10 +91,10 @@ class User {
   bool active;
 
   User.fromJson(Map<String, dynamic> json) :
-    avatarUrl= json["avatar_url"],
-    userId= json["user_id"],
-    active = json["active"],
-    username= json["username"];
+        avatarUrl= json["avatar_url"],
+        userId= json["user_id"],
+        active = json["active"],
+        username= json["username"];
 
   Map<String, dynamic> toJson() => {
     "avatar_url": avatarUrl,
