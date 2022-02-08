@@ -310,7 +310,7 @@ class _InboxPageState extends State<InboxPage> {
                 child: CircularProgressIndicator()) : ListView(
               children: [
                  ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
-
+                SizedBox(height: 50,),
 
               ],
             ),Align(
@@ -371,153 +371,156 @@ class _ListInboxState extends State<ListInbox> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: widget.chatRoomList?.results.rooms.length,
-      itemBuilder: (context, snap){
-        final list = widget.chatRoomList?.results.rooms[snap];
-        final pesan = widget.chatRoomMessage?[snap]['pesan'];
-        var date = DateFormat("dd/MM/yyyy").format(pesan?.results.comments.first.timestamp);
-        var time = DateFormat("HH:mm").format((pesan?.results.comments.first.timestamp));
-        var now = DateTime.now();
-        var today =  DateTime(now.year, now.month, now.day);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 35),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: widget.chatRoomList?.results.rooms.length,
+        itemBuilder: (context, snap){
+          final list = widget.chatRoomList?.results.rooms[snap];
+          final pesan = widget.chatRoomMessage?[snap]['pesan'];
+          var date = DateFormat("dd/MM/yyyy").format(pesan?.results.comments.first.timestamp);
+          var time = DateFormat("HH:mm").format((pesan?.results.comments.first.timestamp));
+          var now = DateTime.now();
+          var today =  DateTime(now.year, now.month, now.day);
 //        final message = widget.chatRoomMessage?.results.comments.length;
-        return InkWell(
-          onTap: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatPage(room_name: list?.roomName, avatar: list?.roomAvatarUrl, chatResponse: widget.chatResponse, pesan: pesan, userProfileResponse: widget.userProfileResponse, id: list?.roomId,),
-              ),
-            );
-          },
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
+          return InkWell(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatPage(room_name: list?.roomName, avatar: list?.roomAvatarUrl, chatResponse: widget.chatResponse, pesan: pesan, userProfileResponse: widget.userProfileResponse, id: list?.roomId,),
+                ),
+              );
+            },
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
 
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.network(
+                              '${list?.roomAvatarUrl}',
+                            ),
                           ),
-                          child: Image.network(
-                            '${list?.roomAvatarUrl}',
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        '${list?.roomName}',
-                                        style: FlutterFlowTheme.bodyText1.override(
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          '${list?.roomName}',
+                                          style: FlutterFlowTheme.bodyText1.override(
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Text(
-                                      pesan?.results.comments.first.timestamp != DateTime(now.year, now.month, now.day) ? '$date' : '$time',
-                                      style: FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Poppins',
-                                        color: Color(0xFF777777),
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                                  child: pesan.results.comments.first.type == 'text' ? Text(
-                                    pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ${pesan.results.comments.first.message} ' :
-                                    '${pesan.results.comments.first.user.username.split(' ').last}: ${pesan.results.comments.first.message} ',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      color: Color(0xFF7E7E7E),
-                                      fontSize: 12,
-                                    ),
-                                  ) : Row(children: [
-                                    Text(
-                                      pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ' :
-                                      '${pesan.results.comments.first.user.username.split(' ').last}: ',
+                                      Text(
+                                        pesan?.results.comments.first.timestamp != DateTime(now.year, now.month, now.day) ? '$date' : '$time',
+                                        style: FlutterFlowTheme.bodyText1.override(
+                                          fontFamily: 'Poppins',
+                                          color: Color(0xFF777777),
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+                                    child: pesan.results.comments.first.type == 'text' ? Text(
+                                      pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ${pesan.results.comments.first.message} ' :
+                                      '${pesan.results.comments.first.user.username.split(' ').first}: ${pesan.results.comments.first.message} ',
                                       style: FlutterFlowTheme.bodyText1.override(
                                         fontFamily: 'Poppins',
                                         color: Color(0xFF7E7E7E),
                                         fontSize: 12,
                                       ),
-                                    ),
-                                    Icon(Icons.camera_alt),
-                                    Text(' send an image', style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      color: Color(0xFF7E7E7E),
-                                      fontSize: 12,
-                                    ), )
-                                  ],),
-                                )
-                              ],
+                                    ) : Row(children: [
+                                      Text(
+                                        pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ' :
+                                        '${pesan.results.comments.first.user.username.split(' ').first}: ',
+                                        style: FlutterFlowTheme.bodyText1.override(
+                                          fontFamily: 'Poppins',
+                                          color: Color(0xFF7E7E7E),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Icon(Icons.camera_alt),
+                                      Text(' send an image', style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                        color: Color(0xFF7E7E7E),
+                                        fontSize: 12,
+                                      ), )
+                                    ],),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                       widget.view == true ? Row(
-                          children: [
-                            InkWell(
-                                onTap: (){
-                                  setState(() {
-                                    widget.view = false;
-                                  });
-                                },
-                                child: Icon(Icons.arrow_back)),
-                            InkWell(
-                                onTap: ()async{
-                                  try {
-                                    await ChatQiscusRepo().deleteroom(
-                                        list?.roomId,
-                                        widget.userProfileResponse?.email);
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => InboxPage(userProfileResponse: widget.userProfileResponse, ),
-                                      ),
-                                    );
-                                  }catch(e){
-                                    print('gagal');
-                                  }
-                                },
-                                child: Icon(Icons.clear))
-                          ],
-                        ) : Container()
-                      ],
-                    ),
-                    // Divider()
-                  ],
+                         widget.view == true ? Row(
+                            children: [
+                              InkWell(
+                                  onTap: (){
+                                    setState(() {
+                                      widget.view = false;
+                                    });
+                                  },
+                                  child: Icon(Icons.arrow_back)),
+                              InkWell(
+                                  onTap: ()async{
+                                    try {
+                                      await ChatQiscusRepo().deleteroom(
+                                          list?.roomId,
+                                          widget.userProfileResponse?.email);
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => InboxPage(userProfileResponse: widget.userProfileResponse, ),
+                                        ),
+                                      );
+                                    }catch(e){
+                                      print('gagal');
+                                    }
+                                  },
+                                  child: Icon(Icons.clear))
+                            ],
+                          ) : Container()
+                        ],
+                      ),
+                      // Divider()
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

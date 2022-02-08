@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
@@ -17,6 +19,8 @@ import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_received.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/widget/card_sender.dart';
 import 'package:dio/dio.dart';
+import 'package:mogawe/modules/inbox_notif/notification/notif.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ChatPage extends StatefulWidget {
   ChatResponse? chatResponse;
@@ -43,7 +47,7 @@ class _ChatPageState extends State<ChatPage> {
   String? path;
   UserProfileResponse? userdata;
   var token;
-  var loadpesan, loadpesan1;
+  var loadpesan, loadpesans1;
   var filePick;
   Timer? timer, timer2;
   void chooseImage() {
@@ -93,7 +97,11 @@ class _ChatPageState extends State<ChatPage> {
   final FileType pickingType = FileType.any;
   var type;
   bool view = false;
-
+  final FirebaseMessaging message = FirebaseMessaging.instance;
+  var initsetting;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  BehaviorSubject<ReceiveNotification> get didReceiveLocalNotificationSubject =>
+      BehaviorSubject<ReceiveNotification>();
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -154,12 +162,15 @@ class _ChatPageState extends State<ChatPage> {
                 future: ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id),
                 builder: (context, snapshot){
 
-                  final loadpesans1 = snapshot.data;
+                  loadpesans1 = snapshot.data;
+
+                  ChatQiscusRepo().notificationSend(loadpesans1.results.comments.first.message, loadpesans1.results.comments.first.user.username, widget.userProfileResponse?.uuid, token);
                   if(snapshot.hasData){
-                    return CardReceived( pesan: widget.chatResponse != null ? null : loadpesans1, userProfileResponse: widget.userProfileResponse,);
+                    print('aa ${loadpesans1.results.comments.first.message}');
+                    return CardReceived( pesan: widget.chatResponse != null ? null : loadpesans1, userProfileResponse: widget.userProfileResponse, );
 
                   }
-                  return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,);
+                  return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse);
 
                 });
           }
@@ -170,12 +181,104 @@ class _ChatPageState extends State<ChatPage> {
 
   }
 
+  notification()async{
+
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    callMehtod();
     getData();
+    callMehtod();
+
+    // permission_forIOS();
+    // FirebaseMessaging.onMessage.listen((event) { showNotification(event); });
+    // FirebaseMessaging.onMessageOpenedApp.listen((event) { showNotification(event); });
+    // FirebaseMessaging.onBackgroundMessage((message) => showNotification(message));
+  }
+
+  Future showNotification(RemoteMessage message) async{
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+        'high_importance_channel',
+        'High Importance Notifications', // title
+        importance: Importance.max,
+        playSound: true
+
+    );
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    RemoteNotification? data  = message.notification;
+    Map<String, dynamic> dataisi = message.data;
+
+    String screen = dataisi['title'].toString();
+    print(screen);
+
+    AndroidNotification? android = message.notification?.android;
+    if(data != null){
+      flutterLocalNotificationsPlugin.show(0, data.title, data.body, NotificationDetails(
+        android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            groupKey: channel.groupId,
+            icon: '@mipmap/ic_launcher',
+
+            enableVibration: true,
+            importance: Importance.max,
+            priority: Priority.max, playSound: true
+        ),
+        iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
+      ), payload: '');
+
+    }
+
+
+  }
+
+  permission_forIOS() async{
+    NotificationSettings setting = await message.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true
+    );
+    if(setting.authorizationStatus == AuthorizationStatus.authorized){
+      ('diizinkan');
+    }
+    else if(setting.authorizationStatus == AuthorizationStatus.provisional){
+      ('diizinkan');
+    } else{
+      ('tidak diizinkan');
+    }
+
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true
+    );
+  }
+
+  Future<dynamic> onselect(payload) async{
+    (payload);
+    Navigator.pushNamed(context, payload);
+  }
+
+  initSetting_notif(){
+    var initsettingAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const IOSInitializationSettings initios = IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false
+    );
+
+    final InitializationSettings initsetting = InitializationSettings(
+        android: initsettingAndroid, iOS: initios
+    );
+    flutterLocalNotificationsPlugin.initialize(initsetting, onSelectNotification: onselect);
+
   }
 
   Future<void> callMehtod() async {

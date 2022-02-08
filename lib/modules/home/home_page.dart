@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_model.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
@@ -9,6 +11,7 @@ import 'package:mogawe/core/data/response/home_content/product_etalasa_model.dar
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/hire_me/sales/hire_me_sales_page.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
@@ -18,12 +21,14 @@ import 'package:mogawe/modules/home/widgets/build_mogawers_target.dart';
 import 'package:mogawe/modules/home/widgets/build_product_item.dart';
 import 'package:mogawe/modules/home/widgets/gaweanListEmptyView.dart';
 import 'package:mogawe/modules/home/widgets/productListEmptyView.dart';
+import 'package:mogawe/modules/inbox_notif/notification/notif.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 import 'package:mogawe/utils/ui/widgets/shimmering_skeleton.dart';
+import 'package:rxdart/rxdart.dart';
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import 'gawean/bloc/gawean_bloc.dart';
 import 'gawean/bloc/gawean_event.dart';
@@ -41,7 +46,14 @@ class _HomePageState extends State<HomePage> {
   var token;
   var convertCurrency, balance, point;
   UserProfileResponse? userProfileResponse;
+  final FirebaseMessaging message = FirebaseMessaging.instance;
 
+  var initsetting;
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  BehaviorSubject<ReceiveNotification> get didReceiveLocalNotificationSubject =>
+      BehaviorSubject<ReceiveNotification>();
   int gaweanMenu = 0;
 
   void getToken() async {
@@ -49,10 +61,11 @@ class _HomePageState extends State<HomePage> {
       loading = true;
     });
     token = await AuthRepository().readSecureData('token');
-
+    String? tokenDevice = await message.getToken();
+    print(tokenDevice);
     print("OUT >> hey");
     print(token);
-
+    await ChatQiscusRepo().kirimTokenDevice(tokenDevice, token);
     userProfileResponse = await AuthRepository().getProfile(token);
 
     setState(() {
@@ -70,12 +83,111 @@ class _HomePageState extends State<HomePage> {
     getToken();
     bloc = GaweanBloc();
     bloc.add(GetGaweanListEvent());
+    permission_forIOS();
+    FirebaseMessaging.onMessage.listen((event) { showNotification(event); });
+    FirebaseMessaging.onMessageOpenedApp.listen((event) { showNotification(event); });
+    FirebaseMessaging.onBackgroundMessage((message) => showNotification(message));
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      //If there is data in our notification
+      if (message != null) {
+        //We will open the route from the field view
+        //with the value definied in the notification
+        print(message.data);
+      }
+    });
+
+    initSetting_notif();
   }
 
   @override
   void dispose() {
     super.dispose();
     bloc.close();
+  }
+
+  Future showNotification(RemoteMessage message) async{
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+        'high_importance_channel',
+        'High Importance Notifications', // title
+        importance: Importance.max,
+        playSound: true
+
+    );
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    RemoteNotification? data  = message.notification;
+    Map<String, dynamic> dataisi = message.data;
+
+    String screen = dataisi['title'].toString();
+    print(screen);
+
+    AndroidNotification? android = message.notification?.android;
+    if(data != null){
+      flutterLocalNotificationsPlugin.show(0, data.title, data.body, NotificationDetails(
+        android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            groupKey: channel.groupId,
+            icon: '@mipmap/ic_launcher',
+
+            enableVibration: true,
+            importance: Importance.max,
+            priority: Priority.max, playSound: true
+        ),
+        iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
+      ), payload: '');
+
+    }
+
+
+  }
+
+  permission_forIOS() async{
+    NotificationSettings setting = await message.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true
+    );
+    if(setting.authorizationStatus == AuthorizationStatus.authorized){
+      ('diizinkan');
+    }
+    else if(setting.authorizationStatus == AuthorizationStatus.provisional){
+      ('diizinkan');
+    } else{
+      ('tidak diizinkan');
+    }
+
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true
+    );
+  }
+
+  Future<dynamic> onselect(payload) async{
+    (payload);
+    Navigator.pushNamed(context, payload);
+  }
+
+  initSetting_notif(){
+    var initsettingAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const IOSInitializationSettings initios = IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false
+    );
+
+    final InitializationSettings initsetting = InitializationSettings(
+        android: initsettingAndroid, iOS: initios
+    );
+    flutterLocalNotificationsPlugin.initialize(initsetting, onSelectNotification: onselect);
+
   }
 
   Widget blocListener(Widget child) {

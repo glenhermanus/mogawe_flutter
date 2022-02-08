@@ -9,6 +9,7 @@ import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 
 class CardReceived extends StatefulWidget {
@@ -29,7 +30,7 @@ class _CardReceivedState extends State<CardReceived> {
   String _mimeType = "";
   File? _imageFile;
   int _progress = 0;
-  var image;
+  var image, token;
 
   void deleteMessageQ(unique_id) {
     showDialog(
@@ -147,6 +148,23 @@ class _CardReceivedState extends State<CardReceived> {
     });
   }
 
+  notification(pesan, judul, uuid, token)async{
+    await ChatQiscusRepo().notificationSend(pesan, judul, uuid, token);
+
+  }
+
+  getData()async{
+    token = await AuthRepository().readSecureData('token');
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +243,7 @@ class _CardReceivedState extends State<CardReceived> {
             String time = DateFormat("HH:mm").format(list?.timestamp);
             typeFile2 = list?.payload?.url.split('_').last.split('.').last;
             print(list?.user.userId);
-
+            notification(widget.pesan.results.comments.first.message, widget.pesan.results.comments.first.user.username, widget.userProfileResponse?.uuid, token);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
