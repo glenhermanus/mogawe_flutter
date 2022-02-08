@@ -185,7 +185,6 @@ class _ChatPageState extends State<ChatPage> {
 
                 loadpesans1 = snapshot.data;
 
-                ChatQiscusRepo().notificationSend(loadpesans1.results.comments.first.message, loadpesans1.results.comments.first.user.username, widget.userProfileResponse?.uuid, token);
                 if(snapshot.hasData){
                   print('aa ${loadpesans1.results.comments.first.message}');
                   return CardReceived( pesan: widget.chatResponse != null ? null : loadpesans1, userProfileResponse: widget.userProfileResponse, );

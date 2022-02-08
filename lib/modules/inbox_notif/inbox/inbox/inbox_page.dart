@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
+import 'package:mogawe/core/data/response/qiscus/get_uuid_user.dart';
+import 'package:mogawe/core/data/response/qiscus/participants_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +27,7 @@ class _InboxPageState extends State<InboxPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _loadingButton = false;
   var chat;
+  ParticipantsModel? participantsModel;
   bool view = false;
   TextEditingController judul = new TextEditingController();
   TextEditingController pertanyaan = new TextEditingController();
@@ -30,8 +35,12 @@ class _InboxPageState extends State<InboxPage> {
   bool loading =false;
   ChatRoomList? chatRoomList;
   ChatRoomMessage? chatRoomMessage, chatRoomMessage2;
-  var room;
+  var room, loadroom1;
   var pesan =[{}];
+  List uuidValue = [];
+  List email_user = [];
+  ModelGetUuid? modelGetUuid;
+  Timer? timer;
 
   void getToken() async {
     setState(() {
@@ -64,14 +73,60 @@ class _InboxPageState extends State<InboxPage> {
     });
   }
 
+
+
+  loadingAlert(title, status, loading) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                contentPadding: EdgeInsets.only(top: 0.0, bottom: 20),
+                content: Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+
+                      Divider(
+                        color: Colors.grey,
+                        height: 1.0,
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(19.0),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            status != null ? status == true ? Icon(Icons.check, size: 30,) : Icon(Icons.clear, size: 30,) : Container(),
+                            SizedBox(height: 15,),
+                            Text('$title', style: FlutterFlowTheme.bodyText2,),
+                            SizedBox(height: 15,),
+                            loading == true ? CircularProgressIndicator(color: Colors.red,) : Container(),
+                            SizedBox(height: 10,),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }));
+  }
+
   void bottomNew(){
     final node = FocusScope.of(context);
-    var isipesan;
-    print('a');
-    print(pesan);
-    for(var i =0; i < chatRoomList!.results.rooms.length; i++){
-       isipesan = pesan[i]['pesan'];
-    }
+
     showModalBottomSheet(
       isScrollControlled: true,
 
@@ -208,9 +263,28 @@ class _InboxPageState extends State<InboxPage> {
                       onPressed: ()async{
 
                         try{
+                          loadingAlert('Mohon tunggu sebentar', null, true);
                           var res = await ChatQiscusRepo().createRoom(judul.text, widget.userProfileResponse?.email);
+                          participantsModel = await ChatQiscusRepo().getParticipants(res.results.room.roomId);
+                          for(var i= 0; i< participantsModel!.results.participants.length; i++){
+                            if(participantsModel!.results.participants[i].userId != widget.userProfileResponse?.email){
+                              email_user.add(participantsModel!.results.participants[i].userId);
+                            }
+
+                          }
+
+                          for(var j =0; j<email_user.length; j++){
+                            modelGetUuid = await ChatQiscusRepo().getUuiduser(email_user[j]);
+                            if(modelGetUuid!.object.isNotEmpty){
+                              uuidValue.add(modelGetUuid?.object.first.uuid);
+                            }
+
+                          }
                           chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, widget.userProfileResponse?.email);
+
                           var load = await ChatQiscusRepo().getMessageList(res.results.room.roomId);
+                          await ChatQiscusRepo().notificationSend(chat.results.comment.message, chat.results.comment.user.username,
+                              uuidValue, token);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -218,7 +292,9 @@ class _InboxPageState extends State<InboxPage> {
                             ),
                           );
                         }catch(e){
+                          loadingAlert('$e', false, false);
                           print(e);
+
                         }
 
                       },
@@ -248,6 +324,29 @@ class _InboxPageState extends State<InboxPage> {
     );
   }
 
+  getRoomList()async{
+    if(mounted){
+      setState(() {
+        Widget listRoom (BuildContext context){
+
+          return FutureBuilder(
+              future: ChatQiscusRepo().getRoomList(widget.userProfileResponse?.email),
+              builder: (context, snapshot){
+
+                loadroom1 = snapshot.data;
+
+                if(snapshot.hasData){
+                  return ListInbox(chatResponse: chat, chatRoomList: loadroom1, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
+
+                }
+                return ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
+
+              });
+        }
+      });
+    }
+  }
+
   void SelectedItem(BuildContext context, item) {
     switch (item) {
       case 0:
@@ -264,12 +363,48 @@ class _InboxPageState extends State<InboxPage> {
         break;
     }
   }
+  Future<void> callMehtod() async {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
 
+        setState(() {
+          getRoomList();
+        });
+
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getToken();
+    callMehtod();
+  }
+
+
+
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    timer?.cancel();
+  }
+
+  Widget listRoom (BuildContext context){
+
+    return FutureBuilder(
+        future: ChatQiscusRepo().getRoomList(widget.userProfileResponse?.email),
+        builder: (context, snapshot){
+
+          loadroom1 = snapshot.data;
+
+          if(snapshot.hasData){
+            return ListInbox(chatResponse: chat, chatRoomList: loadroom1, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
+
+          }
+          return ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
+
+        });
   }
 
   @override
@@ -324,8 +459,9 @@ class _InboxPageState extends State<InboxPage> {
               alignment: Alignment.topCenter,
                 child: CircularProgressIndicator()) : ListView(
               children: [
-                 ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
-                SizedBox(height: 50,),
+                chatRoomList != null ? ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,) :
+                listRoom(context),
+                 SizedBox(height: 50,),
 
               ],
             ),Align(
