@@ -256,7 +256,12 @@ class _InboxPageState extends State<InboxPage> {
         });
 
         break;
+      case 1:
+        setState(() {
+          view = false;
+        });
 
+        break;
     }
   }
 
@@ -290,10 +295,20 @@ class _InboxPageState extends State<InboxPage> {
                 children: [
                   Icon(Icons.edit, color: Colors.black,),
                   SizedBox(width: 20,),
-                  Text('Edit Data'),
+                  Text('Edit'),
                 ],
               )),
-
+             view == true? PopupMenuItem<int>(value: 1, child: Row(
+                children: [
+                  Icon(Icons.arrow_back, color: Colors.black,),
+                  SizedBox(width: 20,),
+                  Text('Cancel'),
+                ],
+              )) : PopupMenuItem<int>(value: 1, child: Row(
+               children: [
+                 Container()
+               ],
+             )),
             ],
            onSelected: (item) => SelectedItem(context, item),
           )
@@ -366,7 +381,40 @@ class _ListInboxState extends State<ListInbox> {
     // TODO: implement initState
     super.initState();
 
+  }
 
+  void deleteMessageQ(room, user) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Konfirmasi"),
+        content: const Text("Anda yakin ingin hapus pesan ?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async{
+
+              try {
+                await ChatQiscusRepo().deleteroom(room, user);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InboxPage(userProfileResponse: widget.userProfileResponse, ),
+                  ),
+                );
+              }catch(e){
+                print('gagal');
+              }
+            },
+            child: const Text('OK'),
+          ),
+        ],
+
+      ),
+    );
   }
 
   @override
@@ -484,28 +532,12 @@ class _ListInboxState extends State<ListInbox> {
                           ),
                          widget.view == true ? Row(
                             children: [
+
                               InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      widget.view = false;
-                                    });
-                                  },
-                                  child: Icon(Icons.arrow_back)),
-                              InkWell(
-                                  onTap: ()async{
-                                    try {
-                                      await ChatQiscusRepo().deleteroom(
-                                          list?.roomId,
-                                          widget.userProfileResponse?.email);
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => InboxPage(userProfileResponse: widget.userProfileResponse, ),
-                                        ),
-                                      );
-                                    }catch(e){
-                                      print('gagal');
-                                    }
+                                  onTap: () {
+                                    deleteMessageQ(list?.roomId,
+                                        widget.userProfileResponse?.email);
+
                                   },
                                   child: Icon(Icons.clear))
                             ],

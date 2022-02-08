@@ -8,6 +8,8 @@ import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/createm_room_response.dart';
+import 'package:mogawe/core/data/response/qiscus/get_uuid_user.dart';
+import 'package:mogawe/core/data/response/qiscus/participants_response.dart';
 import 'package:mogawe/core/data/response/qiscus/upload_file.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
 import 'package:http/http.dart' as http;
@@ -106,9 +108,7 @@ class ChatQiscusRepo {
       "isPushNotification": true,
       "message": pesan,
       "title": title,
-      "uuidMogawers": [
-        iduser
-      ]
+      "uuidMogawers": iduser
     };
 
     final response = await http.post(Uri.parse(
@@ -129,11 +129,33 @@ class ChatQiscusRepo {
     }
   }
 
+  Future<ModelGetUuid> getUuiduser(email) async{
+
+    var token = 'Syt3mMog4w3B4ck3nd';
+
+    final response = await http.get(Uri.parse(
+        "$BASE_URL/api/mogawers/get?offset=1&page=1&q=$email"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token' : token,
+
+        } );
+
+    if (response.statusCode == 200) {
+
+     return ModelGetUuid.fromJson(json.decode(response.body));
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
   Future<QiscusRoomResponse> createRoom(judul, user) async {
     var body = {
       "room_name": judul,
       "creator": user,
-      "participants": ["$user", "azizahif99@gmail.com" ,"ambar.sumapradja@mogawe.id", "glen.hermanus@mogawe.id"],
+      "participants": ["$user", "azizahif99@gmail.com"],
+      //"participants": ["$user", "azizahif99@gmail.com" ,"ambar.sumapradja@mogawe.id", "glen.hermanus@mogawe.id"],
       "room_avatar_url": "http://placehold.it/20x20",
       "room_options": "{\"background\":\"green\"}"
     };
@@ -149,6 +171,26 @@ class ChatQiscusRepo {
     if (response.statusCode == 200) {
 
       return QiscusRoomResponse.fromJson(json.decode(response.body));
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
+  Future<ParticipantsModel> getParticipants(roomid) async {
+
+    final response = await http.get(Uri.parse(
+        "$url/get_room_participants?room_id=$roomid"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
+          'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
+        },
+    );
+
+    if (response.statusCode == 200) {
+
+      return ParticipantsModel.fromJson(json.decode(response.body));
     } else {
 
       throw Exception('Terjadi kegagalan');

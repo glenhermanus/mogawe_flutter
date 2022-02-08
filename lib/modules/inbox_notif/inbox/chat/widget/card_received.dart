@@ -148,10 +148,7 @@ class _CardReceivedState extends State<CardReceived> {
     });
   }
 
-  notification(pesan, judul, uuid, token)async{
-    await ChatQiscusRepo().notificationSend(pesan, judul, uuid, token);
 
-  }
 
   getData()async{
     token = await AuthRepository().readSecureData('token');
@@ -243,7 +240,6 @@ class _CardReceivedState extends State<CardReceived> {
             String time = DateFormat("HH:mm").format(list?.timestamp);
             typeFile2 = list?.payload?.url.split('_').last.split('.').last;
             print(list?.user.userId);
-            notification(widget.pesan.results.comments.first.message, widget.pesan.results.comments.first.user.username, widget.userProfileResponse?.uuid, token);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,

@@ -11,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/createm_room_response.dart';
+import 'package:mogawe/core/data/response/qiscus/get_uuid_user.dart';
+import 'package:mogawe/core/data/response/qiscus/participants_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -50,6 +52,9 @@ class _ChatPageState extends State<ChatPage> {
   var loadpesan, loadpesans1;
   var filePick;
   Timer? timer, timer2;
+  ParticipantsModel? participantsModel;
+  List email_user =[];
+  ModelGetUuid? modelGetUuid;
   void chooseImage() {
     showDialog(
         context: context,
@@ -102,6 +107,7 @@ class _ChatPageState extends State<ChatPage> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   BehaviorSubject<ReceiveNotification> get didReceiveLocalNotificationSubject =>
       BehaviorSubject<ReceiveNotification>();
+  List uuidValue = [];
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -146,44 +152,56 @@ class _ChatPageState extends State<ChatPage> {
 
   getData()async{
     token = await AuthRepository().readSecureData('token');
+    participantsModel = await ChatQiscusRepo().getParticipants(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
     userdata = await AuthRepository().getProfile(token);
     Future.delayed(Duration.zero, () {
       _scrollController.animateTo( _scrollController.position.maxScrollExtent,
           duration: const Duration(microseconds: 1),curve: Curves.easeOut);
     });
+    for(var i= 0; i< participantsModel!.results.participants.length; i++){
+      if(participantsModel!.results.participants[i].userId != widget.userProfileResponse?.email){
+        email_user.add(participantsModel!.results.participants[i].userId);
+      }
+
+    }
+
+    for(var j =0; j<email_user.length; j++){
+      modelGetUuid = await ChatQiscusRepo().getUuiduser(email_user[j]);
+      if(modelGetUuid!.object.isNotEmpty){
+        uuidValue.add(modelGetUuid?.object.first.uuid);
+      }
+
+    }
 
   }
 
   getLoadPesan()async{
-      if(mounted){
-        setState(() {
-          Widget listChat (BuildContext context){
-            return FutureBuilder(
-                future: ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id),
-                builder: (context, snapshot){
+    if(mounted){
+      setState(() {
+        Widget listChat (BuildContext context){
+          return FutureBuilder(
+              future: ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id),
+              builder: (context, snapshot){
 
-                  loadpesans1 = snapshot.data;
+                loadpesans1 = snapshot.data;
 
-                  ChatQiscusRepo().notificationSend(loadpesans1.results.comments.first.message, loadpesans1.results.comments.first.user.username, widget.userProfileResponse?.uuid, token);
-                  if(snapshot.hasData){
-                    print('aa ${loadpesans1.results.comments.first.message}');
-                    return CardReceived( pesan: widget.chatResponse != null ? null : loadpesans1, userProfileResponse: widget.userProfileResponse, );
+                ChatQiscusRepo().notificationSend(loadpesans1.results.comments.first.message, loadpesans1.results.comments.first.user.username, widget.userProfileResponse?.uuid, token);
+                if(snapshot.hasData){
+                  print('aa ${loadpesans1.results.comments.first.message}');
+                  return CardReceived( pesan: widget.chatResponse != null ? null : loadpesans1, userProfileResponse: widget.userProfileResponse, );
 
-                  }
-                  return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse);
+                }
+                return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse);
 
-                });
-          }
+              });
+        }
 
-        });
-      }
+      });
+    }
 
-
-  }
-
-  notification()async{
 
   }
+
 
   @override
   void initState() {
@@ -192,94 +210,8 @@ class _ChatPageState extends State<ChatPage> {
     getData();
     callMehtod();
 
-    // permission_forIOS();
-    // FirebaseMessaging.onMessage.listen((event) { showNotification(event); });
-    // FirebaseMessaging.onMessageOpenedApp.listen((event) { showNotification(event); });
-    // FirebaseMessaging.onBackgroundMessage((message) => showNotification(message));
   }
 
-  Future showNotification(RemoteMessage message) async{
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'high_importance_channel',
-        'High Importance Notifications', // title
-        importance: Importance.max,
-        playSound: true
-
-    );
-
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
-    RemoteNotification? data  = message.notification;
-    Map<String, dynamic> dataisi = message.data;
-
-    String screen = dataisi['title'].toString();
-    print(screen);
-
-    AndroidNotification? android = message.notification?.android;
-    if(data != null){
-      flutterLocalNotificationsPlugin.show(0, data.title, data.body, NotificationDetails(
-        android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
-            groupKey: channel.groupId,
-            icon: '@mipmap/ic_launcher',
-
-            enableVibration: true,
-            importance: Importance.max,
-            priority: Priority.max, playSound: true
-        ),
-        iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
-      ), payload: '');
-
-    }
-
-
-  }
-
-  permission_forIOS() async{
-    NotificationSettings setting = await message.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true
-    );
-    if(setting.authorizationStatus == AuthorizationStatus.authorized){
-      ('diizinkan');
-    }
-    else if(setting.authorizationStatus == AuthorizationStatus.provisional){
-      ('diizinkan');
-    } else{
-      ('tidak diizinkan');
-    }
-
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true
-    );
-  }
-
-  Future<dynamic> onselect(payload) async{
-    (payload);
-    Navigator.pushNamed(context, payload);
-  }
-
-  initSetting_notif(){
-    var initsettingAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const IOSInitializationSettings initios = IOSInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false
-    );
-
-    final InitializationSettings initsetting = InitializationSettings(
-        android: initsettingAndroid, iOS: initios
-    );
-    flutterLocalNotificationsPlugin.initialize(initsetting, onSelectNotification: onselect);
-
-  }
 
   Future<void> callMehtod() async {
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
@@ -595,6 +527,8 @@ class _ChatPageState extends State<ChatPage> {
                                     loadingAlert('Mohon tunggu sebentar', null, true);
                                     var res = await ChatQiscusRepo().kirimPesanFile(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, caption.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email, uploadfile.object);
                                     loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+                                    await ChatQiscusRepo().notificationSend(res.results.comment.message, res.results.comment.user.username,
+                                        uuidValue, token);
 
                                     //    Navigator.pop(context);
                                     stateSetter(() {
@@ -775,8 +709,11 @@ class _ChatPageState extends State<ChatPage> {
                                     var uploadfile = await ChatQiscusRepo().uploadFileChat(body, token, type);
                                     loadingAlert('Mohon tunggu sebentar', null, true);
                                     var res = await ChatQiscusRepo().kirimPesanFile(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, caption.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email, uploadfile.object);
+                                    await ChatQiscusRepo().notificationSend(res.results.comment.message, res.results.comment.user.username,
+                                        uuidValue, token);
 
                                     loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+
                                     Navigator.pop(context);
                                     Navigator.pushReplacement(
                                       context,
@@ -971,19 +908,26 @@ class _ChatPageState extends State<ChatPage> {
                     InkWell(
                       onTap: ()async{
 
-                        var res = await ChatQiscusRepo().kirimPesan(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, kirimpesan.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email);
+                        try{
+                          var res = await ChatQiscusRepo().kirimPesan(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, kirimpesan.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email);
 
-                        loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+                          loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+                          await ChatQiscusRepo().notificationSend(res.results.comment.message, res.results.comment.user.username,
+                              uuidValue, token);
+
+                          Navigator.pushReplacement(
+                            context,
+                            PageRouteBuilder(
+                                pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
+                                transitionDuration: Duration(seconds: 0),
+                                reverseTransitionDuration: Duration(seconds: 0)
+                            ),
+                          );
+                        }catch(e){
+
+                        }
 
 
-                        Navigator.pushReplacement(
-                          context,
-                          PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => ChatPage(room_name: widget.room_name == null? widget.qiscusRoomResponse?.results.room.roomName : widget.room_name, avatar: widget.avatar== null? widget.qiscusRoomResponse?.results.room.roomAvatarUrl : widget.avatar, pesan: loadpesan, userProfileResponse: widget.userProfileResponse == null ? userdata : widget.userProfileResponse, id: widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, ),
-                              transitionDuration: Duration(seconds: 0),
-                              reverseTransitionDuration: Duration(seconds: 0)
-                          ),
-                        );
                       },
                       child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
