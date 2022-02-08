@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "268588548680",
+    "firebase_url": "https://mogawe-4b849.firebaseio.com",
+    "project_id": "mogawe-4b849",
+    "storage_bucket": "mogawe-4b849.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268588548680:android:2e28b4af7d3195d9",
+        "android_client_info": {
+          "package_name": "com.mogawe.mosurvei"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "`268588548680`-bpoh5pkmu5hm2qjuif78hvcb1hjk4bjc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqDrdA-fIj4VoeuOE3A9NuwFeyVtlSku4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

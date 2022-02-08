@@ -77,6 +77,30 @@ class ChatQiscusRepo {
     }
   }
 
+  Future kirimTokenDevice(idDevice, token) async {
+    var body = {
+
+      "idDevice": idDevice,
+
+    };
+    final response = await http.post(Uri.parse(
+        "$BASE_URL/api/mogawers/updateDeviceID"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token' : token,
+
+        },
+        body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+
+      print('sukses');
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
   Future<QiscusRoomResponse> createRoom(judul, user) async {
     var body = {
       "room_name": judul,
