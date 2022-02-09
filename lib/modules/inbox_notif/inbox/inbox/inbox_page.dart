@@ -6,6 +6,7 @@ import 'package:mogawe/core/data/response/qiscus/chat_respnse.dart';
 import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/get_uuid_user.dart';
 import 'package:mogawe/core/data/response/qiscus/participants_response.dart';
+import 'package:mogawe/core/data/response/qiscus/unread_response.dart';
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class _InboxPageState extends State<InboxPage> {
   List email_user = [];
   ModelGetUuid? modelGetUuid;
   Timer? timer;
+  ModelUnread? unreadCount;
 
   void getToken() async {
     setState(() {
@@ -55,12 +57,14 @@ class _InboxPageState extends State<InboxPage> {
     for(var i = 0; i < chatRoomList!.results.rooms.length; i++){
       room = chatRoomList?.results.rooms[i].roomId;
       print(room);
-
+      unreadCount = await ChatQiscusRepo().getUnread(widget.userProfileResponse?.email, room);
       chatRoomMessage = await ChatQiscusRepo().getMessageList(room);
+
 
       //print(chatRoomMessage?.results.comments.length);
       var pesanbaru = {
-        'pesan' : chatRoomMessage
+        'pesan' : chatRoomMessage,
+        'unread' : unreadCount
       };
       pesan.add(pesanbaru);
     }
@@ -72,8 +76,6 @@ class _InboxPageState extends State<InboxPage> {
 
     });
   }
-
-
 
   loadingAlert(title, status, loading) {
     return showDialog(
@@ -281,10 +283,10 @@ class _InboxPageState extends State<InboxPage> {
 
                           }
                           chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, pertanyaan.text, widget.userProfileResponse?.email);
-
-                          var load = await ChatQiscusRepo().getMessageList(res.results.room.roomId);
                           await ChatQiscusRepo().notificationSend(chat.results.comment.message, chat.results.comment.user.username,
                               uuidValue, token);
+                          var load = await ChatQiscusRepo().getMessageList(res.results.room.roomId);
+
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -363,25 +365,24 @@ class _InboxPageState extends State<InboxPage> {
         break;
     }
   }
+
   Future<void> callMehtod() async {
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
 
         setState(() {
-          getRoomList();
+          getToken();
         });
 
     });
   }
+  
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getToken();
-    callMehtod();
+   // callMehtod();
   }
-
-
-
 
   @override
   void dispose() {
@@ -459,8 +460,9 @@ class _InboxPageState extends State<InboxPage> {
               alignment: Alignment.topCenter,
                 child: CircularProgressIndicator()) : ListView(
               children: [
-                chatRoomList != null ? ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,) :
-                listRoom(context),
+                 ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
+                // :
+                //listRoom(context),
                  SizedBox(height: 50,),
 
               ],
@@ -501,6 +503,7 @@ class _InboxPageState extends State<InboxPage> {
 class ListInbox extends StatefulWidget {
   ChatRoomList? chatRoomList;
   ChatResponse? chatResponse;
+  ModelUnread? modelUnread;
   bool? view;
   UserProfileResponse? userProfileResponse;
   List<Map<dynamic, dynamic>>? chatRoomMessage;
@@ -511,7 +514,7 @@ class ListInbox extends StatefulWidget {
 }
 
 class _ListInboxState extends State<ListInbox> {
-
+ bool klik = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -564,13 +567,16 @@ class _ListInboxState extends State<ListInbox> {
         itemBuilder: (context, snap){
           final list = widget.chatRoomList?.results.rooms[snap];
           final pesan = widget.chatRoomMessage?[snap]['pesan'];
+          final unread = widget.chatRoomMessage?[snap]['unread'];
           var date = DateFormat("dd/MM/yyyy").format(pesan?.results.comments.first.timestamp);
           var time = DateFormat("HH:mm").format((pesan?.results.comments.first.timestamp));
           var now = DateTime.now();
           var today =  DateTime(now.year, now.month, now.day);
+
 //        final message = widget.chatRoomMessage?.results.comments.length;
           return InkWell(
             onTap: () async {
+              klik = true;
               await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -623,43 +629,86 @@ class _ListInboxState extends State<ListInbox> {
                                           ),
                                         ),
                                       ),
-                                      Text(
-                                        pesan?.results.comments.first.timestamp != DateTime(now.year, now.month, now.day) ? '$date' : '$time',
-                                        style: FlutterFlowTheme.bodyText1.override(
-                                          fontFamily: 'Poppins',
-                                          color: Color(0xFF777777),
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.normal,
-                                        ),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            pesan?.results.comments.first.timestamp != DateTime(now.year, now.month, now.day) ? '$date' : '$time',
+                                            style: FlutterFlowTheme.bodyText1.override(
+                                              fontFamily: 'Poppins',
+                                              color: Color(0xFF777777),
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+
+                                        ],
                                       )
                                     ],
                                   ),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                                    child: pesan.results.comments.first.type == 'text' ? Text(
-                                      pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ${pesan.results.comments.first.message} ' :
-                                      '${pesan.results.comments.first.user.username.split(' ').first}: ${pesan.results.comments.first.message} ',
-                                      style: FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Poppins',
-                                        color: Color(0xFF7E7E7E),
-                                        fontSize: 12,
-                                      ),
-                                    ) : Row(children: [
-                                      Text(
-                                        pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ' :
-                                        '${pesan.results.comments.first.user.username.split(' ').first}: ',
-                                        style: FlutterFlowTheme.bodyText1.override(
-                                          fontFamily: 'Poppins',
-                                          color: Color(0xFF7E7E7E),
-                                          fontSize: 12,
+                                    child: pesan.results.comments.first.type == 'text' ? Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ${pesan.results.comments.first.message} ' :
+                                            '${pesan.results.comments.first.user.username.split(' ').first}: ${pesan.results.comments.first.message} ',
+                                            style: FlutterFlowTheme.bodyText1.override(
+                                              fontFamily: 'Poppins',
+                                              color: Color(0xFF7E7E7E),
+                                              fontSize: 12,
+                                            ),
+                                          ),
                                         ),
+                                        unread.results.unreadCounts.first.unreadCount != 0 ? Container(
+                                          width: 20,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(2),
+                                            child: Center(child: Text('${unread.results.unreadCounts.first.unreadCount}', style: FlutterFlowTheme.bodyText3.copyWith(color: Colors.white),)),
+                                          ),
+                                        ) : Container()
+                                      ],
+                                    ) : Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                      Row(
+
+                                        children: [
+                                          Text(
+                                            pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ' :
+                                            '${pesan.results.comments.first.user.username.split(' ').first}: ',
+                                            style: FlutterFlowTheme.bodyText1.override(
+                                              fontFamily: 'Poppins',
+                                              color: Color(0xFF7E7E7E),
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          Icon(Icons.camera_alt),
+                                          Text(' send an image', style: FlutterFlowTheme.bodyText1.override(
+                                            fontFamily: 'Poppins',
+                                            color: Color(0xFF7E7E7E),
+                                            fontSize: 12,
+                                          ), )
+                                        ],
                                       ),
-                                      Icon(Icons.camera_alt),
-                                      Text(' send an image', style: FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Poppins',
-                                        color: Color(0xFF7E7E7E),
-                                        fontSize: 12,
-                                      ), )
+                                        unread.results.unreadCounts.first.unreadCount != 0 ? Container(
+                                          width: 20,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(2),
+                                            child: Center(child: Text('${unread.results.unreadCounts.first.unreadCount}', style: FlutterFlowTheme.bodyText3.copyWith(color: Colors.white),)),
+                                          ),
+                                        ) : Container()
                                     ],),
                                   )
                                 ],

@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'high_importance_channel',
         'High Importance Notifications', // title
-        importance: Importance.max,
+        importance: Importance.high,
         playSound: true
 
     );
@@ -136,8 +136,8 @@ class _HomePageState extends State<HomePage> {
             icon: '@mipmap/ic_launcher',
 
             enableVibration: true,
-            importance: Importance.max,
-            priority: Priority.max, playSound: true
+            importance: Importance.high,
+            priority: Priority.high, playSound: true
         ),
         iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
       ), payload: '');

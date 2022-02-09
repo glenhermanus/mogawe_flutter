@@ -909,10 +909,10 @@ class _ChatPageState extends State<ChatPage> {
 
                         try{
                           var res = await ChatQiscusRepo().kirimPesan(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id, kirimpesan.text, widget.userProfileResponse?.email == null ? widget.chatResponse?.results.comment.user.userId : widget.userProfileResponse?.email);
-
-                          loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
                           await ChatQiscusRepo().notificationSend(res.results.comment.message, res.results.comment.user.username,
                               uuidValue, token);
+                          loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
+
 
                           Navigator.pushReplacement(
                             context,

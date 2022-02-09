@@ -35,9 +35,9 @@ class NotificationClass {
   initializePlatform() {
     var initsettingAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     var initsettingIos = IOSInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
         onDidReceiveLocalNotification: (id, title, body, payload) async {
           ReceiveNotification notify = ReceiveNotification(id: id, title: title, body: body, payload: payload);
           didReceiveLocalNotificationSubject.add(notify);
@@ -71,7 +71,7 @@ class NotificationClass {
   }
   Future<void> showjadwalNotif() async{
     var JadwalNotif = DateTime.now().add(Duration(seconds: 6));
-    var androidchannel = AndroidNotificationDetails('CHANNEL_ID', 'CHANNEL_NAME', importance: Importance.max,
+    var androidchannel = AndroidNotificationDetails('CHANNEL_ID', 'CHANNEL_NAME', importance: Importance.high,
         priority: Priority.high, playSound: true, timeoutAfter: 5000, enableLights: true);
 
 

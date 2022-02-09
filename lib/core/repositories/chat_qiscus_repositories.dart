@@ -10,6 +10,7 @@ import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
 import 'package:mogawe/core/data/response/qiscus/createm_room_response.dart';
 import 'package:mogawe/core/data/response/qiscus/get_uuid_user.dart';
 import 'package:mogawe/core/data/response/qiscus/participants_response.dart';
+import 'package:mogawe/core/data/response/qiscus/unread_response.dart';
 import 'package:mogawe/core/data/response/qiscus/upload_file.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
 import 'package:http/http.dart' as http;
@@ -191,6 +192,26 @@ class ChatQiscusRepo {
     if (response.statusCode == 200) {
 
       return ParticipantsModel.fromJson(json.decode(response.body));
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
+  Future<ModelUnread> getUnread(user, roomid) async {
+
+    final response = await http.get(Uri.parse(
+        "$url/get_unread_count?user_id=$user&room_ids[]=$roomid"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
+        'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
+      },
+    );
+
+    if (response.statusCode == 200) {
+
+      return ModelUnread.fromJson(json.decode(response.body));
     } else {
 
       throw Exception('Terjadi kegagalan');
