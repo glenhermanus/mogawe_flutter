@@ -290,7 +290,7 @@ class _InboxPageState extends State<InboxPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res, pesan: null, userProfileResponse: widget.userProfileResponse,),
+                              builder: (context) => ChatPage( qiscusRoomResponse: res, pesan: load, userProfileResponse: widget.userProfileResponse,),
                             ),
                           );
                         }catch(e){
@@ -619,12 +619,12 @@ class _ListInboxState extends State<ListInbox> {
 
 //        final message = widget.chatRoomMessage?.results.comments.length;
           return InkWell(
-            onTap: () async {
+            onTap: () {
               klik = true;
-              await Navigator.push(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatPage(room_name: list?.roomName, avatar: list?.roomAvatarUrl, chatResponse: widget.chatResponse, pesan: pesan, userProfileResponse: widget.userProfileResponse, id: list?.roomId,),
+                  builder: (context) => ChatPage(room_name: list?.roomName, avatar: list?.roomAvatarUrl, pesan: pesan, userProfileResponse: widget.userProfileResponse, id: list?.roomId,),
                 ),
               );
             },
@@ -651,7 +651,7 @@ class _ListInboxState extends State<ListInbox> {
                               shape: BoxShape.circle,
                             ),
                             child: Image.network(
-                              '${list?.roomAvatarUrl}',
+                              '${pesan?.results.comments.first.user.avatarUrl}',
                             ),
                           ),
                           Expanded(
@@ -699,9 +699,13 @@ class _ListInboxState extends State<ListInbox> {
                                           child: Text(
                                             pesan?.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ${pesan?.results.comments.first.message} ' :
                                             '${pesan?.results.comments.first.user.username.split(' ').first}: ${pesan?.results.comments.first.message} ',
-                                            style: FlutterFlowTheme.bodyText1.override(
+                                            style: unread?.results.unreadCounts.first.unreadCount == 0 ? FlutterFlowTheme.bodyText1.override(
                                               fontFamily: 'Poppins',
                                               color: Color(0xFF7E7E7E),
+                                              fontSize: 12,
+                                            ) : FlutterFlowTheme.title1.override(
+                                              fontFamily: 'Poppins',
+                                              color: Colors.black87,
                                               fontSize: 12,
                                             ),
                                           ),
@@ -734,9 +738,13 @@ class _ListInboxState extends State<ListInbox> {
                                             ),
                                           ),
                                           Icon(Icons.camera_alt),
-                                          Text(' send an image', style: FlutterFlowTheme.bodyText1.override(
+                                          Text(' send an image', style:unread?.results.unreadCounts.first.unreadCount == 0 ? FlutterFlowTheme.bodyText1.override(
                                             fontFamily: 'Poppins',
                                             color: Color(0xFF7E7E7E),
+                                            fontSize: 12,
+                                          ) : FlutterFlowTheme.title1.override(
+                                            fontFamily: 'Poppins',
+                                            color: Colors.black87,
                                             fontSize: 12,
                                           ), )
                                         ],

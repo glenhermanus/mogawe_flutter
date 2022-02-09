@@ -769,7 +769,7 @@ class _ChatPageState extends State<ChatPage> {
           final loadpesans1 = snapshot.data;
           print(loadpesans1);
           if(snapshot.hasData){
-            return CardReceived(chatResponse: widget.chatResponse, pesan: loadpesans1, userProfileResponse: widget.userProfileResponse,);
+            return CardReceived( pesan: loadpesans1, userProfileResponse: widget.userProfileResponse,);
 
           }
           return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,);
@@ -797,7 +797,7 @@ class _ChatPageState extends State<ChatPage> {
               ),
               child: Image.network(
                 widget.chatResponse?.results.comment.user.avatarUrl != null ? '${widget.chatResponse?.results.comment.user.avatarUrl}' :
-                '${widget.avatar}',
+                '${widget.pesan?.results.comments.first.user.avatarUrl}',
               ),
             ),
             Padding(
