@@ -338,7 +338,7 @@ class _InboxPageState extends State<InboxPage> {
                 loadroom1 = snapshot.data;
 
                 if(snapshot.hasData){
-                  return ListInbox(chatResponse: chat, chatRoomList: loadroom1, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
+                  return ListInbox(chatResponse: chat, chatRoomList: loadroom1, userProfileResponse: widget.userProfileResponse, view: view,);
 
                 }
                 return ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
@@ -367,7 +367,7 @@ class _InboxPageState extends State<InboxPage> {
   }
 
   Future<void> callMehtod() async {
-    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
 
         setState(() {
           getRoomList();
@@ -530,11 +530,36 @@ class ListInbox extends StatefulWidget {
 
 class _ListInboxState extends State<ListInbox> {
  bool klik = false;
+ ChatRoomMessage? chatRoomMessage;
+ ModelUnread? unreadCount;
+ bool loading = false;
+ List<ChatRoomMessage?> isichat = [];
+ List<ModelUnread?> isiCount = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getData();
+  }
 
+  getData()async{
+    setState(() {
+      loading = true;
+    });
+    for(var i = 0; i < widget.chatRoomList!.results.rooms.length; i++){
+     var room = widget.chatRoomList?.results.rooms[i].roomId;
+      print(room);
+      unreadCount = await ChatQiscusRepo().getUnread(widget.userProfileResponse?.email, room);
+      chatRoomMessage = await ChatQiscusRepo().getMessageList(room);
+      isichat.add(chatRoomMessage);
+      isiCount.add(unreadCount);
+      //print(chatRoomMessage?.results.comments.length);
+    }
+
+    setState(() {
+      loading = false;
+    });
   }
 
   void deleteMessageQ(room, user) {
@@ -576,7 +601,8 @@ class _ListInboxState extends State<ListInbox> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return loading? Align(alignment: Alignment.topCenter,
+    child: CircularProgressIndicator( color: Colors.red,),) :  Padding(
       padding: const EdgeInsets.only(bottom: 35),
       child: ListView.builder(
         shrinkWrap: true,
@@ -584,10 +610,10 @@ class _ListInboxState extends State<ListInbox> {
         itemCount: widget.chatRoomList?.results.rooms.length,
         itemBuilder: (context, snap){
           final list = widget.chatRoomList?.results.rooms[snap];
-          final pesan = widget.chatRoomMessage?[snap]['pesan'];
-          final unread = widget.chatRoomMessage?[snap]['unread'];
-          var date = DateFormat("dd/MM/yyyy").format(pesan?.results.comments.first.timestamp);
-          var time = DateFormat("HH:mm").format((pesan?.results.comments.first.timestamp));
+          final pesan = isichat[snap];
+          final unread = isiCount[snap];
+          var date = DateFormat("dd/MM/yyyy").format(pesan?.results.comments.first.timestamp as DateTime);
+          var time = DateFormat("HH:mm").format((pesan?.results.comments.first.timestamp as DateTime));
           var now = DateTime.now();
           var today =  DateTime(now.year, now.month, now.day);
 
@@ -666,13 +692,13 @@ class _ListInboxState extends State<ListInbox> {
                                   ),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                                    child: pesan.results.comments.first.type == 'text' ? Row(
+                                    child: pesan?.results.comments.first.type == 'text' ? Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ${pesan.results.comments.first.message} ' :
-                                            '${pesan.results.comments.first.user.username.split(' ').first}: ${pesan.results.comments.first.message} ',
+                                            pesan?.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ${pesan?.results.comments.first.message} ' :
+                                            '${pesan?.results.comments.first.user.username.split(' ').first}: ${pesan?.results.comments.first.message} ',
                                             style: FlutterFlowTheme.bodyText1.override(
                                               fontFamily: 'Poppins',
                                               color: Color(0xFF7E7E7E),
@@ -680,7 +706,7 @@ class _ListInboxState extends State<ListInbox> {
                                             ),
                                           ),
                                         ),
-                                        unread.results.unreadCounts.first.unreadCount != 0 ? Container(
+                                        unread?.results.unreadCounts.first.unreadCount != 0 ? Container(
                                           width: 20,
                                           height: 20,
                                           decoration: BoxDecoration(
@@ -689,7 +715,7 @@ class _ListInboxState extends State<ListInbox> {
                                           ),
                                           child: Padding(
                                             padding: EdgeInsets.all(2),
-                                            child: Center(child: Text('${unread.results.unreadCounts.first.unreadCount}', style: FlutterFlowTheme.bodyText3.copyWith(color: Colors.white),)),
+                                            child: Center(child: Text('${unread?.results.unreadCounts.first.unreadCount}', style: FlutterFlowTheme.bodyText3.copyWith(color: Colors.white),)),
                                           ),
                                         ) : Container()
                                       ],
@@ -699,8 +725,8 @@ class _ListInboxState extends State<ListInbox> {
 
                                         children: [
                                           Text(
-                                            pesan.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ' :
-                                            '${pesan.results.comments.first.user.username.split(' ').first}: ',
+                                            pesan?.results.comments.first.user.userId == widget.userProfileResponse?.email ? 'You: ' :
+                                            '${pesan?.results.comments.first.user.username.split(' ').first}: ',
                                             style: FlutterFlowTheme.bodyText1.override(
                                               fontFamily: 'Poppins',
                                               color: Color(0xFF7E7E7E),
@@ -715,7 +741,7 @@ class _ListInboxState extends State<ListInbox> {
                                           ), )
                                         ],
                                       ),
-                                        unread.results.unreadCounts.first.unreadCount != 0 ? Container(
+                                        unread?.results.unreadCounts.first.unreadCount != 0 ? Container(
                                           width: 20,
                                           height: 20,
                                           decoration: BoxDecoration(
@@ -724,7 +750,7 @@ class _ListInboxState extends State<ListInbox> {
                                           ),
                                           child: Padding(
                                             padding: EdgeInsets.all(2),
-                                            child: Center(child: Text('${unread.results.unreadCounts.first.unreadCount}', style: FlutterFlowTheme.bodyText3.copyWith(color: Colors.white),)),
+                                            child: Center(child: Text('${unread?.results.unreadCounts.first.unreadCount}', style: FlutterFlowTheme.bodyText3.copyWith(color: Colors.white),)),
                                           ),
                                         ) : Container()
                                     ],),
