@@ -454,46 +454,58 @@ class _InboxPageState extends State<InboxPage> {
       ),
       backgroundColor: Color(0xffF2F2F2),
       body: SafeArea(
-        child:Stack(
-          children: [
-            loading ? Align(
-              alignment: Alignment.topCenter,
-                child: CircularProgressIndicator()) : ListView(
-              children: [
-                 ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
-                // :
-                //listRoom(context),
-                 SizedBox(height: 50,),
+        child:RefreshIndicator(
+          onRefresh: () async {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                  pageBuilder: (_, __, ___) => InboxPage(userProfileResponse: widget.userProfileResponse,),
+                  transitionDuration: Duration(seconds: 0),
+                  reverseTransitionDuration: Duration(seconds: 0)
+              ),
+            );
+          },
+          child: Stack(
+            children: [
+              loading ? Align(
+                alignment: Alignment.topCenter,
+                  child: CircularProgressIndicator()) : ListView(
+                children: [
+                   ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
+                  // :
+                  //listRoom(context),
+                   SizedBox(height: 50,),
 
-              ],
-            ),Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(50, 30, 50, 16),
-                child: FFButtonWidget(
-                  onPressed: (){
-                    bottomNew();
-                  },
-                  text: 'New Conversation',
-                  options: FFButtonOptions(
-                    width: double.infinity,
-                    height: 56,
-                    color: FlutterFlowTheme.primaryColor,
-                    textStyle: FlutterFlowTheme.subtitle2.override(
-                      fontFamily: 'Poppins',
-                      color: Colors.white,
+                ],
+              ),Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(50, 30, 50, 16),
+                  child: FFButtonWidget(
+                    onPressed: (){
+                      bottomNew();
+                    },
+                    text: 'New Conversation',
+                    options: FFButtonOptions(
+                      width: double.infinity,
+                      height: 56,
+                      color: FlutterFlowTheme.primaryColor,
+                      textStyle: FlutterFlowTheme.subtitle2.override(
+                        fontFamily: 'Poppins',
+                        color: Colors.white,
+                      ),
+                      borderSide: BorderSide(
+                        color: Colors.transparent,
+                        width: 1,
+                      ),
+                      borderRadius: 30,
                     ),
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
-                    ),
-                    borderRadius: 30,
+                    loading: _loadingButton,
                   ),
-                  loading: _loadingButton,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -538,10 +550,13 @@ class _ListInboxState extends State<ListInbox> {
 
               try {
                 await ChatQiscusRepo().deleteroom(room, user);
+                Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => InboxPage(userProfileResponse: widget.userProfileResponse, ),
+                  PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => InboxPage(userProfileResponse: widget.userProfileResponse,),
+                      transitionDuration: Duration(seconds: 0),
+                      reverseTransitionDuration: Duration(seconds: 0)
                   ),
                 );
               }catch(e){
