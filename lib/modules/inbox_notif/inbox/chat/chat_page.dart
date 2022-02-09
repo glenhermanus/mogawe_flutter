@@ -158,7 +158,10 @@ class _ChatPageState extends State<ChatPage> {
       _scrollController.animateTo( _scrollController.position.maxScrollExtent,
           duration: const Duration(microseconds: 1),curve: Curves.easeOut);
     });
+
     for(var i= 0; i< participantsModel!.results.participants.length; i++){
+      print('ini email ${participantsModel!.results.participants[i].userId}');
+      print('ini email dihp ${widget.userProfileResponse?.email}');
       if(participantsModel!.results.participants[i].userId != widget.userProfileResponse?.email){
         email_user.add(participantsModel!.results.participants[i].userId);
       }
@@ -172,7 +175,7 @@ class _ChatPageState extends State<ChatPage> {
       }
 
     }
-
+    print('ini uuid mogawers $email_user');
   }
 
   getLoadPesan()async{
@@ -186,8 +189,7 @@ class _ChatPageState extends State<ChatPage> {
                 loadpesans1 = snapshot.data;
 
                 if(snapshot.hasData){
-                  print('aa ${loadpesans1.results.comments.first.message}');
-                  return CardReceived( pesan: widget.chatResponse != null ? null : loadpesans1, userProfileResponse: widget.userProfileResponse, );
+                  return CardReceived( pesan: loadpesans1, userProfileResponse: widget.userProfileResponse, );
 
                 }
                 return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse);
@@ -912,7 +914,6 @@ class _ChatPageState extends State<ChatPage> {
                           await ChatQiscusRepo().notificationSend(res.results.comment.message, res.results.comment.user.username,
                               uuidValue, token);
                           loadpesan = await ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id);
-
 
                           Navigator.pushReplacement(
                             context,

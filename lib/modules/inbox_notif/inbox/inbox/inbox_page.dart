@@ -286,11 +286,11 @@ class _InboxPageState extends State<InboxPage> {
                           await ChatQiscusRepo().notificationSend(chat.results.comment.message, chat.results.comment.user.username,
                               uuidValue, token);
                           var load = await ChatQiscusRepo().getMessageList(res.results.room.roomId);
-
+                          Navigator.pop(context);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res, pesan: null,),
+                              builder: (context) => ChatPage(chatResponse: chat, qiscusRoomResponse: res, pesan: null, userProfileResponse: widget.userProfileResponse,),
                             ),
                           );
                         }catch(e){
@@ -370,7 +370,7 @@ class _InboxPageState extends State<InboxPage> {
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
 
         setState(() {
-          getToken();
+          getRoomList();
         });
 
     });
@@ -381,7 +381,7 @@ class _InboxPageState extends State<InboxPage> {
     // TODO: implement initState
     super.initState();
     getToken();
-   // callMehtod();
+    callMehtod();
   }
 
   @override
@@ -469,11 +469,14 @@ class _InboxPageState extends State<InboxPage> {
             children: [
               loading ? Align(
                 alignment: Alignment.topCenter,
-                  child: CircularProgressIndicator()) : ListView(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: CircularProgressIndicator(),
+                  )) : ListView(
                 children: [
-                   ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
+                  // ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
                   // :
-                  //listRoom(context),
+                  listRoom(context),
                    SizedBox(height: 50,),
 
                 ],
