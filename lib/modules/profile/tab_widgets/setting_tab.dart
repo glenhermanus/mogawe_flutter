@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/generator/webview_flutter.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
+import 'package:mogawe/modules/home/widgets/update_password.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 import 'package:mogawe/modules/profile/screens/about_app.dart';
+import 'package:mogawe/modules/profile/widget/ajak_teman_scan.dart';
 import 'package:mogawe/modules/starter/screens/onboarding/onboarding_page.dart';
+import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingTab extends StatelessWidget {
 
   final Function() logoutProfile;
-  const SettingTab({Key? key, required this.logoutProfile}) : super(key: key);
+  final String email;
+  const SettingTab({Key? key, required this.logoutProfile, required this.email}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,36 +28,23 @@ class SettingTab extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Ajak Teman',
-                    style:
-                    FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Poppins',
-                    ),
+            BounceTap(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AjakTemanPage(),
                   ),
-                ),
-                Icon(
-                  Icons.chevron_right,
-                  color: Colors.black,
-                  size: 24,
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(
-                  0, 16, 0, 0),
+                );
+              },
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
                     child: Text(
-                      'Ubah Password',
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
+                      'Ajak Teman',
+                      style:
+                      FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Poppins',
                       ),
                     ),
@@ -63,6 +55,39 @@ class SettingTab extends StatelessWidget {
                     size: 24,
                   )
                 ],
+              ),
+            ),
+            BounceTap(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UpdatePassword(email: this.email),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(
+                    0, 16, 0, 0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Ubah Password',
+                        style: FlutterFlowTheme.bodyText1
+                            .override(
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black,
+                      size: 24,
+                    )
+                  ],
+                ),
               ),
             ),
             Padding(

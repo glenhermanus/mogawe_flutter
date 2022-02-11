@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'package:mogawe/core/data/response/merchant/response_update.dart';
@@ -7,6 +8,7 @@ import 'package:mogawe/core/data/response/merchant/selfpick_radius_response.dart
 import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
+import 'package:mogawe/core/data/response/profile/update_password_response.dart';
 import 'package:mogawe/core/data/response/register/register_response.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
 
@@ -137,6 +139,45 @@ class ProfileRepository extends NetworkService {
     var map = await putMethod("${BASE_URL}api/mogawers/supplier/profile/update",
         header: header, body: body);
     return SelfpickRadiusResponse.fromJson(map);
+  }
+
+  Future scanQR(mogawersCode) async{
+    final response = await http.get(Uri.parse(
+        "$BASE_URL/api/mogawers/mogawersByCodeForRecruit/$mogawersCode"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+
+        } );
+
+    if (response.statusCode == 200) {
+
+      print(response.body);
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
+  Future<UpdatePasswordResponse> UpdatePasswordReq(email, password, passwordnew, token) async {
+    var body = {
+      "email": email,
+      "newPassword": passwordnew,
+      "oldPassword": password
+    };
+    final response = await http.post(Uri.parse(
+        "$BASE_URL/api/mogawers/changePassword"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': token,
+
+        },
+        body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+      return UpdatePasswordResponse.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Terjadi kegagalan');
+    }
   }
 
 }
