@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
@@ -21,10 +22,12 @@ class _PesonaPageState extends State<PesonaPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
   var res;
-
+  int length_data =6;
   bool loading = false;
   PesonaResponses? pesonaResponses;
   DetailPesonaResponses? detailPesonaResponses;
+  bool loadingPage = false, loadingall = false;
+  List<PesonaResponses> pesonaItem =[];
 
   Future getdata() async{
     setState(() {
@@ -37,9 +40,12 @@ class _PesonaPageState extends State<PesonaPage> {
 
     setState(() {
       print(pesonaResponses?.message);
+
       loading = false;
     });
   }
+
+
 
   @override
   void initState() {
@@ -172,11 +178,14 @@ class _PesonaPageState extends State<PesonaPage> {
       ),
       backgroundColor: Color(0xFFF5F5F5),
       body: SafeArea(
-        child: PageView.builder(
+        child:PageView.builder(
           scrollDirection: Axis.vertical,
-          itemCount:  pesonaResponses?.object.length,
+          itemCount: pesonaResponses?.object.length,
           itemBuilder: (context, snap){
             final list =  pesonaResponses?.object[snap];
+            double convertCurrency = list?.minimumjob ?? 0;
+            var currencyFormatter = NumberFormat.currency(locale: 'ID');
+            var minimum = currencyFormatter.format(convertCurrency);
             return Stack(
               alignment: AlignmentDirectional(0, 1),
               children: [
@@ -199,7 +208,7 @@ class _PesonaPageState extends State<PesonaPage> {
                   padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 48),
                   child: Container(
                     width: double.infinity,
-                    height: 200,
+                    height: MediaQuery.of(context).size.height * 0.25,
                     decoration: BoxDecoration(
                       color: Color(0x00EEEEEE),
                     ),
@@ -266,7 +275,7 @@ class _PesonaPageState extends State<PesonaPage> {
                               ),
                               Padding(
                                 padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                                EdgeInsetsDirectional.fromSTEB(4, 16, 0, 0),
                                 child: loading ? Shimmer.fromColors(
                                   baseColor: Color(0xffD8D8D8),
                                   highlightColor: Color(0xffEDEDED),
@@ -277,6 +286,7 @@ class _PesonaPageState extends State<PesonaPage> {
                                   ),
                                 ) : Text(
                                   '${list?.desc}',
+                                  maxLines: 2,
                                   style: FlutterFlowTheme.bodyText2.override(
                                     fontFamily: 'Poppins',
                                     fontSize: 12,
@@ -338,7 +348,7 @@ class _PesonaPageState extends State<PesonaPage> {
                                                           color: Colors.white,
                                                         ),
                                                       ) :Text(
-                                                        '${list?.potentialJob} potensial hire_me',
+                                                        '${list?.potentialJob} potensial jobs',
                                                         style: FlutterFlowTheme
                                                             .bodyText1
                                                             .override(
@@ -407,7 +417,7 @@ class _PesonaPageState extends State<PesonaPage> {
                                                           color: Colors.white,
                                                         ),
                                                       ) : Text(
-                                                        'Rp${list?.minimumjob}/day',
+                                                        'Rp${minimum.replaceAll('IDR', '').replaceAll(',00', '')}/day',
                                                         style: FlutterFlowTheme
                                                             .bodyText1
                                                             .override(
