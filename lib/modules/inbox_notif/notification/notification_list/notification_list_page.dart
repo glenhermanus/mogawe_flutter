@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_card.dart';
+import 'package:mogawe/modules/inbox_notif/notification/widgets/build_notification_loading.dart';
 
 class NotificationListPage extends StatefulWidget {
   NotificationListPage({Key? key}) : super(key: key);
@@ -74,7 +75,7 @@ class _NotificationListPageState extends State<NotificationListPage> {
               SizedBox(height: 8,),
               loading? Align(
                   alignment: Alignment.topCenter,
-                  child: CircularProgressIndicator()) : CardNotification(notificationResponse: notificationResponse,)
+                  child: buildNotificationLoading()) : CardNotification(notificationResponse: notificationResponse,)
             ],
           ),
         ),

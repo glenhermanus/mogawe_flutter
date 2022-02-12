@@ -83,47 +83,37 @@ class _AllGaweanScreenState extends State<AllGaweanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: FlutterFlowTheme.secondaryColor,
-        iconTheme: IconThemeData(color: FlutterFlowTheme.tertiaryColor),
-        automaticallyImplyLeading: true,
-        title: Text(
-          'Gaweanku',
-          style: FlutterFlowTheme.subtitle1.override(
-            fontFamily: 'Poppins',
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: FlutterFlowTheme.secondaryColor,
+          iconTheme: IconThemeData(color: FlutterFlowTheme.tertiaryColor),
+          automaticallyImplyLeading: true,
+          title: Text(
+            'Gaweanku',
+            style: FlutterFlowTheme.subtitle1.override(
+              fontFamily: 'Poppins',
+            ),
           ),
+          centerTitle: false,
+          elevation: 0,
         ),
-        centerTitle: false,
-        elevation: 0,
+        body: blocListener(blocBuilder(context)),
       ),
-      body: _buildBody(),
     );
   }
 
-  Widget _buildBody() {
-    return SingleChildScrollView(child: _buildContent());
-  }
-
-  Widget _buildContent() {
-    return blocListener(blocBuilder(context));
-  }
-
   Widget _buildGaweanList(List<Gawean> jobs) {
-    return Column(
-      children: [
-        ListView.builder(
-          itemCount: jobs.length,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (ctx, index) {
-            var gawean = jobs[index];
-            return BuildGaweanItem(
-              gaweanModel: gawean,
-            );
-          },
-        ),
-      ],
+    return ListView.builder(
+      itemCount: jobs.length,
+      shrinkWrap: true,
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (ctx, index) {
+        var gawean = jobs[index];
+        return BuildGaweanItem(
+          gaweanModel: gawean,
+        );
+      },
     );
   }
 }

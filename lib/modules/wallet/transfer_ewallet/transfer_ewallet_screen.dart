@@ -16,6 +16,7 @@ import 'package:mogawe/modules/wallet/bloc/wallet_event.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_state.dart';
 import 'package:mogawe/modules/wallet/otp/ewallet_otp_screen.dart';
 import 'package:mogawe/modules/wallet/transfer_ewallet/widget/nominal_item_tile.dart';
+import 'package:mogawe/modules/wallet/widgets/build_loading_withdrawal_page.dart';
 
 class TransferEWalletScreen extends StatefulWidget {
   const TransferEWalletScreen({Key? key}) : super(key: key);
@@ -42,6 +43,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
   UserProfileResponse? userProfileResponse;
   bool isLoading = false;
   bool loading = false;
+
   var token;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -146,7 +148,8 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
   }
 
   Widget _buildBody() {
-    return SafeArea(child: _buildContent());
+    return SafeArea(child: loading ? buildWithdrawalPageLoading():
+    _buildContent());
   }
 
   Widget _buildContent() {
@@ -181,7 +184,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                'Total Saldo : Rp.1,240',
+                                'Total Saldo : ${userProfileResponse?.balance}',
                                 style: FlutterFlowTheme.bodyText1.override(
                                   fontFamily: 'Lato',
                                   fontSize: 14,

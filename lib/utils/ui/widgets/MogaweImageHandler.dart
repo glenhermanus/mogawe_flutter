@@ -18,7 +18,7 @@ Widget mogaweImageHandler(
         )
       : Image.asset(
           isProfile ? emptyProfileAssets : emptyImageAsset,
-          fit: fit,
+          fit: BoxFit.cover,
           height: height,
           width: width,
         );

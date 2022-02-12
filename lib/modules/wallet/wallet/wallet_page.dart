@@ -8,6 +8,7 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_bloc.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_event.dart';
 import 'package:mogawe/modules/wallet/bloc/wallet_state.dart';
+import 'package:mogawe/modules/wallet/widgets/build_loading_wallet_history.dart';
 import 'package:mogawe/modules/wallet/wiithdrawal/wiithdrawal_page.dart';
 import "package:grouped_list/grouped_list.dart";
 import 'package:mogawe/utils/services/currency_formatter.dart';
@@ -76,7 +77,7 @@ class _WalletPageState extends State<WalletPage> {
         if (state is ShowLoadingWalletState) {
           print("State : $state");
           return Center(
-            child: CircularProgressIndicator(),
+            child: buildWalletHistoryLoading(),
           );
         }
         if (state is ShowWalletHistoryList) {

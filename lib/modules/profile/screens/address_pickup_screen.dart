@@ -8,6 +8,7 @@ import 'package:mogawe/modules/address/AddressScreenEdit.dart';
 import 'package:mogawe/modules/profile/blocs/address_bloc.dart';
 import 'package:mogawe/modules/profile/blocs/address_event.dart';
 import 'package:mogawe/modules/profile/blocs/address_state.dart';
+import 'package:mogawe/modules/profile/widget/loading/build_pickup_address_loading.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 
 class AddressPickupScreen extends StatefulWidget {
@@ -48,9 +49,7 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
       builder: (ctx, state) {
         if (state is ShowLoadingAddressState) {
           print("State : $state");
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return buildPickUpAddressLoading();
         }
         if (state is ShowListAddressPickupState) {
           listAddress = state.data;

@@ -9,6 +9,8 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_util.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/gawean_repository.dart';
+import 'package:mogawe/modules/form/form_loading_screen.dart';
+import 'package:mogawe/modules/form/screen/form_screen.dart';
 import 'package:mogawe/modules/home/gawean/gawean_detail.dart';
 import 'package:mogawe/utils/services/currency_formatter.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
@@ -31,9 +33,8 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
 
   var logger = Logger(printer: PrettyPrinter());
 
-
   // Gawean scheduling time
-  String _selectedDate = DateTime.now().toString();
+  String _selectedDate = "";
   String _selectedTime = TimeOfDay.now().toString();
   late String _gaweanSchedulingTime;
 
@@ -51,6 +52,11 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
   @override
   void initState() {
     super.initState();
+    if(widget.gaweanModel.reminderDate != null){
+      setState(() {
+        _selectedDate = _formatReminderDate(widget.gaweanModel.reminderDate!);
+      });
+    }
     getToken();
   }
 
@@ -63,7 +69,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
         color: FlutterFlowTheme.secondaryColor,
         elevation: 2,
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+          padding: EdgeInsetsDirectional.fromSTEB(8, 16, 16, 16),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,15 +77,14 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
               ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: mogaweImageHandler(
-                    url: widget.gaweanModel.jobPicture,
+                      url: widget.gaweanModel.jobPicture,
                       height: 145,
                       width: 115,
-                    fit: BoxFit.fitHeight,
-                      isProfile: false
-                  )),
+                      fit: BoxFit.cover,
+                      isProfile: false)),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -87,7 +92,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
+                          Flexible(
                             child: Text(
                               widget.gaweanModel.jobName ?? "",
                               maxLines: 1,
@@ -113,7 +118,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                             ),
                             Padding(
                               padding:
-                                  EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                              EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                               child: Text(
                                 'Sisa 2 Hari lagi',
                                 style: FlutterFlowTheme.bodyText2.override(
@@ -123,8 +128,8 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                                 ),
                               ),
                             ),
-                            Expanded(
-                                child: _buildReminderText(widget.gaweanModel.reminderDate ?? ""))
+                            Spacer(),
+                            _buildReminderText(_selectedDate)
                           ],
                         ),
                       ),
@@ -140,7 +145,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                             ),
                             Padding(
                               padding:
-                                  EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                              EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                               child: Text(
                                 stringtoRupiah(
                                     (widget.gaweanModel.fee ?? 0.0).toInt()),
@@ -161,7 +166,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                           Expanded(
                             child: Padding(
                               padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+                              EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -170,18 +175,17 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                                     color: Colors.black,
                                     size: 12,
                                   ),
-                                  Padding( 
+                                  Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         8, 0, 0, 0),
-                                    child: Expanded(
-                                      child: Text(
-                                        widget.gaweanModel.locationAddress ?? "",
-                                        style:
-                                            FlutterFlowTheme.bodyText2.override(
-                                          fontFamily: 'Poppins',
-                                          color: Color(0xFF8C8C8C),
-                                          fontSize: 12,
-                                        ),
+                                    child: Text(
+                                      widget.gaweanModel.locationAddress ??
+                                          "",
+                                      style:
+                                      FlutterFlowTheme.bodyText2.override(
+                                        fontFamily: 'Poppins',
+                                        color: Color(0xFF8C8C8C),
+                                        fontSize: 12,
                                       ),
                                     ),
                                   )
@@ -191,7 +195,16 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                           ),
                           FFButtonWidget(
                             onPressed: () {
-                              print('Button pressed ...');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => FormLoadingScreen(idTask: widget.gaweanModel.uuid ?? "", currentTimeInMillis: DateTime.now().millisecondsSinceEpoch)
+                                ),
+                              );
+                              /* Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => FormScreen()),
+                              ); */
                             },
                             text: 'Mulai',
                             options: FFButtonOptions(
@@ -252,63 +265,65 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
       onSelected: (value) => selectedMenuItem(value, widget.gaweanModel),
     );
   }
-   Widget _schedulingTimePicker() {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 300,
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.dateAndTime,
-                onDateTimeChanged: (value) {
-                  _selectedDate = DateFormat("yyyy-MM-dd").format(value);
-                  _selectedTime = "${value.hour}:${value.minute}:${value.second}";
-                  _gaweanSchedulingTime = "$_selectedDate $_selectedTime";
-                  print(value);
-                },
-                use24hFormat: true,
-                initialDateTime: DateFormat("yyyy-MM-dd hh:mm:ss").parse(widget.gaweanModel.reminderDate ?? DateTime.now().toString()),
-              ),
+
+  Widget _schedulingTimePicker() {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 300,
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.dateAndTime,
+              onDateTimeChanged: (value) {
+                _selectedDate = DateFormat("yyyy-MM-dd").format(value);
+                _selectedTime = "${value.hour}:${value.minute}:${value.second}";
+                _gaweanSchedulingTime = "$_selectedDate $_selectedTime";
+                print(value);
+              },
+              use24hFormat: true,
+              initialDateTime: DateFormat("yyyy-MM-dd hh:mm:ss").parse(
+                  widget.gaweanModel.reminderDate ?? DateTime.now().toString()),
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-              child: FFButtonWidget(
-                text: "Konfirmasi",
-                onPressed: () {
-                  try {
-                    _handleUpdateGaweanReminder(token);
-                  } finally {
-                    Navigator.pop(context);
-                  }
-                },
-                options: FFButtonOptions(
-                  width: double.infinity,
-                  height: 40,
-                  color: FlutterFlowTheme.secondaryColor,
-                  textStyle: FlutterFlowTheme.bodyText1.override(
-                    fontFamily: 'Poppins',
-                    color: FlutterFlowTheme.primaryColor,
-                    fontSize: 12,
-                  ),
-                  borderSide: BorderSide(
-                    color: FlutterFlowTheme.primaryColor,
-                    width: 1,
-                  ),
-                  borderRadius: 12,
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+            child: FFButtonWidget(
+              text: "Konfirmasi",
+              onPressed: () {
+                try {
+                  _handleUpdateGaweanReminder(token);
+                } finally {
+                  Navigator.pop(context);
+                }
+              },
+              options: FFButtonOptions(
+                width: double.infinity,
+                height: 40,
+                color: FlutterFlowTheme.secondaryColor,
+                textStyle: FlutterFlowTheme.bodyText1.override(
+                  fontFamily: 'Poppins',
+                  color: FlutterFlowTheme.primaryColor,
+                  fontSize: 12,
                 ),
-                loading: _loadingButtonScheduling,
+                borderSide: BorderSide(
+                  color: FlutterFlowTheme.primaryColor,
+                  width: 1,
+                ),
+                borderRadius: 12,
               ),
+              loading: _loadingButtonScheduling,
             ),
-            SizedBox(height: 24),
-          ],
-        ),
-      );
-    }
+          ),
+          SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
 
   // void datePicker() async {
   //   var datetime = await showDatePicker(
@@ -341,7 +356,6 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
       _gaweanSchedulingTime = "$_selectedDate $_selectedTime";
 
       String formattedDate = _formatReminderDate(_gaweanSchedulingTime);
-      _buildReminderText(_selectedDate);
 
       _handleUpdateGaweanReminder(token);
     });
@@ -369,7 +383,7 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
     }
   }
 
-  Widget _buildReminderText(String date){
+  Widget _buildReminderText(String date) {
     logger.d("Received $date}");
     return Text(
       date,
@@ -381,9 +395,12 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
     );
   }
 
-  String _formatReminderDate(String selectedDate){
-    //TODO: Membuat formatter untuk date
-    return "";
+  String _formatReminderDate(String date) {
+    DateTime parsedDate = DateTime.parse(date);
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formattedDate = formatter.format(parsedDate);
+
+    return formattedDate;
   }
 
   Future<void> _handleUpdateGaweanReminder(String token) async {
@@ -402,8 +419,6 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
         print(response);
         setState(() {
           widget.gaweanModel.reminderDate = _gaweanSchedulingTime;
-
-
         });
       } else if (response.returnValue == "001") {
         showSnackbar(context, response.message.toString());

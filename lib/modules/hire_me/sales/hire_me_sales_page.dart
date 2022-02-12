@@ -8,6 +8,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/hire_me/sales/favorite_page.dart';
+import 'package:mogawe/modules/hire_me/sales/widgets/build_loading_sales_page.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_detail/sales_detail_page.dart';
 
 class HireMeSalesPage extends StatefulWidget {
@@ -93,6 +94,7 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery. of(context).size.width ;
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -249,7 +251,7 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                 ],
               ),
             ),
-           loading ? CircularProgressIndicator() : Expanded(
+           loading ? buildSalesPageLoading((width * 0.40)) : Expanded(
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                 child: GridView.builder(
