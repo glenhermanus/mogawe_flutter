@@ -276,7 +276,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           objectShipment: widget.objectShipment,
                           supplierProduct: widget.supplierProduct,
                         ),
-                        SettingTab(logoutProfile: logoutProfile,)
+                        SettingTab(logoutProfile: logoutProfile,
+                          email: widget.data?.email??'',
+                        )
                       ],
                     ),
                   ),
