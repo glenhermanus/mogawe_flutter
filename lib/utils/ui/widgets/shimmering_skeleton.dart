@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 const Color primaryColor = Color(0xFF2967FF);
 const Color grayColor = Color(0x9AE5E5E5);
@@ -11,14 +12,19 @@ class Skeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      padding: const EdgeInsets.all(defaultPadding / 2),
-      decoration: BoxDecoration(
-          color: grayColor,
-          borderRadius:
-          const BorderRadius.all(Radius.circular(defaultPadding))),
+    return Shimmer.fromColors(
+      baseColor: Color(0xffcbcbcb),
+      highlightColor: Color(0xffededed),
+      enabled: true,
+      child: Container(
+        height: height,
+        width: width,
+        padding: const EdgeInsets.all(defaultPadding / 2),
+        decoration: BoxDecoration(
+            color: grayColor,
+            borderRadius:
+            const BorderRadius.all(Radius.circular(defaultPadding))),
+      ),
     );
   }
 }

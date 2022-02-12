@@ -9,6 +9,8 @@ class FlutterFlowTheme {
   static const Color tertiaryColorLighter = Color(0xFF8D8D8D);
   static const Color tertiaryColor = Color(0xFF515151);
   static const Color tertiaryDarkerColor = Color(0xFF3D3D3D);
+  static const Color tertiaryBlackColor = Color(0xFF1F1F1F);
+
 
   static const Color blackColor = Color.fromRGBO(0, 0, 0, 1);
 

@@ -13,7 +13,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/screens/login/login_page.dart';
 import 'package:mogawe/modules/profile/id_card_profile.dart';
-import 'package:mogawe/modules/profile/tab_widgets/history_tab.dart';
+import 'package:mogawe/modules/profile/tab_widgets/history/history_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/personal_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/setting_tab.dart';

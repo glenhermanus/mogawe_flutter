@@ -39,6 +39,7 @@ class ProfileHistoryData {
   String? jobDescription;
   int? fee;
   int? points;
+  double? total;
   String? status;
   String? statusQc;
   String? jobTypeName;
@@ -50,25 +51,26 @@ class ProfileHistoryData {
   String? jobTextColor;
   bool? isDisplayable;
 
-  ProfileHistoryData.fromJsonMap(Map<String, dynamic> map):
-        uuidTask = map["uuidTask"],
+  ProfileHistoryData.fromJsonMap(Map<String, dynamic> map)
+      : uuidTask = map["uuidTask"],
         uuidResult = map["uuidResult"],
-      notes = map["notes"],
-      createdDate = map["createdDate"],
-      jobName = map["jobName"],
-      jobDescription = map["jobDescription"],
-      fee = map["fee"],
-      points = map["points"],
-      status = map["status"],
-      statusQc = map["statusQc"],
-      jobTypeName = map["jobTypeName"],
-      uuidJobType = map["uuidJobType"],
-      idMogawers = map["idMogawers"],
-      jobPicture = map["jobPicture"],
-      jobBanner = map["jobBanner"],
-      jobColor = map["jobColor"],
-      jobTextColor = map["jobTextColor"],
-      isDisplayable = map["isDisplayable"];
+        notes = map["notes"],
+        createdDate = map["createdDate"],
+        jobName = map["jobName"],
+        jobDescription = map["jobDescription"],
+        fee = map["fee"],
+        points = map["points"],
+        total = map["total"],
+        status = map["status"],
+        statusQc = map["statusQc"],
+        jobTypeName = map["jobTypeName"],
+        uuidJobType = map["uuidJobType"],
+        idMogawers = map["idMogawers"],
+        jobPicture = map["jobPicture"],
+        jobBanner = map["jobBanner"],
+        jobColor = map["jobColor"],
+        jobTextColor = map["jobTextColor"],
+        isDisplayable = map["isDisplayable"];
 
   Map<String, dynamic> toJson() {
     return {
@@ -80,6 +82,7 @@ class ProfileHistoryData {
       "jobDescription": jobDescription,
       "fee": fee,
       "points": points,
+      "total": total,
       "status": status,
       "statusQc": statusQc,
       "jobTypeName": jobTypeName,

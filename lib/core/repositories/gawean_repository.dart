@@ -1,5 +1,7 @@
 import 'package:mogawe/constant/api_path.dart';
+import 'package:mogawe/core/data/response/gawean/get_task_response.dart';
 import 'package:mogawe/core/data/response/gawean/update_reminder_gawean_response.dart';
+import 'package:mogawe/core/data/response/home_content/gawean_model.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
 import 'package:mogawe/core/data/response/home_content/widget_row_response.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
@@ -29,6 +31,17 @@ class GaweanRepository extends NetworkService {
       header,
     );
     return WidgetRowResponse.fromJson(map).object;
+  }
+
+  Future<List<Gawean>> getTaskList({
+    required String realToken
+  }) async {
+    var header = { token: realToken };
+    var map = await getMethod(
+        "${BASE_URL}api/fieldtask/myTask?page=1&offset=20",
+        header
+    );
+    return GetTaskResponse.fromJson(map).object;
   }
 
   Future<UpdateReminderGaweanResponse> updateGaweanReminder(
