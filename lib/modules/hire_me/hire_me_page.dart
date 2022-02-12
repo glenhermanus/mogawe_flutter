@@ -1,7 +1,7 @@
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mogawe/modules/hire_me/bundle/hire_me_bundle_page.dart';
-import 'package:mogawe/modules/hire_me/instant/hire_me_instant_page.dart';
+import 'package:mogawe/modules/hire_me/instant/screens/hire_me_instant_page.dart';
 import 'package:mogawe/modules/hire_me/sales/hire_me_sales_page.dart';
 import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 

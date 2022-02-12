@@ -16,6 +16,8 @@ class GaweanDetailScreen extends StatefulWidget {
 }
 
 class _GaweanDetailScreenState extends State<GaweanDetailScreen> {
+  Completer<GoogleMapController> _controller = Completer();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,8 +201,6 @@ class _GaweanDetailScreenState extends State<GaweanDetailScreen> {
       ],
     );
   }
-
-  Completer<GoogleMapController> _controller = Completer();
 
   CameraPosition gaweanLocation(double lat, double lng) {
     return CameraPosition(

@@ -4,8 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 // ignore: avoid_classes_with_only_static_members
 class FlutterFlowTheme {
   static const Color primaryColor = Color(0xFFEA2327);
+
   static const Color secondaryColor = Color(0xFFFFFFFF);
+  static const Color tertiaryColorLighter = Color(0xFF8D8D8D);
   static const Color tertiaryColor = Color(0xFF515151);
+  static const Color tertiaryDarkerColor = Color(0xFF3D3D3D);
+
   static const Color blackColor = Color.fromRGBO(0, 0, 0, 1);
 
   static const Color fieldColor = Color(0xFFF3F2F2);

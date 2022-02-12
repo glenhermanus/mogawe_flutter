@@ -18,14 +18,14 @@ class AudioRecordFunc{
     if(status != PermissionStatus.granted){
       throw RecordingPermissionException('Izin Mic Tidak Ada');
     }
-    await flutterSoundRecorder!.openAudioSession();
-    await flutterSoundPlayer!.openAudioSession();
+    // await flutterSoundRecorder!._openAudioSession();
+    // await flutterSoundPlayer!._openAudioSession();
     recordinisialisasi = true;
   }
   void dispose(){
     if(!recordinisialisasi) return;
-    flutterSoundRecorder!.closeAudioSession();
-    flutterSoundPlayer!.closeAudioSession();
+    // flutterSoundRecorder!.closeAudioSession();
+    // flutterSoundPlayer!.closeAudioSession();
     flutterSoundPlayer = null;
     flutterSoundRecorder = null;
     recordinisialisasi = false;

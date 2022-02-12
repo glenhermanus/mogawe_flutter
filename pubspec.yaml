@@ -31,7 +31,7 @@ dependencies:
   font_awesome_flutter:
   geolocator: 7.6.2
   geocoding:
-  google_fonts: ^2.1.0
+  google_fonts: 2.2.0
   intl:
   page_transition:
   smooth_page_indicator:
@@ -83,6 +83,8 @@ dependencies:
   flutter_local_notifications:
   firebase_messaging:
   rxdart:
+  lottie: ^1.2.1
+  sqflite:
 
 dev_dependencies:
   flutter_test:
