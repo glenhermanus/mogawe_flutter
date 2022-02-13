@@ -6,11 +6,12 @@ import 'package:lottie/lottie.dart';
 import 'package:mogawe/core/data/response/form/form_model.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
 import 'package:mogawe/modules/form/bloc/form_state.dart';
-import 'package:mogawe/modules/form/continous/continous_form_screen.dart';
-import 'package:mogawe/modules/form/widget/fact_widget_generator.dart';
+import 'package:mogawe/modules/form/standart/fact_widget_generator.dart';
+import 'package:mogawe/modules/form/tracker/model/activity_tracker.dart';
 import 'package:mogawe/utils/global/common_function.dart';
 
 import 'bloc/form_bloc.dart';
+import 'widget/activity_tracker_item.dart';
 
 class FormLoadingScreen extends StatefulWidget {
   final String idTask;
@@ -28,6 +29,7 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
   late FormBloc bloc;
   var logger = Logger(printer: PrettyPrinter());
   int _currentIndex = 0;
+  List<ActivityTracker> _activityTrackers = [];
 
   @override
   void initState() {
@@ -61,11 +63,12 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
         }
         if (state is ShowTrackerActivityForm) {
           logger.d("State : $state");
+          _convertSectionsToTrackers(state.forms);
           return _buildTrackerForm(state.forms);
         }
         if (state is ShowContinuousForm) {
           logger.d("State : $state");
-          return _buildContinuousForm(state.form);
+          return _buildContinuousForm(state.forms);
         }
         return Container();
       },
@@ -77,34 +80,7 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
     return blocListener(blocBuilder());
   }
 
-  Widget _buildContinuousForm(FormModel form) {
-    return Center(
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("Form siap dikerjakan!"),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ContinuousFormScreen(
-                      form: form,
-                    ),
-                  ),
-                );
-              },
-              child: Text("Kerjakan"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTrackerForm(List<FormModel> forms) {
+  Widget _buildContinuousForm(List<FormModel> forms) {
     return Scaffold(
       body: WillPopScope(
         onWillPop: _onWillPop,
@@ -115,29 +91,27 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
     );
   }
 
+  Widget _buildTrackerForm(List<FormModel> forms) {
+    return Scaffold(
+      body: WillPopScope(
+        onWillPop: _onWillPop,
+        child: SafeArea(
+            child: ListView.builder(
+          itemCount: forms.length,
+          itemBuilder: (context, index) {
+            return FormActivityTrackerItem(
+                forms: forms,
+                changeTrackerStatus: (tracker) => _changeSectionTrackerState(tracker),
+                activityTracker: _activityTrackers[index]);
+          },
+        )),
+      ),
+    );
+  }
+
   Widget _buildFormSection(FormModel form, int currentIndex, int lastIndex) {
       AppBar appBar = AppBar(
         title: Text(form.name),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.delete,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              bloc.add(DeleteSectionLocalDatabase());
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              bloc.add(TestShowDatabase());
-            },
-          )
-        ],
       );
     return BlocProvider(
       create: (context) => bloc,
@@ -149,7 +123,7 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
               height: 12,
             ),
             Expanded(
-              child: FactWidgetGenerator(
+              child: StandardFactWidgetGenerator(
                   currentIndex: currentIndex,
                   lastIndex: lastIndex,
                   nextFormSection: (index) {
@@ -254,5 +228,24 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
           ),
         )) ??
         false;
+  }
+
+  void _changeSectionTrackerState(ActivityTracker tracker){
+    _activityTrackers[tracker.sequence - 1] = tracker;
+  }
+
+  void _convertSectionsToTrackers(List<FormModel> sections) {
+    int sequence = 1;
+    for (var section in sections) {
+      ActivityTracker tracker = new ActivityTracker(
+          sectionName: section.name,
+          uuidSection: section.uuid,
+          status: sequence == 1 ? "ready" : "",
+          startTime: "",
+          sequence: sequence,
+          trackerTotal: sections.length);
+      _activityTrackers.add(tracker);
+      sequence++;
+    }
   }
 }

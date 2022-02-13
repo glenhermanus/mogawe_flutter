@@ -11,6 +11,7 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/form_repository.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
 import 'package:mogawe/modules/form/bloc/form_state.dart';
+import 'package:mogawe/modules/form/tracker/model/activity_tracker.dart';
 
 class FormBloc extends Bloc<FormEvent, FormState> {
   late FormRepository _repo;
@@ -25,12 +26,12 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   List<Fact> facts = [];
   List<FormModel> listModel = [];
   List<FactResultRequest> factsResults = [];
+
+  List<ActivityTracker> activityTrackers = [];
   String startTime = "";
 
-  final _counterStateController = StreamController<int>();
-
+  final _counterStateController = StreamController<int>.broadcast();
   StreamSink<int> get _inController => _counterStateController.sink;
-
   Stream<int> get currentProgress => _counterStateController.stream;
 
   FormBloc() : super(InitFormState()) {
@@ -54,20 +55,11 @@ class FormBloc extends Bloc<FormEvent, FormState> {
       startTime = DateTime.now().toIso8601String();
       print("StartTime is $startTime");
 
-      // for (var section in data.object){
-      //   bool isExist = await _databaseHelper.isSectionExistInDatabase(section.uuid);
-      //   print("Row is exist = $isExist");
-      //   if (isExist){
-      //     listModel.add(await _databaseHelper.getSectionFromDatabase(section.uuid));
-      //   } else {
-      //     _databaseHelper.insertSectionToDatabase(section);
-      //   }
-      // }
-
       if (data.object.first.questionnaireTemplateName == "Activity Tracker") {
+        _convertSectionsToTrackers(data.object);
         yield ShowTrackerActivityForm(data.object);
       } else {
-        yield ShowTrackerActivityForm(data.object);
+        yield ShowContinuousForm(data.object);
       }
     }
 
@@ -180,57 +172,24 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     return filteredFacts;
   }
 
-  // void _getFavoriteRestaurants() async {
-  //   List<Fact> localFacts = await _databaseHelper.getFactsFromDatabase("");
-  //   for(var locFact in localFacts){
-  //     print(locFact.factName + "---" + locFact.input.toString() + "---" + locFact.uuid);
-  //   }
-  // }
-
-  // void _getLocalFacts() async {
-  //   List<Fact> localFacts = await _databaseHelper.getFactsFromDatabase("");
-  //   for(var locFact in localFacts){
-  //     print(locFact.factName + "---" + locFact.input.toString() + "---" + locFact.uuid);
-  //   }
-  // }
-  //
-  // void _addFactToDatabase(Fact fact) async {
-  //   try {
-  //     await _databaseHelper.insertFactToDatabase(fact);
-  //   } catch (e) {
-  //     logger.e('Error Add karena $e');
-  //   }
-  // }
-
-  void _removeFactFromDatabaseByUuid(String uuidFact) async {
-    try {
-      await _databaseHelper.removeFactFromDatabaseByUuid(uuidFact);
-    } catch (e) {
-      logger.e('Error Remove By uuid karena $e');
-    }
-  }
-
-  void _removeFactBasedBySection(String uuidSection) async {
-    try {
-      await _databaseHelper.removeFactsFromDatabase(uuidSection);
-    } catch (e) {
-      logger.e('Error Remove By section karena $e');
-    }
-  }
-
-  void _removeAllData() async {
-    try {
-      await _databaseHelper.removeData();
-    } catch (e) {
-      logger.e('Error Remove All karena $e');
-    }
-  }
-
   void _setCounterToDefaultIfGoBelowZero() {
     if (_currentProgress < 0) {
       _currentProgress = 0;
     }
     _inController.add(_currentProgress);
+  }
+
+  void _convertSectionsToTrackers(List<FormModel> sections) {
+    int index = 1;
+    for (var section in sections) {
+      ActivityTracker tracker = new ActivityTracker(
+          sectionName: section.name,
+          uuidSection: section.uuid,
+          status: "",
+          startTime: "", sequence: index, trackerTotal: sections.length);
+      activityTrackers.add(tracker);
+      index++;
+    }
   }
 
   void dispose() {

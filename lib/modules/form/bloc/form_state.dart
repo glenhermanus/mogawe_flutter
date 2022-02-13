@@ -11,8 +11,8 @@ class ShowLoadingSubmitFacts extends FormState {}
 class ShowLoadingSubmitFile extends FormState {}
 
 class ShowContinuousForm extends FormState {
-  FormModel form;
-  ShowContinuousForm(this.form);
+  List<FormModel> forms;
+  ShowContinuousForm(this.forms);
 }
 
 class ShowTrackerActivityForm extends FormState {

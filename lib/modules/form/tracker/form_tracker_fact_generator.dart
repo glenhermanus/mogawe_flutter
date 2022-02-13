@@ -6,43 +6,37 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/form/bloc/form_bloc.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_audio_recorder.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_boolean.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_checkin.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_date.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_geolocation.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_multiple_selection.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_open_url.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_phone_number.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_rating.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_screen_recorder.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_single_selection.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_slider.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_take_pic_camera.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_take_pic_gallery.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_text_box.dart';
+import 'package:mogawe/modules/form/standart/fact/fact_time.dart';
 import 'package:mogawe/modules/form/utils/fact_type.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_audio_recorder.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_boolean.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_checkin.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_date.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_geolocation.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_multiple_selection.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_open_url.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_phone_number.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_rating.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_screen_recorder.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_slider.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_take_pic_gallery.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_text_box.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_time.dart';
-import 'package:mogawe/modules/form/widget/fact/fact_single_selection.dart';
 import 'package:provider/src/provider.dart';
 
-import 'fact/fact_take_pic_camera.dart';
-import 'fact/fact_text_box.dart';
 
-class FactWidgetGenerator extends StatefulWidget {
-  const FactWidgetGenerator(
-      {required this.currentIndex,
-      required this.lastIndex,
-      required this.facts,
-      required this.nextFormSection});
+class FormActivityTrackerFactGenerator extends StatefulWidget {
+  const FormActivityTrackerFactGenerator(
+      {required this.facts});
 
   final List<Fact> facts;
-  final int currentIndex, lastIndex;
-  final NextFormSection nextFormSection;
 
   @override
-  _FactWidgetGeneratorState createState() => _FactWidgetGeneratorState();
+  _FormActivityTrackerFactGeneratorState createState() => _FormActivityTrackerFactGeneratorState();
 }
 
-class _FactWidgetGeneratorState extends State<FactWidgetGenerator> {
+class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFactGenerator> {
   var logger = Logger(printer: PrettyPrinter());
 
   @override
@@ -72,13 +66,9 @@ class _FactWidgetGeneratorState extends State<FactWidgetGenerator> {
     Widget button = Padding(
       padding: const EdgeInsets.only(top: 18.0, bottom: 28.0, left: 18.0, right: 18.0),
       child: FFButtonWidget(
-        text: widget.currentIndex == widget.lastIndex ? "Kirim" : "Selanjutnya",
+        text: "Kirim",
         onPressed: () {
-          if (widget.currentIndex == widget.lastIndex) {
-            bloc.add(SubmitResult());
-          } else {
-            widget.nextFormSection(widget.currentIndex);
-          }
+
         },
         options: FFButtonOptions(
           height: 60,
