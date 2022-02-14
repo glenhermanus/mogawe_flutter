@@ -37,6 +37,7 @@ class _PesonaPageState extends State<PesonaPage> {
 
     token = await AuthRepository().readSecureData('token');
     pesonaResponses = await AuthRepository().pesonadata(token);
+    print(pesonaResponses?.object.length);
 
     setState(() {
       print(pesonaResponses?.message);
@@ -180,9 +181,9 @@ class _PesonaPageState extends State<PesonaPage> {
       body: SafeArea(
         child:PageView.builder(
           scrollDirection: Axis.vertical,
-          itemCount: pesonaResponses?.object.length,
+        //  itemCount: pesonaResponses?.object.length,
           itemBuilder: (context, snap){
-            final list =  pesonaResponses?.object[snap];
+            final list =  pesonaResponses?.object[snap % pesonaResponses!.object.length];
             double convertCurrency = list?.minimumjob ?? 0;
             var currencyFormatter = NumberFormat.currency(locale: 'ID');
             var minimum = currencyFormatter.format(convertCurrency);
