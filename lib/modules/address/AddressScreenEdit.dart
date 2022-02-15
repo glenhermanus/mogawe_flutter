@@ -187,7 +187,8 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
   Future<void> _addPickupAddress() async {
     try {
       var response = await _addressRepository.updateAddress(token, widget.addressModel.isDefault, _addressName.value.text,
-          address, addressLat, addressLng, province_id as int, name, city_id as int, nama_city, widget.addressModel.supplierName as String,
+          address, addressLat, addressLng, province_id == null ? int.parse(idProvince)  : province_id as int, name == null ? nameProvince : name, city_id == null ? int.parse(idCity) : city_id as int,
+          nama_city == null ? nameCity : nama_city, widget.addressModel.supplierName as String,
           widget.addressModel.uuid as String, widget.addressModel.uuidSupplier as String, detailAddress.text == '' ? '' : detailAddress.text);
 
       if(response.message == "Berhasil"){
