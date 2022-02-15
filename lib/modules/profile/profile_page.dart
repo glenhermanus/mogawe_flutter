@@ -17,7 +17,7 @@ import 'package:mogawe/modules/profile/tab_widgets/history/history_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/merchant_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/personal_tab.dart';
 import 'package:mogawe/modules/profile/tab_widgets/setting_tab.dart';
-
+import 'dart:math' as math;
 import 'package:mogawe/core/data/response/merchant/merchant_profile_response.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
@@ -109,32 +109,32 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            width: double.infinity,
-            height: 160,
-            decoration: BoxDecoration(
-              color: FlutterFlowTheme.primaryColor,
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: Image.asset(
-                  'assets/images/bg_profile_header.png',
-                ).image,
-              ),
+  SliverPersistentHeader makeHeader() {
+    return SliverPersistentHeader(
+      pinned: false,
+      delegate: _SliverAppBarDelegate(
+        minHeight: 60.0,
+        maxHeight: 140.0,
+        child: Container(
+          width: double.infinity,
+          height: 160,
+          decoration: BoxDecoration(
+            color: FlutterFlowTheme.primaryColor,
+            image: DecorationImage(
+              fit: BoxFit.fill,
+              image: Image.asset(
+                'assets/images/bg_profile_header.png',
+              ).image,
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-                  child: GestureDetector(
-                    onTap: () => chooseImage(),
-                    child: Container(
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                child: GestureDetector(
+                  onTap: () => chooseImage(),
+                  child: Container(
                       width: 80,
                       height: 80,
                       clipBehavior: Clip.antiAlias,
@@ -142,62 +142,62 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                         shape: BoxShape.circle,
                       ),
                       child: widget.data == null? Container():
-                          mogaweImageHandler(url: widget.data?.profilePicture, isProfile: true, fit: BoxFit.cover)
-                    ),
+                      mogaweImageHandler(url: widget.data?.profilePicture, isProfile: true, fit: BoxFit.cover)
                   ),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.data != null? widget.data!.fullName!: "",
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.data != null? widget.data!.fullName!: "",
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                          color: FlutterFlowTheme.secondaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+                        child: Text(
+                          widget.data != null? widget.data!.email!: "",
                           style: FlutterFlowTheme.bodyText1.override(
                             fontFamily: 'Poppins',
                             color: FlutterFlowTheme.secondaryColor,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                          child: Text(
-                            widget.data != null? widget.data!.email!: "",
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Poppins',
-                              color: FlutterFlowTheme.secondaryColor,
-                              fontSize: 12,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
-                  child: FlutterFlowIconButton(
-                    borderColor: Colors.transparent,
-                    borderRadius: 30,
-                    borderWidth: 1,
-                    buttonSize: 60,
-                    icon: Icon(
-                      Icons.qr_code_scanner_outlined,
-                      color: FlutterFlowTheme.secondaryColor,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      showDialog(
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
+                child: FlutterFlowIconButton(
+                  borderColor: Colors.transparent,
+                  borderRadius: 30,
+                  borderWidth: 1,
+                  buttonSize: 60,
+                  icon: Icon(
+                    Icons.qr_code_scanner_outlined,
+                    color: FlutterFlowTheme.secondaryColor,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    showDialog(
                         context: context,
                         builder: (ctx) => Center(
                           child: Padding(
                             padding: const EdgeInsets.all(24.0),
                             child: Material(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)
+                                  borderRadius: BorderRadius.circular(12)
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
@@ -206,14 +206,28 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             ),
                           ),
                         )
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
+                    );
+                  },
+                ),
+              )
+            ],
           ),
-          Expanded(
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Stack(
+        children: [
+          NestedScrollView(
+            headerSliverBuilder: (context, value){
+              return[
+                makeHeader(),
+              ];
+            }, body: Container(
             child: DefaultTabController(
               length: 4,
               initialIndex: currTab,
@@ -252,11 +266,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             dataReminder: widget.taskReminder,
                             updateProfile: widget.updateProfile!,
                             updateTarget: widget.updateTarget!,
-                              updateSelfReminder: widget.updateSelfReminder!,
-                              targetCtrl: widget.targetCtrl,
-                              namaCtrl: widget.namaCtrl,
-                              emailCtrl: widget.emailCtrl,
-                              phoneCtrl: widget.phoneCtrl,
+                            updateSelfReminder: widget.updateSelfReminder!,
+                            targetCtrl: widget.targetCtrl,
+                            namaCtrl: widget.namaCtrl,
+                            emailCtrl: widget.emailCtrl,
+                            phoneCtrl: widget.phoneCtrl,
                             phone: widget.phone,
                             birthday: widget.birthday,
                             reminder: widget.reminder,
@@ -285,7 +299,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 ],
               ),
             ),
-          )
+          ),
+          ),
+
+
         ],
       ),
     );
@@ -393,4 +410,33 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     );
   }
 
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  _SliverAppBarDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+
+  @override
+  double get minExtent => minHeight;
+  @override
+  double get maxExtent => math.max(maxHeight, minHeight);
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return new SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
+  }
 }
