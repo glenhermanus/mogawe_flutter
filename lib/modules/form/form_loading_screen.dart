@@ -6,8 +6,10 @@ import 'package:lottie/lottie.dart';
 import 'package:mogawe/core/data/response/form/form_model.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
 import 'package:mogawe/modules/form/bloc/form_state.dart';
+import 'package:mogawe/modules/form/bloc/form_state.dart' as formState;
 import 'package:mogawe/modules/form/standart/fact_widget_generator.dart';
 import 'package:mogawe/modules/form/tracker/model/activity_tracker.dart';
+import 'package:mogawe/modules/form/widget/build_loading_submit_form.dart';
 import 'package:mogawe/utils/global/common_function.dart';
 
 import 'bloc/form_bloc.dart';
@@ -70,6 +72,13 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
           logger.d("State : $state");
           return _buildContinuousForm(state.forms);
         }
+
+        if (state is ShowDialogLoadingSubmitFacts){
+          return BlocProvider(
+              create: (context) => bloc,
+              child: BuildLoadingSubmitForm());
+        }
+
         return Container();
       },
     );
@@ -110,38 +119,38 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
   }
 
   Widget _buildFormSection(FormModel form, int currentIndex, int lastIndex) {
-      AppBar appBar = AppBar(
-        title: Text(form.name),
-      );
-    return BlocProvider(
-      create: (context) => bloc,
-      child: Flexible(
-        child: Column(
-          children: [
-            appBar,
-            SizedBox(
-              height: 12,
-            ),
-            Expanded(
-              child: StandardFactWidgetGenerator(
-                  currentIndex: currentIndex,
-                  lastIndex: lastIndex,
-                  nextFormSection: (index) {
-                    bloc.add(ResetCounter());
-                    setState(() {
-                      _currentIndex = index + 1;
-                    });
-                  },
-                  facts: form.facts),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            _buildFormFooter(form.facts.length, 50)
-          ],
-        ),
-      ),
+    AppBar appBar = AppBar(
+      title: Text(form.name),
     );
+    return BlocProvider(
+          create: (context) => bloc,
+          child: Flexible(
+            child: Column(
+              children: [
+                appBar,
+                SizedBox(
+                  height: 12,
+                ),
+                Expanded(
+                  child: StandardFactWidgetGenerator(
+                      currentIndex: currentIndex,
+                      lastIndex: lastIndex,
+                      nextFormSection: (index) {
+                        bloc.add(ResetCounter());
+                        setState(() {
+                          _currentIndex = index + 1;
+                        });
+                      },
+                      facts: form.facts),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                _buildFormFooter(form.facts.length, 50)
+              ],
+            ),
+          ),
+        );
   }
 
   Widget _buildLoadingForm() {
@@ -198,16 +207,6 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
     );
   }
 
-  Widget blocBuilderDialog() {
-    return BlocBuilder(
-      bloc: bloc,
-      builder: (ctx, state) {
-        
-        return Container();
-      },
-    );
-  }
-
   Future<bool> _onWillPop() async {
     return (await showDialog(
           context: context,
@@ -230,8 +229,20 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
         false;
   }
 
-  void _changeSectionTrackerState(ActivityTracker tracker){
-    _activityTrackers[tracker.sequence - 1] = tracker;
+  Future<void> _showUploadingFactsDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Sedang Mengupload'),
+        content: new Text('Sedang mengupload jawaban, jangan tutup aplikasi..'),
+      ),
+    );
+  }
+
+  void _changeSectionTrackerState(ActivityTracker tracker) {
+    setState(() {
+      _activityTrackers[tracker.sequence - 1] = tracker;
+    });
   }
 
   void _convertSectionsToTrackers(List<FormModel> sections) {

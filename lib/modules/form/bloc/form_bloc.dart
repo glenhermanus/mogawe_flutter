@@ -21,6 +21,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   late var _userToken;
 
   int _currentProgress = 0;
+  String _submitText = "";
   String uuidSession = "";
   String idTask = "";
   List<Fact> facts = [];
@@ -33,6 +34,10 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   final _counterStateController = StreamController<int>.broadcast();
   StreamSink<int> get _inController => _counterStateController.sink;
   Stream<int> get currentProgress => _counterStateController.stream;
+
+  final _submitTextStateController = StreamController<String>.broadcast();
+  StreamSink<String> get _inTextController => _submitTextStateController.sink;
+  Stream<String> get currentSubmitText => _submitTextStateController.stream;
 
   FormBloc() : super(InitFormState()) {
     _repo = FormRepository.instance;
@@ -100,9 +105,15 @@ class FormBloc extends Bloc<FormEvent, FormState> {
 
     //submit Form
     if (event is SubmitResult) {
+      yield(ShowDialogLoadingSubmitFacts());
+
+      _submitText = "Mengirim form kamu...";
+      _inTextController.add(_submitText);
       FormSubmitResponse response = await _requestSubmit();
       if(response.returnValue == "000"){
         FormSubmitResponse responseSubmitFacts = await _requestSubmitFacts(response.uuid);
+        _submitText = "done!";
+        _inTextController.add(_submitText);
         if(responseSubmitFacts.returnValue == "000"){
           await _requestSubmitFiles(responseSubmitFacts.uuid);
         }
@@ -194,5 +205,6 @@ class FormBloc extends Bloc<FormEvent, FormState> {
 
   void dispose() {
     _counterStateController.close();
+    _submitTextStateController.close();
   }
 }

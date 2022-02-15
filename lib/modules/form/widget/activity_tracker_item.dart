@@ -53,7 +53,11 @@ class _FormActivityTrackerItemState extends State<FormActivityTrackerItem> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.access_time_rounded),
+                    Icon(
+                      Icons.access_time_rounded,
+                    size: 16,
+                    color: Colors.grey,),
+                    SizedBox(width: 4),
                     Text(
                       widget.activityTracker.startTime,
                       style: TextStyle(color: Colors.grey, fontSize: 12),

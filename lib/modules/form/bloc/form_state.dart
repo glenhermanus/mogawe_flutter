@@ -10,6 +10,10 @@ class ShowLoadingSubmitFacts extends FormState {}
 
 class ShowLoadingSubmitFile extends FormState {}
 
+class ShowDialogLoadingSubmitFacts extends FormState {}
+
+class ShowDialogCloseForm extends FormState {}
+
 class ShowContinuousForm extends FormState {
   List<FormModel> forms;
   ShowContinuousForm(this.forms);
