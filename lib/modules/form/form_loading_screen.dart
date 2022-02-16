@@ -6,7 +6,6 @@ import 'package:lottie/lottie.dart';
 import 'package:mogawe/core/data/response/form/form_model.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
 import 'package:mogawe/modules/form/bloc/form_state.dart';
-import 'package:mogawe/modules/form/bloc/form_state.dart' as formState;
 import 'package:mogawe/modules/form/standart/fact_widget_generator.dart';
 import 'package:mogawe/modules/form/tracker/model/activity_tracker.dart';
 import 'package:mogawe/modules/form/widget/build_loading_submit_form.dart';
@@ -104,16 +103,19 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
     return Scaffold(
       body: WillPopScope(
         onWillPop: _onWillPop,
-        child: SafeArea(
-            child: ListView.builder(
-          itemCount: forms.length,
-          itemBuilder: (context, index) {
-            return FormActivityTrackerItem(
-                forms: forms,
-                changeTrackerStatus: (tracker) => _changeSectionTrackerState(tracker),
-                activityTracker: _activityTrackers[index]);
-          },
-        )),
+        child: BlocProvider(
+          create: (context) => bloc,
+          child: SafeArea(
+              child: ListView.builder(
+            itemCount: forms.length,
+            itemBuilder: (context, index) {
+              return FormActivityTrackerItem(
+                  forms: forms,
+                  changeTrackerStatus: (tracker) => _changeSectionTrackerState(tracker),
+                  activityTracker: _activityTrackers[index]);
+            },
+          )),
+        ),
       ),
     );
   }
@@ -220,7 +222,10 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
                 child: new Text('Tidak'),
               ),
               TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () {
+                  bloc.add(ResetCounter());
+                  Navigator.of(context).pop(true);
+                },
                 child: new Text('Iya'),
               ),
             ],

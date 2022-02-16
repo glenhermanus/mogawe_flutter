@@ -8,7 +8,8 @@ import 'package:mogawe/modules/form/tracker/form_tracker_fact_generator.dart';
 import 'package:mogawe/utils/global/common_function.dart';
 
 class ActivityFormScreen extends StatefulWidget {
-  const ActivityFormScreen({required this.form, Key? key}) : super(key: key);
+  const ActivityFormScreen({required this.form,Key? key})
+      : super(key: key);
   final FormModel form;
 
   @override
@@ -19,28 +20,34 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    FormBloc bloc = context.read<FormBloc>();
+    final FormBloc bloc = BlocProvider.of<FormBloc>(context);
+
     AppBar appBar = AppBar(
       title: Text(widget.form.name),
     );
-    return Scaffold(
-      appBar: appBar,
-      body: WillPopScope(
-        onWillPop: () => _onWillPop(bloc),
-        child: Column(
-          children: [
-            _buildFormCounter(widget.form.facts.length, 50, bloc),
-            SizedBox(
-              height: 12,
+    return BlocBuilder(
+      bloc: bloc,
+      builder: (ctx, count) {
+        return Scaffold(
+          appBar: appBar,
+          body: WillPopScope(
+            onWillPop: () => _onWillPop(),
+            child: Column(
+              children: [
+                _buildFormCounter(widget.form.facts.length, 50, bloc),
+                SizedBox(
+                  height: 12,
+                ),
+                Expanded(
+                  child: FormActivityTrackerFactGenerator(
+                    facts: widget.form.facts,
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: FormActivityTrackerFactGenerator(
-                facts: widget.form.facts,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -70,28 +77,27 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
     );
   }
 
-  Future<bool> _onWillPop(FormBloc bloc) async {
+  Future<bool> _onWillPop() async {
     return (await showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Keluar Dari Section ini?'),
-            content: new Text(
-                'Kamu akan kembali ke halaman tracker, yakin untuk keluar?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('Tidak'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-
-                },
-                child: new Text('Iya'),
-              ),
-            ],
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Keluar Dari Section ini?'),
+        content: new Text(
+            'Kamu akan kembali ke halaman tracker, yakin untuk keluar?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Tidak'),
           ),
-        )) ??
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: new Text('Iya'),
+          ),
+        ],
+      ),
+    )) ??
         false;
   }
 

@@ -23,7 +23,7 @@ class FactTextField extends StatefulWidget {
 
 class _FactTextFieldState extends State<FactTextField> {
   bool isInputNull = true;
-  bool isAlreadyNotify = false;
+  bool isAlreadyNotify = true;
   late TextEditingController _controller;
 
   @override
@@ -31,14 +31,20 @@ class _FactTextFieldState extends State<FactTextField> {
     super.initState();
     _controller = TextEditingController(text: widget.fact.input ?? "");
     isInputNull = widget.fact.input?.isEmpty?? true;
-    isAlreadyNotify = widget.fact.input?.isNotEmpty ?? true;
+    // if(widget.fact.input?.isEmpty ?? true) {
+    //   isAlreadyNotify = true;
+    // } else {
+    //   isAlreadyNotify = false;
+    // }
     _controller.addListener(_listenTextFieldValue);
   }
 
   void _listenTextFieldValue() {
     if (_controller.text.isEmpty) {
       if(isAlreadyNotify){
+        print("isAlreadyNotify is True");
         setState(() {
+          print("Decrementing");
           isInputNull = true;
           isAlreadyNotify = false;
           widget.decrementCounterCallback();
@@ -46,7 +52,9 @@ class _FactTextFieldState extends State<FactTextField> {
       }
     } else {
       if (!isAlreadyNotify) {
+        print("isAlreadyNotify is False");
         setState(() {
+          print("Incrementing");
           isInputNull = false;
           isAlreadyNotify = true;
           widget.incrementCounterCallback();

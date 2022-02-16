@@ -9,7 +9,6 @@ import 'package:mogawe/modules/form/tracker/model/activity_tracker.dart';
 import 'package:mogawe/utils/ui/widgets/app_util.dart';
 
 import '../bloc/form_bloc.dart';
-import '../bloc/form_event.dart';
 
 class FormActivityTrackerItem extends StatefulWidget {
   const FormActivityTrackerItem({
@@ -71,7 +70,7 @@ class _FormActivityTrackerItemState extends State<FormActivityTrackerItem> {
           FFButtonWidget(
             text: _convertStatusToText(widget.activityTracker.status),
             onPressed: ()  {
-              _handleButtonClick(widget.activityTracker.status, bloc, context);
+              _handleButtonClick(widget.activityTracker.status, context, bloc);
             },
             options: FFButtonOptions(
               height: 40,
@@ -95,29 +94,29 @@ class _FormActivityTrackerItemState extends State<FormActivityTrackerItem> {
     );
   }
 
-  void _handleButtonClick(String status, FormBloc bloc, BuildContext context){
-     if (status == "started") {
-       Navigator.push(
-         context,
-         MaterialPageRoute(
-           builder: (context) => ActivityFormScreen(form: widget.forms[widget.activityTracker.sequence - 1]),
-         ),
-       );
+  void _handleButtonClick(
+      String status, BuildContext context, FormBloc formBloc) {
+    if (status == "started") {
+      Navigator.of(context).push(MaterialPageRoute<ActivityFormScreen>(
+          builder: (context) => BlocProvider.value(
+            value: formBloc,
+            child: ActivityFormScreen(
+                form: widget.forms[widget.activityTracker.sequence - 1]),
+          )));
     } else if (status == "ready") {
-       widget.activityTracker.status = "started";
+      widget.activityTracker.status = "started";
       String startTime = AppUtil.formatDateTime(
-           dateFormat: "MMM dd, yyyy - HH:mm",
-           dateTime: DateTime.now()
-       );
-       widget.activityTracker.startTime = startTime;
-       widget.changeTrackerStatus(widget.activityTracker);
+          dateFormat: "MMM dd, yyyy - HH:mm", dateTime: DateTime.now());
+      widget.activityTracker.startTime = startTime;
+      widget.changeTrackerStatus(widget.activityTracker);
 
-       Navigator.push(
-         context,
-         MaterialPageRoute(
-           builder: (context) => ActivityFormScreen(form: widget.forms[widget.activityTracker.sequence - 1]),
-         ),
-       );
+      Navigator.of(context).push(MaterialPageRoute<ActivityFormScreen>(
+          builder: (context) => BlocProvider.value(
+                value: formBloc,
+                child: ActivityFormScreen(
+                    form: widget.forms[widget.activityTracker.sequence - 1]),
+              )));
+
     } else {
 
     }

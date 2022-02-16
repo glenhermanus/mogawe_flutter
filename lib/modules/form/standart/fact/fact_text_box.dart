@@ -25,31 +25,39 @@ class FactTextField extends StatefulWidget {
 
 class _FactTextFieldState extends State<FactTextField> {
   bool isInputNull = true;
-  bool isAlreadyNotify = false;
+  bool _isAlreadyNotify = false;
   late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.fact.input ?? "");
-    isInputNull = widget.fact.input?.isEmpty ?? true;
+    setState(() {
+      if(widget.fact.input?.isEmpty ?? true){
+        isInputNull = true;
+        _isAlreadyNotify = false;
+      } else {
+        isInputNull = false;
+        _isAlreadyNotify = true;
+      }
+    });
     _controller.addListener(_listenTextFieldValue);
   }
 
   void _listenTextFieldValue() {
     if (_controller.text.isEmpty) {
-      if(isAlreadyNotify){
+      if(_isAlreadyNotify){
         setState(() {
           isInputNull = true;
-          isAlreadyNotify = false;
+          _isAlreadyNotify = false;
           widget.decrementCounterCallback();
         });
       }
     } else {
-      if (!isAlreadyNotify) {
+      if (!_isAlreadyNotify) {
         setState(() {
           isInputNull = false;
-          isAlreadyNotify = true;
+          _isAlreadyNotify = true;
           widget.incrementCounterCallback();
         });
       }

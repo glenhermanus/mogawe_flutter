@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/form/fact.dart';
+import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/form/bloc/form_bloc.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
 import 'package:mogawe/modules/form/standart/fact/fact_audio_recorder.dart';
@@ -35,9 +37,11 @@ class FormActivityTrackerFactGenerator extends StatefulWidget {
 
 class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFactGenerator> {
   var logger = Logger(printer: PrettyPrinter());
-  final _pageController = PageController();
+  final _pageController = PageController(keepPage: true);
   static const _kDuration = const Duration(milliseconds: 300);
   static const _kCurve = Curves.ease;
+  bool _hasReachedEnd = false;
+  bool _hasReachedStart = true;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +51,23 @@ class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFa
         Flexible(
           child: PageView.builder(
               controller: _pageController,
+              onPageChanged: (index) {
+                if (index + 1 == widget.facts.length) {
+                  setState(() {
+                    _hasReachedEnd = true;
+                  });
+                } else if (index == 0){
+                  setState(() {
+                    _hasReachedStart = true;
+                  });
+                }
+                else {
+                  setState(() {
+                    _hasReachedStart = false;
+                    _hasReachedEnd = false;
+                  });
+                }
+              },
               itemCount: widget.facts.length,
               itemBuilder: (context, index) {
                 return _factGenerator(widget.facts[index], bloc);
@@ -55,36 +76,75 @@ class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFa
         _buildFactNavigationFooter(),
       ],
     );
-
-    //   SingleChildScrollView(
-    //   child: Column(
-    //     children: _buildFactList(widget.facts, bloc),
-    //   ),
-    // );
   }
 
   Widget _buildFactNavigationFooter() {
     return Container(
       color: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 22),
       child: Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          ElevatedButton(
-            child: Text('Prev'),
-            onPressed: () {
-              _pageController.previousPage(
-                  duration: _kDuration, curve: _kCurve);
-            },
-          ),
-          ElevatedButton(
-            child: Text('Next'),
-            onPressed: () {
-
-              _pageController.nextPage(duration: _kDuration, curve: _kCurve);
-            },
-          ),
+          Visibility(
+            visible: !_hasReachedStart,
+              child: _buildPreviousButton()),
+          _buildNextButton()
         ],
+      ),
+    );
+  }
+
+  Widget _buildPreviousButton(){
+    return FFButtonWidget(
+      text: 'Prev',
+      icon: Icon(Icons.arrow_back_ios, size: 18),
+      onPressed: ()  {
+        _pageController.previousPage(duration: _kDuration, curve: _kCurve);
+      },
+      options: FFButtonOptions(
+        height: 40,
+        color: Colors.transparent,
+        textStyle: FlutterFlowTheme.subtitle2.override(
+          fontFamily: 'Poppins',
+          color: FlutterFlowTheme.blackColor,
+          fontSize: 14,
+        ),
+        elevation: 0,
+        borderSide: BorderSide(
+          color: Colors.transparent,
+          width: 1,
+        ),
+        borderRadius: 12,
+      ),
+    );
+  }
+
+
+  Widget _buildNextButton(){
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: FFButtonWidget(
+        icon: _hasReachedEnd ? Icon(Icons.save) : Icon(Icons.arrow_back_ios, size: 18),
+        text: _hasReachedEnd ? 'Send' : 'Next',
+        onPressed: ()  {
+          _pageController.nextPage(duration: _kDuration, curve: _kCurve);
+        },
+        options: FFButtonOptions(
+          height: 40,
+          color: _hasReachedEnd ? FlutterFlowTheme.primaryColor : Colors.transparent,
+          textStyle: FlutterFlowTheme.subtitle2.override(
+            fontFamily: 'Poppins',
+            color: _hasReachedEnd ? Colors.white : FlutterFlowTheme.blackColor,
+            fontSize: 14,
+          ),
+          elevation: 0,
+          borderSide: BorderSide(
+            color: Colors.transparent,
+            width: 1,
+          ),
+          borderRadius: 12,
+        ),
       ),
     );
   }
