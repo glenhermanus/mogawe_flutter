@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
       if (message != null) {
         //We will open the route from the field view
         //with the value definied in the notification
-        print(message.data);
+        print(message.messageType);
       }
     });
 
@@ -109,41 +109,91 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future showNotification(RemoteMessage message) async{
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'high_importance_channel',
-        'High Importance Notifications', // title
-        importance: Importance.high,
-        playSound: true
-
-    );
-
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
-    RemoteNotification? data  = message.notification;
+    RemoteNotification? datas  = message.notification;
     Map<String, dynamic> dataisi = message.data;
 
-    String screen = dataisi['title'].toString();
-    print(screen);
+    String screens = dataisi['n_type'].toString();
+    print(screens);
 
-    AndroidNotification? android = message.notification?.android;
-    if(data != null){
-      flutterLocalNotificationsPlugin.show(0, data.title, data.body, NotificationDetails(
-        android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
-            groupKey: channel.groupId,
-            icon: '@mipmap/ic_launcher',
+    if(screens != 'direct message'){
+      const sounds = 'sf_notification_gawean';
+      const AndroidNotificationChannel channel = AndroidNotificationChannel(
+          'high_importance_channel1',
+          'High Importance Notifications', // title
+          importance: Importance.high,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound(sounds)
 
-            enableVibration: true,
-            importance: Importance.high,
-            priority: Priority.high, playSound: true
-        ),
-        iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
-      ), payload: '');
+      );
 
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(channel);
+
+      RemoteNotification? data  = message.notification;
+      Map<String, dynamic> dataisi = message.data;
+
+      String screen = dataisi['title'].toString();
+      print(message.data);
+      String sound = 'sf_notification_gawean';
+
+      AndroidNotification? android = message.notification?.android;
+      if(datas != null){
+        flutterLocalNotificationsPlugin.show(0, datas.title, datas.body, NotificationDetails(
+          android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              groupKey: channel.groupId,
+              icon: '@mipmap/ic_launcher',
+              sound: RawResourceAndroidNotificationSound(sound),
+              enableVibration: true,
+              importance: Importance.high,
+              priority: Priority.high, playSound: true
+          ),
+          iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true, sound: sound),
+        ), payload: '');
+
+      }
     }
+    else{
+
+      const AndroidNotificationChannel channel = AndroidNotificationChannel(
+          'high_importance_channel',
+          'High Importance Notifications', // title
+          importance: Importance.high,
+          playSound: true,
+
+      );
+
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(channel);
+
+      RemoteNotification? data  = message.notification;
+      Map<String, dynamic> dataisi = message.data;
+
+      String screen = dataisi['title'].toString();
+      print(message.data);
+
+      AndroidNotification? android = message.notification?.android;
+      if(data != null){
+        flutterLocalNotificationsPlugin.show(1, data.title, data.body, NotificationDetails(
+          android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              groupKey: channel.groupId,
+              icon: '@mipmap/ic_launcher',
+              enableVibration: true,
+              importance: Importance.high,
+              priority: Priority.high, playSound: true
+          ),
+          iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
+        ), payload: '');
+
+      }
+    }
+
+
 
 
   }
