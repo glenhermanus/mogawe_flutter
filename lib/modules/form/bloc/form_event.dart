@@ -17,6 +17,11 @@ class NotifyDecrementCounter extends FormEvent {}
 
 class ResetCounter extends FormEvent {}
 
+class SaveCounterValue extends FormEvent {
+  final int counter;
+  SaveCounterValue(this.counter);
+}
+
 class SaveChangedFacts extends FormEvent {
   final Fact fact;
   SaveChangedFacts(this.fact);

@@ -25,27 +25,28 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
     );
     return Scaffold(
       appBar: appBar,
-      body: Column(
-        children: [
-          Expanded(
-            child: FormActivityTrackerFactGenerator(
-              facts: widget.form.facts,
+      body: WillPopScope(
+        onWillPop: () => _onWillPop(bloc),
+        child: Column(
+          children: [
+            _buildFormCounter(widget.form.facts.length, 50, bloc),
+            SizedBox(
+              height: 12,
             ),
-          ),
-          _buildFormCounter(widget.form.facts.length, 50, bloc),
-        ],
+            Expanded(
+              child: FormActivityTrackerFactGenerator(
+                facts: widget.form.facts,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildFormCounter(int factTotal, double footerHeight, FormBloc bloc) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 18),
       height: footerHeight,
-      decoration: BoxDecoration(boxShadow: <BoxShadow>[
-        BoxShadow(
-            color: Colors.black54, blurRadius: 10.0, offset: Offset(0.0, 1.2))
-      ], color: Colors.white),
       child: StreamBuilder(
         stream: bloc.currentProgress,
         initialData: 0,
@@ -67,6 +68,31 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
         },
       ),
     );
+  }
+
+  Future<bool> _onWillPop(FormBloc bloc) async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Keluar Dari Section ini?'),
+            content: new Text(
+                'Kamu akan kembali ke halaman tracker, yakin untuk keluar?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('Tidak'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+
+                },
+                child: new Text('Iya'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
   }
 
   @override

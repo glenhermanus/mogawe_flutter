@@ -1,11 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/form/fact.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
-import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/form/bloc/form_bloc.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
-import 'package:mogawe/modules/form/handler/form_handler.dart';
 import 'package:mogawe/modules/form/standart/fact/fact_audio_recorder.dart';
 import 'package:mogawe/modules/form/standart/fact/fact_boolean.dart';
 import 'package:mogawe/modules/form/standart/fact/fact_checkin.dart';
@@ -27,8 +25,7 @@ import 'package:provider/src/provider.dart';
 
 
 class FormActivityTrackerFactGenerator extends StatefulWidget {
-  const FormActivityTrackerFactGenerator(
-      {required this.facts});
+  const FormActivityTrackerFactGenerator({required this.facts});
 
   final List<Fact> facts;
 
@@ -38,59 +35,58 @@ class FormActivityTrackerFactGenerator extends StatefulWidget {
 
 class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFactGenerator> {
   var logger = Logger(printer: PrettyPrinter());
+  final _pageController = PageController();
+  static const _kDuration = const Duration(milliseconds: 300);
+  static const _kCurve = Curves.ease;
 
   @override
   Widget build(BuildContext context) {
     FormBloc bloc = context.read<FormBloc>();
-
-    return SingleChildScrollView(
-      child: Column(
-        children: _buildFactList(widget.facts, bloc),
-      ),
+    return Column(
+      children: [
+        Flexible(
+          child: PageView.builder(
+              controller: _pageController,
+              itemCount: widget.facts.length,
+              itemBuilder: (context, index) {
+                return _factGenerator(widget.facts[index], bloc);
+              }),
+        ),
+        _buildFactNavigationFooter(),
+      ],
     );
+
+    //   SingleChildScrollView(
+    //   child: Column(
+    //     children: _buildFactList(widget.facts, bloc),
+    //   ),
+    // );
   }
 
-  List<Widget> _buildFactList(List<Fact> facts, FormBloc bloc) {
-    List<Widget> result = [];
-    for (int i = 0; i < facts.length; i++) {
-      result.add(
-        Container(
-          decoration: BoxDecoration(
-            color: i.isEven ? Colors.white : Colors.grey[50],
+  Widget _buildFactNavigationFooter() {
+    return Container(
+      color: Colors.white,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          ElevatedButton(
+            child: Text('Prev'),
+            onPressed: () {
+              _pageController.previousPage(
+                  duration: _kDuration, curve: _kCurve);
+            },
           ),
-          child: _factGenerator(facts[i], bloc),
-        ),
-      );
-    }
+          ElevatedButton(
+            child: Text('Next'),
+            onPressed: () {
 
-    Widget button = Padding(
-      padding: const EdgeInsets.only(top: 18.0, bottom: 28.0, left: 18.0, right: 18.0),
-      child: FFButtonWidget(
-        text: "Kirim",
-        onPressed: () {
-
-        },
-        options: FFButtonOptions(
-          height: 60,
-          width: double.infinity,
-          color: FlutterFlowTheme.primaryColor,
-          textStyle: FlutterFlowTheme.subtitle2.override(
-            fontFamily: 'Poppins',
-            color: FlutterFlowTheme.secondaryColor,
-            fontSize: 14,
+              _pageController.nextPage(duration: _kDuration, curve: _kCurve);
+            },
           ),
-          elevation: 0,
-          borderSide: BorderSide(
-            color: Colors.transparent,
-            width: 1,
-          ),
-          borderRadius: 12,
-        ),
+        ],
       ),
     );
-    result.add(button);
-
-    return result;
   }
 
   Widget _factGenerator(Fact fact, FormBloc bloc) {

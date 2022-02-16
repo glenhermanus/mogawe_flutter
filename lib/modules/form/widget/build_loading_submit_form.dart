@@ -10,11 +10,19 @@ class BuildLoadingSubmitForm extends StatefulWidget {
   _BuildLoadingSubmitFormState createState() => _BuildLoadingSubmitFormState();
 }
 
-class _BuildLoadingSubmitFormState extends State<BuildLoadingSubmitForm> {
+class _BuildLoadingSubmitFormState extends State<BuildLoadingSubmitForm>
+    with TickerProviderStateMixin {
   String loadingSubmitAssetPath =
       'assets/lottie_animations/lottie_finish_form_loading_animation.json';
   String doneSubmitAssetPath =
       'assets/lottie_animations/lottie_done_form_loading_animation.json';
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +45,18 @@ class _BuildLoadingSubmitFormState extends State<BuildLoadingSubmitForm> {
                     children: [
                       SizedBox(
                         height: 280,
-                        child: snapshot.data == "done!" ? Lottie.asset(
-                          doneSubmitAssetPath,
-                          repeat: false,
-                        ) : Lottie.asset(loadingSubmitAssetPath),
+                        child: snapshot.data == "done!"
+                            ? Lottie.asset(doneSubmitAssetPath,
+                                controller: _controller,
+                                animate: snapshot.data == "done!",
+                                repeat: false, onLoaded: (composition) {
+                                if (snapshot.data == "done!") {
+                                  _controller
+                                    ..duration = composition.duration
+                                    ..forward();
+                                }
+                              })
+                            : Lottie.asset(loadingSubmitAssetPath),
                       ),
 
                       Text(
