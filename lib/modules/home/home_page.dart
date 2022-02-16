@@ -15,6 +15,7 @@ import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/hire_me/sales/hire_me_sales_page.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
+import 'package:mogawe/modules/home/gawean/all/all_gawean_screen.dart';
 import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 import 'package:mogawe/modules/home/widgets/build_gawean_item.dart';
 import 'package:mogawe/modules/home/widgets/build_mogawers_target.dart';
@@ -647,7 +648,14 @@ class _HomePageState extends State<HomePage> {
             }
         ),
         BounceTap(
-            onTap: (){},
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AllGaweanScreen(),
+                ),
+              );
+            },
             child: Text("Lihat Semua", style: TextStyle(color: FlutterFlowTheme.primaryColor, fontWeight: FontWeight.w600))),
       ],
     );
@@ -688,7 +696,9 @@ class _HomePageState extends State<HomePage> {
           ),
           SizedBox(height: 18),
           BounceTap(
-            onTap: (){},
+            onTap: (){
+
+            },
             child: Text("Lihat Semua",
               style: TextStyle(color: FlutterFlowTheme.primaryColor, fontWeight: FontWeight.w600),),),
         ]);

@@ -155,7 +155,7 @@ class ChatQiscusRepo {
     var body = {
       "room_name": judul,
       "creator": user,
-      "participants": ["$user", "azizahif99@gmail.com"],
+      "participants": ["$user", "azizahif99@gmail.com", "demo@mogawe.id"],
       //"participants": ["$user", "azizahif99@gmail.com" ,"ambar.sumapradja@mogawe.id", "glen.hermanus@mogawe.id"],
       "room_avatar_url": "http://placehold.it/20x20",
       "room_options": "{\"background\":\"green\"}"
