@@ -65,7 +65,5 @@ class _MyAppState extends State<MyApp> {
       ),
       home: SplashPage(),
     );
-
-
   }
 }
