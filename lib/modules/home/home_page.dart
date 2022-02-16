@@ -84,7 +84,22 @@ class _HomePageState extends State<HomePage> {
     getToken();
     bloc = GaweanBloc();
     bloc.add(GetGaweanListEvent());
+    permission_forIOS();
+    FirebaseMessaging.onMessage.listen((event) { showNotification(event); });
+    FirebaseMessaging.onMessageOpenedApp.listen((event) { showNotification(event); });
+    FirebaseMessaging.onBackgroundMessage((message) => showNotification(message));
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      //If there is data in our notification
+      if (message != null) {
+        //We will open the route from the field view
+        //with the value definied in the notification
+        print(message.data);
+      }
+    });
 
+    initSetting_notif();
   }
 
   @override
