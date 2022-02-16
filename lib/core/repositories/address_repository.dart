@@ -73,6 +73,47 @@ class AddressRepository extends NetworkService {
     return AddAddressResponse.fromJson(map);
   }
 
+  Future<AddAddressResponse> updateAddress(
+      String? realToken,
+      bool isdefault,
+      String name,
+      String address,
+      double latitude,
+      double longitude,
+      int shipmentProvinceId,
+      String shipmentProvinceName,
+      int shipmentCityId,
+      String shipmentCityName,
+      String suppName, String uuid,
+      String uuidSup,
+      String note
+      ) async {
+    var body = {
+      'isDefault': isdefault,
+      'name': name,
+      'address': address,
+      'latitude': latitude,
+      'longitude': longitude,
+      'notes': note,
+      'shipmentProvinceId': shipmentProvinceId,
+      'shipmentProvinceName': shipmentProvinceName,
+      'shipmentCityId': shipmentCityId,
+      'shipmentCityName': shipmentCityName,
+      "supplierName": suppName,
+      "uuid": uuid,
+      "uuidSupplier": uuidSup
+    };
+    var header = {
+      token: realToken!,
+      contentType: applicationJson
+    };
+
+    var map = await putMethod("${BASE_URL}api/mogawers/supplier/address/update",
+        body: body, header: header);
+
+    return AddAddressResponse.fromJson(map);
+  }
+
   Future<UpdateResponseMerchant> deletePickupAddress(
       {String? realToken, String? uuid}) async {
     print(realToken);

@@ -20,24 +20,24 @@ class AddressScreenEdit extends StatefulWidget {
 
 class _AddressScreenEditState extends State<AddressScreenEdit> {
   var logger = Logger(printer: PrettyPrinter());
-
+  bool tap = true;
   bool _loadingButton = false;
   bool loading = false;
   List listcategory = [];
   var nameProvince, idProvince, nameCity, idCity;
   var value, value_city;
-  var name, token;
+  var name, token, nama_city;
   String addressName = "";
   ProvinsiResponse? provinsiResponse;
   var listprovinsi, listcity;
   String address = "";
   late double addressLat, addressLng;
-
+  int? city_id, province_id;
   ShipmentCityResponse? shipmentCityResponse;
   SalesDetailResponses? salesDetailResponses;
   final AddressRepository _addressRepository = AddressRepository.instance;
   TextEditingController _addressName = new TextEditingController();
-
+  TextEditingController detailAddress = new TextEditingController();
   Future getdata() async {
     setState(() {
       loading = true;
@@ -71,6 +71,7 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
     idProvince = widget.addressModel.shipmentProvinceId;
     idCity = widget.addressModel.shipmentCityId;
     _addressName.text = widget.addressModel.name ?? "";
+    detailAddress.text = widget.addressModel.notes ??'';
   }
 
   @override
@@ -143,10 +144,31 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
                         fontFamily: 'Poppins',
                       ),
                     ),
+                    TextFormField(
+                      controller: detailAddress,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xff898888),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xff898888),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 16),
                       child: MogawePrimaryButton(
-                        onTap: () {
+                        onTap: () {print(nameCity);
                           _addPickupAddress();
                         },
                         buttonText: "Simpan",
@@ -164,7 +186,10 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
 
   Future<void> _addPickupAddress() async {
     try {
-      var response = await _addressRepository.addAddress(token, _addressName.value.text, address, addressLat, addressLng, 15, nameProvince, 15, nameCity);
+      var response = await _addressRepository.updateAddress(token, widget.addressModel.isDefault, _addressName.value.text,
+          address, addressLat, addressLng, province_id == null ? int.parse(idProvince)  : province_id as int, name == null ? nameProvince : name, city_id == null ? int.parse(idCity) : city_id as int,
+          nama_city == null ? nameCity : nama_city, widget.addressModel.supplierName as String,
+          widget.addressModel.uuid as String, widget.addressModel.uuidSupplier as String, detailAddress.text == '' ? '' : detailAddress.text);
 
       if(response.message == "Berhasil"){
         Navigator.of(context).pop();
@@ -191,76 +216,100 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
                   fontFamily: 'Poppins',
                   color: Colors.black,
                 )),
-          ],
+          ]
+
         ),
         Row(
           children: [
-            loading
-                ? Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                  )
-                : Container(
-                    width: 170,
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<Map<String, String>>(
-                          dropdownColor: FlutterFlowTheme.fieldColor,
-                          value: value,
-                          icon: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 14,
+            loading ?
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 14,)
+                : tap ? InkWell(
+              onTap: (){
+                setState(() {
+
+                  tap = false;
+                });
+              },
+                  child: Row(
+                    children: [
+                      Text(nameProvince),
+                      SizedBox(width: 10,),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                      ),
+                    ],
+                  ),
+                ) : InkWell(
+              onTap: (){
+                tap = false;
+              },
+                  child: Container(
+                      width: 170,
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<Map<String, String>>(
+                            dropdownColor: FlutterFlowTheme.fieldColor,
+                            value: value,
+                            icon: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                            ),
+                            isExpanded: true,
+                            elevation: 0,
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              color: Colors.black,
+                            ),
+                            onChanged: (newValue) async {
+                              setState(() {
+                                value = newValue;
+                                name = value['province'];
+                                nameProvince = value['province'];
+                                idProvince = value['province_id'];
+                                province_id = int.parse(value['province_id']);
+                                value_city = null;
+                                loading = true;
+                              });
+                              shipmentCityResponse = await AuthRepository()
+                                  .getShipment(token, idProvince);
+                              setState(() {
+                                loading = false;
+                                listcity = [];
+                                for (var i = 0;
+                                    i < shipmentCityResponse!.object.length;
+                                    i++) {
+                                  var listbaru = {
+                                    'city_name': shipmentCityResponse
+                                        ?.object[i].city_name as String,
+                                    'province_id': shipmentCityResponse
+                                        ?.object[i].province_id as String,
+                                    'city_id': shipmentCityResponse
+                                        ?.object[i].city_id as String,
+                                    'postal_code': shipmentCityResponse
+                                        ?.object[i].postal_code as String,
+                                  };
+                                  listcity.add(listbaru);
+                                }
+                              });
+                            },
+                            items: listprovinsi
+                                .map<DropdownMenuItem<Map<String, String>>>(
+                                    (value) {
+                              nameProvince = value['province'];
+                              return DropdownMenuItem<Map<String, String>>(
+                                value: value,
+                                child: Text(nameProvince),
+                              );
+                            }).toList(),
                           ),
-                          isExpanded: true,
-                          elevation: 0,
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: Colors.black,
-                          ),
-                          onChanged: (newValue) async {
-                            setState(() {
-                              value = newValue;
-                              name = value['province'];
-                              idProvince = value['province_id'];
-                              value_city = null;
-                              loading = true;
-                            });
-                            shipmentCityResponse = await AuthRepository()
-                                .getShipment(token, idProvince);
-                            setState(() {
-                              loading = false;
-                              listcity = [];
-                              for (var i = 0;
-                                  i < shipmentCityResponse!.object.length;
-                                  i++) {
-                                var listbaru = {
-                                  'city_name': shipmentCityResponse
-                                      ?.object[i].city_name as String,
-                                  'province_id': shipmentCityResponse
-                                      ?.object[i].province_id as String,
-                                  'city_id': shipmentCityResponse
-                                      ?.object[i].city_id as String,
-                                  'postal_code': shipmentCityResponse
-                                      ?.object[i].postal_code as String,
-                                };
-                                listcity.add(listbaru);
-                              }
-                            });
-                          },
-                          items: listprovinsi
-                              .map<DropdownMenuItem<Map<String, String>>>(
-                                  (value) {
-                            nameProvince = value['province'];
-                            return DropdownMenuItem<Map<String, String>>(
-                              value: value,
-                              child: Text(nameProvince),
-                            );
-                          }).toList(),
                         ),
                       ),
                     ),
-                  ),
+                ),
           ],
         ),
       ],
@@ -289,10 +338,16 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
         Row(
           children: [
             listcity == null
-                ? Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                  )
+                ? Row(
+                  children: [
+                    Text(nameCity),
+                    SizedBox(width: 10,),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                    ),
+                  ],
+                )
                 : Container(
                     width: 170,
                     child: Padding(
@@ -314,9 +369,11 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
                           onChanged: (newValue) async {
                             setState(() {
                               value_city = newValue;
-                              var name_city = value_city['city_name'];
+                              print(value_city);
+                              nama_city = value_city['city_name'];
+                              print(nama_city);
                               var postal_code = value_city['postal_code'];
-                              var city_id = value_city['city_id'];
+                               city_id = int.parse(value_city['city_id']);
 
                               loading = false;
                             });
@@ -405,20 +462,9 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
               ],
             ),
           ),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(border: InputBorder.none),
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                ),
-              ],
-            ),
+          Icon(
+            Icons.arrow_forward_ios,
+            size: 14,
           ),
         ],
       ),
