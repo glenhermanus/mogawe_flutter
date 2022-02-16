@@ -83,22 +83,7 @@ class _HomePageState extends State<HomePage> {
     getToken();
     bloc = GaweanBloc();
     bloc.add(GetGaweanListEvent());
-    permission_forIOS();
-    FirebaseMessaging.onMessage.listen((event) { showNotification(event); });
-    FirebaseMessaging.onMessageOpenedApp.listen((event) { showNotification(event); });
-    FirebaseMessaging.onBackgroundMessage((message) => showNotification(message));
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
-      //If there is data in our notification
-      if (message != null) {
-        //We will open the route from the field view
-        //with the value definied in the notification
-        print(message.data);
-      }
-    });
 
-    initSetting_notif();
   }
 
   @override
@@ -111,7 +96,7 @@ class _HomePageState extends State<HomePage> {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'high_importance_channel',
         'High Importance Notifications', // title
-        importance: Importance.max,
+        importance: Importance.high,
         playSound: true
 
     );
@@ -136,8 +121,8 @@ class _HomePageState extends State<HomePage> {
             icon: '@mipmap/ic_launcher',
 
             enableVibration: true,
-            importance: Importance.max,
-            priority: Priority.max, playSound: true
+            importance: Importance.high,
+            priority: Priority.high, playSound: true
         ),
         iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
       ), payload: '');
