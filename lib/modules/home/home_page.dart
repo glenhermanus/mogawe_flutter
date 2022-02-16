@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_model.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
@@ -9,27 +11,28 @@ import 'package:mogawe/core/data/response/home_content/product_etalasa_model.dar
 import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/hire_me/sales/hire_me_sales_page.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
-import 'package:mogawe/modules/home/gawean/all/all_gawean_screen.dart';
 import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
 import 'package:mogawe/modules/home/widgets/build_gawean_item.dart';
 import 'package:mogawe/modules/home/widgets/build_mogawers_target.dart';
 import 'package:mogawe/modules/home/widgets/build_product_item.dart';
 import 'package:mogawe/modules/home/widgets/gaweanListEmptyView.dart';
 import 'package:mogawe/modules/home/widgets/productListEmptyView.dart';
+import 'package:mogawe/modules/inbox_notif/notification/notif.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 import 'package:mogawe/modules/profile/profile_screen.dart';
 import 'package:mogawe/modules/wallet/wallet/wallet_page.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 import 'package:mogawe/utils/ui/widgets/shimmering_skeleton.dart';
+import 'package:rxdart/rxdart.dart';
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import 'gawean/bloc/gawean_bloc.dart';
 import 'gawean/bloc/gawean_event.dart';
 import 'gawean/bloc/gawean_state.dart';
-import 'widgets/loading/build_home_loading.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -43,7 +46,14 @@ class _HomePageState extends State<HomePage> {
   var token;
   var convertCurrency, balance, point;
   UserProfileResponse? userProfileResponse;
+  final FirebaseMessaging message = FirebaseMessaging.instance;
 
+  var initsetting;
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  BehaviorSubject<ReceiveNotification> get didReceiveLocalNotificationSubject =>
+      BehaviorSubject<ReceiveNotification>();
   int gaweanMenu = 0;
 
   void getToken() async {
@@ -51,10 +61,11 @@ class _HomePageState extends State<HomePage> {
       loading = true;
     });
     token = await AuthRepository().readSecureData('token');
-
+    String? tokenDevice = await message.getToken();
+    print(tokenDevice);
     print("OUT >> hey");
     print(token);
-
+    await ChatQiscusRepo().kirimTokenDevice(tokenDevice, token);
     userProfileResponse = await AuthRepository().getProfile(token);
 
     setState(() {
@@ -72,12 +83,111 @@ class _HomePageState extends State<HomePage> {
     getToken();
     bloc = GaweanBloc();
     bloc.add(GetGaweanListEvent());
+    permission_forIOS();
+    FirebaseMessaging.onMessage.listen((event) { showNotification(event); });
+    FirebaseMessaging.onMessageOpenedApp.listen((event) { showNotification(event); });
+    FirebaseMessaging.onBackgroundMessage((message) => showNotification(message));
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      //If there is data in our notification
+      if (message != null) {
+        //We will open the route from the field view
+        //with the value definied in the notification
+        print(message.data);
+      }
+    });
+
+    initSetting_notif();
   }
 
   @override
   void dispose() {
     super.dispose();
     bloc.close();
+  }
+
+  Future showNotification(RemoteMessage message) async{
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+        'high_importance_channel',
+        'High Importance Notifications', // title
+        importance: Importance.max,
+        playSound: true
+
+    );
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    RemoteNotification? data  = message.notification;
+    Map<String, dynamic> dataisi = message.data;
+
+    String screen = dataisi['title'].toString();
+    print(screen);
+
+    AndroidNotification? android = message.notification?.android;
+    if(data != null){
+      flutterLocalNotificationsPlugin.show(0, data.title, data.body, NotificationDetails(
+        android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            groupKey: channel.groupId,
+            icon: '@mipmap/ic_launcher',
+
+            enableVibration: true,
+            importance: Importance.max,
+            priority: Priority.max, playSound: true
+        ),
+        iOS: IOSNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
+      ), payload: '');
+
+    }
+
+
+  }
+
+  permission_forIOS() async{
+    NotificationSettings setting = await message.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true
+    );
+    if(setting.authorizationStatus == AuthorizationStatus.authorized){
+      ('diizinkan');
+    }
+    else if(setting.authorizationStatus == AuthorizationStatus.provisional){
+      ('diizinkan');
+    } else{
+      ('tidak diizinkan');
+    }
+
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true
+    );
+  }
+
+  Future<dynamic> onselect(payload) async{
+    (payload);
+    Navigator.pushNamed(context, payload);
+  }
+
+  initSetting_notif(){
+    var initsettingAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const IOSInitializationSettings initios = IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false
+    );
+
+    final InitializationSettings initsetting = InitializationSettings(
+        android: initsettingAndroid, iOS: initios
+    );
+    flutterLocalNotificationsPlugin.initialize(initsetting, onSelectNotification: onselect);
+
   }
 
   Widget blocListener(Widget child) {
@@ -94,14 +204,14 @@ class _HomePageState extends State<HomePage> {
       builder: (ctx, state) {
         if (state is ShowLoadingListGaweanState) {
           print("State : $state");
-          return buildHomeShimmerLoading();
+          return _buildHomeShimmerLoading();
         }
         if (state is ShowListGaweanState) {
           print("State : $state");
           print("State : $state");
           return _buildHomeWidgetContent(state.list, context);
         }
-        if (state is ShowErrorGaweanListState) {
+        if (state is ShowErrorGaweanListState){
           log(state.message);
         }
         return Container();
@@ -161,15 +271,13 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
+
           FlutterFlowIconButton(
             borderColor: Colors.transparent,
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 44,
-            icon: Image.asset(
-              'assets/icon/ic_faq.png',
-              width: 20,
-            ),
+            icon: Image.asset('assets/icon/ic_faq.png', width: 20,),
             onPressed: () async {
               await Navigator.push(
                 context,
@@ -219,9 +327,8 @@ class _HomePageState extends State<HomePage> {
                     width: 40,
                     height: 40,
                     clipBehavior: Clip.antiAlias,
-                    child: mogaweImageHandler(
-                        url: this.userProfileResponse?.profil_picture,
-                        isProfile: true))),
+                    child: mogaweImageHandler(url: this.userProfileResponse?.profil_picture, isProfile: true))
+            ),
           ),
         ],
         centerTitle: true,
@@ -265,7 +372,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Expanded(
-                child: RefreshIndicator(
+                child:
+                RefreshIndicator(
                     onRefresh: () async {
                       bloc.add(GetGaweanListEvent());
                     },
@@ -279,8 +387,62 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHomeWidgetContent(
-      List<GaweanRowModel> homeWidgets, BuildContext context) {
+  Widget _buildHomeShimmerLoading(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Stack(
+          children: [
+            Align(
+              alignment: AlignmentDirectional(0, -1),
+              child: Container(
+                width: double.infinity,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.primaryColor,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const NeverScrollableScrollPhysics(),
+                child: Row(children: [
+                  Skeleton(width: 330, height: 175,),
+                  SizedBox(width: 12),
+                  Skeleton(width: 330, height: 175,),
+                ],),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 85),
+        Padding(
+          padding: const EdgeInsets.only(left: 18.0),
+          child: Skeleton(width: 150, height: 24,),
+        ),
+        SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+          child: Skeleton(height: 175,),
+        ),
+        SizedBox(height: 36),
+        Padding(
+          padding: const EdgeInsets.only(left: 18.0),
+          child: Skeleton(width: 150, height: 24,),
+        ),
+        SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+          child: Skeleton(height: 50,),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHomeWidgetContent(List<GaweanRowModel> homeWidgets, BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -429,7 +591,7 @@ class _HomePageState extends State<HomePage> {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
       child: BounceTap(
-        onTap: () {
+        onTap: (){
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -460,8 +622,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildProductAndGaweanHome(
-      List<GaweanRowModel> homeWidget, BuildContext context) {
+  Widget _buildProductAndGaweanHome(List<GaweanRowModel> homeWidget, BuildContext context) {
     return gaweanMenu == 0
         ? _buildGaweanList(homeWidget[1].jobs ?? [])
         : _buildProductList(homeWidget[1].products ?? [], context);
@@ -473,7 +634,9 @@ class _HomePageState extends State<HomePage> {
         : Column(
       children: [
         ListView.builder(
-            itemCount: jobs.length < 5 ? jobs.length : 5,
+            itemCount: jobs.length < 5
+                ? jobs.length
+                : 5,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (ctx, index) {
@@ -481,19 +644,11 @@ class _HomePageState extends State<HomePage> {
               return BuildGaweanItem(
                 gaweanModel: gawean,
               );
-            }),
-        BounceTap(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (ctx) => AllGaweanScreen()),
-            );
-          },
-          child: Text("Lihat Semua",
-              style: TextStyle(
-                  color: FlutterFlowTheme.primaryColor,
-                  fontWeight: FontWeight.w600)),
+            }
         ),
+        BounceTap(
+            onTap: (){},
+            child: Text("Lihat Semua", style: TextStyle(color: FlutterFlowTheme.primaryColor, fontWeight: FontWeight.w600))),
       ],
     );
   }
@@ -504,38 +659,38 @@ class _HomePageState extends State<HomePage> {
     final double itemWidth = size.width / 2;
 
     return products.length == 0
-        ? productListEmptyView(onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HireMeSalesPage(),
-        ),
-      );
-    })
-        : Column(children: [
-      GridView.builder(
-        itemCount: products.length > 6 ? 6 : products.length,
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: 230,
-        ),
-        itemBuilder: (ctx, index) {
-          return BuildProductItem(productModel: products[index]);
-        },
-      ),
-      SizedBox(height: 18),
-      BounceTap(
-        onTap: () {},
-        child: Text(
-          "Lihat Semua",
-          style: TextStyle(
-              color: FlutterFlowTheme.primaryColor,
-              fontWeight: FontWeight.w600),
-        ),
-      ),
-    ]);
+        ? productListEmptyView(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HireMeSalesPage(),
+            ),
+          );
+        })
+        : Column(
+        children: [
+          GridView.builder(
+            itemCount: products.length > 6
+                ? 6
+                : products.length,
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisExtent: 230,
+            ),
+            itemBuilder: (ctx, index) {
+              return BuildProductItem(
+                  productModel: products[index]);
+            },
+          ),
+          SizedBox(height: 18),
+          BounceTap(
+            onTap: (){},
+            child: Text("Lihat Semua",
+              style: TextStyle(color: FlutterFlowTheme.primaryColor, fontWeight: FontWeight.w600),),),
+        ]);
   }
 }
