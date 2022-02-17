@@ -69,6 +69,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
+
     tabController = TabController(length: 4, vsync: this);
     tabController.addListener(handleTabSelection);
   }
@@ -289,6 +290,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                           updateShipmet: widget.updateShipment,
                           objectShipment: widget.objectShipment,
                           supplierProduct: widget.supplierProduct,
+                          uuidMogawers: widget.data?.uuid ?? '',
                         ),
                         SettingTab(logoutProfile: logoutProfile,
                           email: widget.data?.email??'',
