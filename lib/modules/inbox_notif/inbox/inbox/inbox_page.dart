@@ -367,7 +367,7 @@ class _InboxPageState extends State<InboxPage> {
   }
 
   Future<void> callMehtod() async {
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
 
         setState(() {
           getRoomList();

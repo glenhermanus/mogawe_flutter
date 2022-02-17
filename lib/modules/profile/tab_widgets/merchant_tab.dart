@@ -14,8 +14,10 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:mogawe/modules/profile/page_merchant/add_product_merchant.dart';
 import 'package:mogawe/modules/profile/page_merchant/edit_product_merchant.dart';
+import 'package:mogawe/modules/profile/page_merchant/mulai_jualan.dart';
 import 'package:mogawe/modules/profile/page_merchant/product_merchant.dart';
 import 'package:mogawe/modules/profile/screens/address_pickup_screen.dart';
+import 'package:mogawe/modules/profile/screens/mulai_jualan_screen.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,7 +28,8 @@ class MerchantTab extends StatefulWidget {
   final Function(File photo)? onFotoChangedMerchant;
   final Function(int selfPick)? parseRadius;
   final SupplierProduct? supplierProduct;
-  const MerchantTab({Key? key, required this.dataMerchant, this.supplierProduct, this.objectShipment, this.updateShipmet, this.onFotoChangedMerchant, this.parseRadius }) : super(key: key);
+  final String uuidMogawers;
+  const MerchantTab({Key? key, required this.uuidMogawers, required this.dataMerchant, this.supplierProduct, this.objectShipment, this.updateShipmet, this.onFotoChangedMerchant, this.parseRadius }) : super(key: key);
 
   @override
   State<MerchantTab> createState() => _MerchantTabState();
@@ -110,18 +113,16 @@ class _MerchantTabState extends State<MerchantTab> {
     shipmentValue.setString('shipmenttoApi', shipment);
   }
 
-
-
   void setShipmentBool(shipment) async{
     SharedPreferences shipmentValue = await SharedPreferences.getInstance();
     shipmentValue.setString('shipmentString', shipment);
 
   }
+
   void setShipmentSelect( select) async{
     SharedPreferences shipmentValue1 = await SharedPreferences.getInstance();
     shipmentValue1.setBool('selected', select);
   }
-
 
   Future<String> getShipmentValueBool2()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -259,7 +260,12 @@ class _MerchantTabState extends State<MerchantTab> {
             SizedBox(height: 10,),
             FFButtonWidget(
               onPressed: () {
-                print('Button pressed ...');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MulaiJualanScreen(uuidMogawers: widget.uuidMogawers,),
+                  ),
+                );
               },
               text: 'Mulai Jualan',
               options: FFButtonOptions(
