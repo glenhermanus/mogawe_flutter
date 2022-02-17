@@ -3,8 +3,8 @@ import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactMultipleSelection extends StatefulWidget {
-  const FactMultipleSelection(
+class FactTrackerMultipleSelection extends StatefulWidget {
+  const FactTrackerMultipleSelection(
       {required this.incrementCounterCallback,
       required this.decrementCounterCallback,
       required this.fact,
@@ -16,10 +16,10 @@ class FactMultipleSelection extends StatefulWidget {
   final SendChangedFact sendChangedFact;
 
   @override
-  _FactMultipleSelectionState createState() => _FactMultipleSelectionState();
+  _FactTrackerMultipleSelectionState createState() => _FactTrackerMultipleSelectionState();
 }
 
-class _FactMultipleSelectionState extends State<FactMultipleSelection> {
+class _FactTrackerMultipleSelectionState extends State<FactTrackerMultipleSelection> {
   List _selected = [];
   bool _isAlreadyNotify = false;
 

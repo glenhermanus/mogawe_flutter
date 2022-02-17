@@ -5,16 +5,16 @@ import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 
-class FactOpenUrl extends StatefulWidget {
-  const FactOpenUrl({required this.fact});
+class FactTrackerOpenUrl extends StatefulWidget {
+  const FactTrackerOpenUrl({required this.fact});
 
   final Fact fact;
 
   @override
-  _FactOpenUrlState createState() => _FactOpenUrlState();
+  _FactTrackerOpenUrlState createState() => _FactTrackerOpenUrlState();
 }
 
-class _FactOpenUrlState extends State<FactOpenUrl> {
+class _FactTrackerOpenUrlState extends State<FactTrackerOpenUrl> {
   @override
   Widget build(BuildContext context) {
     return Padding(

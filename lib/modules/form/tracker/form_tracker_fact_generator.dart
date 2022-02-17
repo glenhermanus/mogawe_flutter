@@ -6,38 +6,43 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/form/bloc/form_bloc.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_audio_recorder.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_boolean.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_checkin.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_date.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_geolocation.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_multiple_selection.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_open_url.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_phone_number.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_rating.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_screen_recorder.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_single_selection.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_slider.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_take_pic_camera.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_take_pic_gallery.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_text_box.dart';
-import 'package:mogawe/modules/form/standart/fact/fact_time.dart';
+import 'package:mogawe/modules/form/handler/form_handler.dart';
 import 'package:mogawe/modules/form/utils/fact_type.dart';
 import 'package:provider/src/provider.dart';
 
+import 'fact/fact_tracker_audio_recorder.dart';
+import 'fact/fact_tracker_boolean.dart';
+import 'fact/fact_tracker_checkin.dart';
+import 'fact/fact_tracker_date.dart';
+import 'fact/fact_tracker_geolocation.dart';
+import 'fact/fact_tracker_multiple_selection.dart';
+import 'fact/fact_tracker_open_url.dart';
+import 'fact/fact_tracker_phone_number.dart';
+import 'fact/fact_tracker_rating.dart';
+import 'fact/fact_tracker_screen_recorder.dart';
+import 'fact/fact_tracker_single_selection.dart';
+import 'fact/fact_tracker_slider.dart';
+import 'fact/fact_tracker_take_pic_camera.dart';
+import 'fact/fact_tracker_take_pic_gallery.dart';
+import 'fact/fact_tracker_text_box.dart';
+import 'fact/fact_tracker_time.dart';
+
 
 class FormActivityTrackerFactGenerator extends StatefulWidget {
-  const FormActivityTrackerFactGenerator({required this.facts});
+  const FormActivityTrackerFactGenerator(
+      {required this.facts, required this.finishTrackerSection});
 
   final List<Fact> facts;
+  final FinishTrackerSection finishTrackerSection;
 
   @override
-  _FormActivityTrackerFactGeneratorState createState() => _FormActivityTrackerFactGeneratorState();
+  _FormActivityTrackerFactGeneratorState createState() =>
+      _FormActivityTrackerFactGeneratorState();
 }
 
 class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFactGenerator> {
   var logger = Logger(printer: PrettyPrinter());
-  final _pageController = PageController(keepPage: true);
+  final _pageController = PageController(keepPage: false);
   static const _kDuration = const Duration(milliseconds: 300);
   static const _kCurve = Curves.ease;
   bool _hasReachedEnd = false;
@@ -73,12 +78,12 @@ class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFa
                 return _factGenerator(widget.facts[index], bloc);
               }),
         ),
-        _buildFactNavigationFooter(),
+        _buildFactTrackerNavigationFooter(),
       ],
     );
   }
 
-  Widget _buildFactNavigationFooter() {
+  Widget _buildFactTrackerNavigationFooter() {
     return Container(
       color: Colors.white,
       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 22),
@@ -87,7 +92,7 @@ class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFa
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Visibility(
-            visible: !_hasReachedStart,
+              visible: !_hasReachedStart,
               child: _buildPreviousButton()),
           _buildNextButton()
         ],
@@ -127,8 +132,12 @@ class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFa
       child: FFButtonWidget(
         icon: _hasReachedEnd ? Icon(Icons.save) : Icon(Icons.arrow_back_ios, size: 18),
         text: _hasReachedEnd ? 'Send' : 'Next',
-        onPressed: ()  {
-          _pageController.nextPage(duration: _kDuration, curve: _kCurve);
+        onPressed: () {
+          if (_hasReachedEnd) {
+            widget.finishTrackerSection();
+          } else {
+            _pageController.nextPage(duration: _kDuration, curve: _kCurve);
+          }
         },
         options: FFButtonOptions(
           height: 40,
@@ -152,115 +161,115 @@ class _FormActivityTrackerFactGeneratorState extends State<FormActivityTrackerFa
   Widget _factGenerator(Fact fact, FormBloc bloc) {
     switch (fact.uuidFactType) {
       case TEXT_BOX:
-        return FactTextField(
+        return FactTrackerTextField(
           incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
           decrementCounterCallback: () => bloc.add(NotifyDecrementCounter()),
-          sendChangedFact: (changedFact) =>
-              bloc.add(SaveChangedFacts(changedFact)),
+          sendChangedFact: (changedFactTracker) =>
+              bloc.add(SaveChangedFacts(changedFactTracker)),
           textInputType: TextInputType.text,
           fact: fact,
         );
       case NUMERIC_BOX:
-        return FactTextField(
+        return FactTrackerTextField(
           incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
           decrementCounterCallback: () => bloc.add(NotifyDecrementCounter()),
-          sendChangedFact: (changedFact) =>
-              bloc.add(SaveChangedFacts(changedFact)),
+          sendChangedFact: (changedFactTracker) =>
+              bloc.add(SaveChangedFacts(changedFactTracker)),
           textInputType: TextInputType.number,
           fact: fact,
         );
       case SINGLE_SELECTION:
-        return FactSingleSelection(
+        return FactTrackerSingleSelection(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
             decrementCounterCallback: () => bloc.add(NotifyDecrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case MULTIPLE_SELECTION:
-        return FactMultipleSelection(
+        return FactTrackerMultipleSelection(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
             decrementCounterCallback: () => bloc.add(NotifyDecrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case TIME:
-        return FactTime(
+        return FactTrackerTime(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case DATE:
-        return FactDate(
+        return FactTrackerDate(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case PHONE_NUMBER:
-        return FactPhoneNumber(
+        return FactTrackerPhoneNumber(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
             decrementCounterCallback: () => bloc.add(NotifyDecrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             textInputType: TextInputType.phone,
             fact: fact);
       case EMAIL:
-        return FactTextField(
+        return FactTrackerTextField(
           incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
           decrementCounterCallback: () => bloc.add(NotifyDecrementCounter()),
-          sendChangedFact: (changedFact) =>
-              bloc.add(SaveChangedFacts(changedFact)),
+          sendChangedFact: (changedFactTracker) =>
+              bloc.add(SaveChangedFacts(changedFactTracker)),
           textInputType: TextInputType.emailAddress,
           fact: fact,
         );
       case GEO_LOCATION:
-        return FactGeoLocation(
+        return FactTrackerGeoLocation(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case CHECK_IN:
-        return FactCheckIn(
+        return FactTrackerCheckIn(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case TAKE_PIC_FROM_GALLERY:
-        return FactTakeGalleryPic(
+        return FactTrackerTakeGalleryPic(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case PICTURE:
-        return FactTakeCameraPic(
+        return FactTrackerTakeCameraPic(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case AUDIO_RECORDER:
-        return FactAudioRecorder(fact: fact);
+        return FactTrackerAudioRecorder(fact: fact);
       case SCREEN_RECORDER:
-        return FactScreenRecorder(fact: fact);
+        return FactTrackerScreenRecorder(fact: fact);
       case RATING:
-        return FactRating(
+        return FactTrackerRating(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact);
       case SLIDER:
-        return FactSlider(
+        return FactTrackerSlider(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
             decrementCounterCallback: () => bloc.add(NotifyDecrementCounter()),
             fact: fact);
       case BOOLEAN:
-        return FactBoolean(fact: fact);
+        return FactTrackerBoolean(fact: fact);
       case OPEN_URL:
-        return FactOpenUrl(fact: fact);
+        return FactTrackerOpenUrl(fact: fact);
       default:
-        return FactTextField(
+        return FactTrackerTextField(
             incrementCounterCallback: () => bloc.add(NotifyIncrementCounter()),
             decrementCounterCallback: () => bloc.add(NotifyDecrementCounter()),
-            sendChangedFact: (changedFact) =>
-                bloc.add(SaveChangedFacts(changedFact)),
+            sendChangedFact: (changedFactTracker) =>
+                bloc.add(SaveChangedFacts(changedFactTracker)),
             fact: fact,
             textInputType: TextInputType.text);
     }

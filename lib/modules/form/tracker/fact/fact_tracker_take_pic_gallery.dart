@@ -4,12 +4,11 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' as imgPicker;
 import 'package:mogawe/core/data/response/form/fact.dart';
-import 'package:mogawe/core/data/response/form/result/file_path.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactTakeGalleryPic extends StatefulWidget {
-  const FactTakeGalleryPic({
+class FactTrackerTakeGalleryPic extends StatefulWidget {
+  const FactTrackerTakeGalleryPic({
     required this.fact,
     required this.incrementCounterCallback,
     required this.sendChangedFact
@@ -20,10 +19,10 @@ class FactTakeGalleryPic extends StatefulWidget {
   final SendChangedFact sendChangedFact;
 
   @override
-  _FactTakeGalleryPicState createState() => _FactTakeGalleryPicState();
+  _FactTrackerTakeGalleryPicState createState() => _FactTrackerTakeGalleryPicState();
 }
 
-class _FactTakeGalleryPicState extends State<FactTakeGalleryPic> {
+class _FactTrackerTakeGalleryPicState extends State<FactTrackerTakeGalleryPic> {
   final picker = imgPicker.ImagePicker();
   late File photo;
   String path = "";

@@ -751,7 +751,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void SelectedItem(BuildContext context, item) {
+  void selectedItem(BuildContext context, item) {
     switch (item) {
       case 0:
         view = true;
@@ -766,10 +766,10 @@ class _ChatPageState extends State<ChatPage> {
         future: ChatQiscusRepo().getMessageList(widget.id == null ? widget.qiscusRoomResponse?.results.room.roomId : widget.id),
         builder: (context, snapshot){
 
-          final loadpesans1 = snapshot.data;
-          print(loadpesans1);
+          final loadPesans1 = snapshot.data;
+          print(loadPesans1);
           if(snapshot.hasData){
-            return CardReceived( pesan: loadpesans1, userProfileResponse: widget.userProfileResponse,);
+            return CardReceived( pesan: loadPesans1, userProfileResponse: widget.userProfileResponse,);
 
           }
           return CardReceived(chatResponse: widget.chatResponse, pesan: widget.pesan == null ?  loadpesan : widget.pesan, userProfileResponse: widget.userProfileResponse,);

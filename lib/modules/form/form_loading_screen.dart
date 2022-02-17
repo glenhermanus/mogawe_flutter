@@ -1,14 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mogawe/core/data/response/form/form_model.dart';
+import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/bloc/form_event.dart';
 import 'package:mogawe/modules/form/bloc/form_state.dart';
 import 'package:mogawe/modules/form/standart/fact_widget_generator.dart';
 import 'package:mogawe/modules/form/tracker/model/activity_tracker.dart';
 import 'package:mogawe/modules/form/widget/build_loading_submit_form.dart';
+import 'package:mogawe/modules/form/widget/build_submit_tracker_form_button.dart';
 import 'package:mogawe/utils/global/common_function.dart';
 
 import 'bloc/form_bloc.dart';
@@ -31,6 +32,8 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
   var logger = Logger(printer: PrettyPrinter());
   int _currentIndex = 0;
   List<ActivityTracker> _activityTrackers = [];
+  int _totalTracker = 0;
+  int _currentTracker = 0;
 
   @override
   void initState() {
@@ -64,7 +67,10 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
         }
         if (state is ShowTrackerActivityForm) {
           logger.d("State : $state");
-          _convertSectionsToTrackers(state.forms);
+          if (_activityTrackers.length == 0) {
+            _convertSectionsToTrackers(state.forms);
+          }
+
           return _buildTrackerForm(state.forms);
         }
         if (state is ShowContinuousForm) {
@@ -106,15 +112,32 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
         child: BlocProvider(
           create: (context) => bloc,
           child: SafeArea(
-              child: ListView.builder(
-            itemCount: forms.length,
-            itemBuilder: (context, index) {
-              return FormActivityTrackerItem(
-                  forms: forms,
-                  changeTrackerStatus: (tracker) => _changeSectionTrackerState(tracker),
-                  activityTracker: _activityTrackers[index]);
-            },
-          )),
+            child: Column(
+              children: [
+                Flexible(
+                  child: ListView.builder(
+                    itemCount: forms.length,
+                    itemBuilder: (context, index) {
+                      return FormActivityTrackerItem(
+                          forms: forms,
+                          changeTrackerStatus: (tracker) =>
+                              _changeSectionTrackerState(tracker),
+                          activityTracker: _activityTrackers[index]);
+                    },
+                  ),
+                ),
+                buildSubmitTrackerFormButton(
+                    onPressed: () {
+                      if (_currentTracker == _activityTrackers.length) {
+                        bloc.add(SubmitResult());
+                      } else {}
+                    },
+                    color: _currentTracker == _activityTrackers.length
+                        ? FlutterFlowTheme.primaryColor
+                        : FlutterFlowTheme.tertiaryColorLighter)
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -246,6 +269,17 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
 
   void _changeSectionTrackerState(ActivityTracker tracker) {
     setState(() {
+      if (tracker.status == "done") {
+        _currentTracker = _currentTracker + 1;
+      }
+      print("current tracker status is ${tracker.status}");
+      print(
+          "current tracker counter is $_currentTracker and total is ${_activityTrackers.length}");
+      for (var tracker in _activityTrackers) {
+        print(
+            "current tracker status is ${tracker.uuidSection} and name is ${tracker.sectionName}");
+      }
+
       _activityTrackers[tracker.sequence - 1] = tracker;
     });
   }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactSingleSelection extends StatefulWidget {
-  const FactSingleSelection({
+class FactTrackerSingleSelection extends StatefulWidget {
+  const FactTrackerSingleSelection({
     required this.fact,
     required this.incrementCounterCallback,
     required this.decrementCounterCallback,
@@ -18,18 +19,37 @@ class FactSingleSelection extends StatefulWidget {
 
 
   @override
-  _FactSingleSelectionState createState() => _FactSingleSelectionState();
+  _FactTrackerSingleSelectionState createState() => _FactTrackerSingleSelectionState();
 }
 
-class _FactSingleSelectionState extends State<FactSingleSelection> {
+class _FactTrackerSingleSelectionState extends State<FactTrackerSingleSelection> {
 
-  int _radioIndex = 100;
+  int _radioIndex = -1;
   bool _isAlreadyNotify = false;
+  List<String> _selection = [];
+  List<String> _scores = [];
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _selection = widget.fact.value.split(",");
+      _scores = widget.fact.valueScore?.split(",") ?? [];
+      print("received Fact input is ${widget.fact.input}");
+
+      _radioIndex = _selection.indexWhere((element) => (widget.fact.input ?? "") == element);
+      print("radioIndex is $_radioIndex");
+      if(_radioIndex != -1){
+        _isAlreadyNotify = true;
+      }
+    });
+
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    var selection = widget.fact.value.split(","); 
+    var _selection = widget.fact.value.split(",");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -39,7 +59,7 @@ class _FactSingleSelectionState extends State<FactSingleSelection> {
           child: Row(
             children: [
               Icon(Icons.check_circle, color:
-              _radioIndex == 100 ? FlutterFlowTheme.tertiaryColor:
+              _radioIndex == -1 ? FlutterFlowTheme.tertiaryColor:
               FlutterFlowTheme.primaryColor,),
               SizedBox(width: 8),
               Flexible(child: Text(widget.fact.label, maxLines: 3, overflow: TextOverflow.visible,))
@@ -47,31 +67,33 @@ class _FactSingleSelectionState extends State<FactSingleSelection> {
           ),
         ),
         ListView.builder(
-          itemCount: selection.length,
+          itemCount: _selection.length,
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemBuilder: (ctx, index) {
-          var selection = widget.fact.value.split(",");
-          var scores = widget.fact.valueScore?.split(",");
+
           return RadioListTile(
             value: index,
             groupValue: _radioIndex,
-            title: Text(selection[index]),
+            title: Text(_selection[index]),
             onChanged: (value) {
               setState(() {
                 _radioIndex = index;
               });
-              if(widget.fact.valueScore != null){
-                String? score = scores?[index];
-                widget.fact.finalScore = score;
-              }
+              widget.fact.input = _selection[index];
+              print("sent Fact input is ${_selection[index]}");
+              widget.sendChangedFact(widget.fact);
 
               if(!_isAlreadyNotify){
                 widget.incrementCounterCallback();
                 _isAlreadyNotify = true;
               }
-              widget.fact.input = selection[index];
-              widget.sendChangedFact(widget.fact);
+
+              if(widget.fact.valueScore != null){
+                String? score = _scores[index];
+                widget.fact.finalScore = score;
+              }
+
             },
           );
         }),

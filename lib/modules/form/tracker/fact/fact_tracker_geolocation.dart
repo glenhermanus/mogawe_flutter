@@ -5,9 +5,9 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/address/widgets/maps_location_picker.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactGeoLocation extends StatefulWidget {
+class FactTrackerGeoLocation extends StatefulWidget {
 
-  const FactGeoLocation({
+  const FactTrackerGeoLocation({
     required this.fact,
     required this.incrementCounterCallback,
     required this.sendChangedFact,
@@ -18,13 +18,32 @@ class FactGeoLocation extends StatefulWidget {
   final SendChangedFact sendChangedFact;
 
   @override
-  _FactGeoLocationState createState() => _FactGeoLocationState();
+  _FactTrackerGeoLocationState createState() => _FactTrackerGeoLocationState();
 }
 
-class _FactGeoLocationState extends State<FactGeoLocation> {
+class _FactTrackerGeoLocationState extends State<FactTrackerGeoLocation> {
   String _address = "";
   double _addressLat = 0.0;
   double _addressLng = 0.0;
+  String _textAddressLat = "";
+  String _textAddressLng = "";
+  bool _isAlreadyNotify = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.fact.input?.isNotEmpty ?? true){
+      List<String>? results = widget.fact.input?.split('~');
+      setState(() {
+        //Expected Results is (lat,lng,address)
+        print("results is $results");
+        _textAddressLat = results?[0] ?? "";
+        _textAddressLng = results?[1] ?? "";
+        _address = results?[2] ?? "";
+        _isAlreadyNotify = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +75,16 @@ class _FactGeoLocationState extends State<FactGeoLocation> {
                     setState(() {
                       _addressLat = result['latitude'] as double;
                       _addressLng = result['longitude'] as double;
+                      _textAddressLat = _addressLat.toString();
+                      _textAddressLng = _addressLng.toString();
                       _address = result['address'] as String;
                     });
 
-                    widget.incrementCounterCallback();
-                    widget.fact.input = "$_addressLat, $_addressLng, $_address";
+                    if(!_isAlreadyNotify){
+                      widget.incrementCounterCallback();
+                    }
+
+                    widget.fact.input = "$_addressLat~$_addressLng~$_address";
                     widget.sendChangedFact(widget.fact);
                   }
                 },
@@ -84,7 +108,7 @@ class _FactGeoLocationState extends State<FactGeoLocation> {
           ),
           Text(widget.fact.hintName),
           SizedBox(height: 8),
-          Text(_address == "" ? "" : "$_addressLat , $_addressLng"),
+          Text(_address == "" ? "" : "$_textAddressLat , $_textAddressLng"),
           SizedBox(height: 4),
           Text(_address),
         ],

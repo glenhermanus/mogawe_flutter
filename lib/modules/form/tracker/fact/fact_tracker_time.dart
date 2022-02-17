@@ -4,8 +4,8 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactTime extends StatefulWidget {
-  const FactTime(
+class FactTrackerTime extends StatefulWidget {
+  const FactTrackerTime(
       {required this.fact,
       required this.incrementCounterCallback,
       required this.sendChangedFact});
@@ -15,12 +15,26 @@ class FactTime extends StatefulWidget {
   final SendChangedFact sendChangedFact;
 
   @override
-  _FactTimeState createState() => _FactTimeState();
+  _FactTrackerTimeState createState() => _FactTrackerTimeState();
 }
 
-class _FactTimeState extends State<FactTime> {
+class _FactTrackerTimeState extends State<FactTrackerTime> {
 
   String _time = "";
+  bool _isAlreadyNotify = false;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _time = widget.fact.input ?? "";
+      if (_time == ""){
+        _isAlreadyNotify = false;
+      } else {
+        _isAlreadyNotify = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +55,10 @@ class _FactTimeState extends State<FactTime> {
               SizedBox(width: 8),
               Flexible(
                   child: Text(
-                widget.fact.label,
-                maxLines: 3,
-                overflow: TextOverflow.visible,
-              )),
+                    widget.fact.label,
+                    maxLines: 3,
+                    overflow: TextOverflow.visible,
+                  )),
               Spacer(),
               FFButtonWidget(
                 text: "Pilih Waktu",
@@ -67,8 +81,9 @@ class _FactTimeState extends State<FactTime> {
                     setState(() {
                       _time = timeFormatter(pickedTime);
                     });
-                    widget.incrementCounterCallback();
-
+                    if (!_isAlreadyNotify){
+                      widget.incrementCounterCallback();
+                    }
                     widget.fact.input = _time;
                     widget.sendChangedFact(widget.fact);
                   }

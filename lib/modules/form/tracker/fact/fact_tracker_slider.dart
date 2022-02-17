@@ -3,8 +3,8 @@ import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactSlider extends StatefulWidget {
-  const FactSlider(
+class FactTrackerSlider extends StatefulWidget {
+  const FactTrackerSlider(
       {required this.incrementCounterCallback,
       required this.decrementCounterCallback,
       required this.fact});
@@ -14,10 +14,10 @@ class FactSlider extends StatefulWidget {
   final NotifyDecrementCounterHandler decrementCounterCallback;
 
   @override
-  _FactSliderState createState() => _FactSliderState();
+  _FactTrackerSliderState createState() => _FactTrackerSliderState();
 }
 
-class _FactSliderState extends State<FactSlider> {
+class _FactTrackerSliderState extends State<FactTrackerSlider> {
   late double _value;
   bool _isAlreadyNotify = false;
 

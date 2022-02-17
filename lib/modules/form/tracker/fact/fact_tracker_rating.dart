@@ -3,26 +3,36 @@ import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactRating extends StatefulWidget {
+class FactTrackerRating extends StatefulWidget {
   final Fact fact;
   final NotifyIncrementCounterHandler incrementCounterCallback;
   final SendChangedFact sendChangedFact;
 
-  const FactRating({
+  const FactTrackerRating({
     required this.incrementCounterCallback,
     required this.fact,
     required this.sendChangedFact,
   });
 
   @override
-  State<FactRating> createState() => _FactRatingState();
+  State<FactTrackerRating> createState() => _FactTrackerRatingState();
 }
 
-class _FactRatingState extends State<FactRating> {
+class _FactTrackerRatingState extends State<FactTrackerRating> {
 
   bool _isAlreadyNotify = false;
   int starCount = 5;
   double rating = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.fact.input != ""){
+      rating = double.parse(widget.fact.input!);
+      _isAlreadyNotify = true;
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {

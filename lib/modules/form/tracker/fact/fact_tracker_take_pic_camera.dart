@@ -8,8 +8,8 @@ import 'package:mogawe/core/data/response/form/result/file_path.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactTakeCameraPic extends StatefulWidget {
-  const FactTakeCameraPic({
+class FactTrackerTakeCameraPic extends StatefulWidget {
+  const FactTrackerTakeCameraPic({
     required this.fact,
     required this.incrementCounterCallback,
     required this.sendChangedFact
@@ -20,10 +20,10 @@ class FactTakeCameraPic extends StatefulWidget {
   final SendChangedFact sendChangedFact;
 
   @override
-  _FactTakeCameraPicState createState() => _FactTakeCameraPicState();
+  _FactTrackerTakeCameraPicState createState() => _FactTrackerTakeCameraPicState();
 }
 
-class _FactTakeCameraPicState extends State<FactTakeCameraPic> {
+class _FactTrackerTakeCameraPicState extends State<FactTrackerTakeCameraPic> {
   final picker = imgPicker.ImagePicker();
   late File photo;
   String path = "";

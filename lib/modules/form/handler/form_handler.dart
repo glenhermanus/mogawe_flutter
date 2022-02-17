@@ -9,5 +9,7 @@ typedef void NextFormSection(int index);
 
 typedef void ChangeTrackerStatus(ActivityTracker tracker);
 
+typedef void FinishTrackerSection();
+
 
 
