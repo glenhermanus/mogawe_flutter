@@ -266,14 +266,14 @@ class _PersonalTabState extends State<PersonalTab> {
                 padding: EdgeInsetsDirectional.fromSTEB(
                     0, 16, 0, 0),
                 child: InkWell(
-                  onTap: () => showEditDialog(
-                    context,
-                    title: "Masukkan Email :",
-                    value: email,
-                    field: "email",
-                    ctrl: widget.emailCtrl,
-                    type: TextInputType.emailAddress,
-                  ),
+                  // onTap: () => showEditDialog(
+                  //   context,
+                  //   title: "Masukkan Email :",
+                  //   value: email,
+                  //   field: "email",
+                  //   ctrl: widget.emailCtrl,
+                  //   type: TextInputType.emailAddress,
+                  // ),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -333,7 +333,7 @@ class _PersonalTabState extends State<PersonalTab> {
                         ),
                       ),
                        Text(
-                        widget.data != null? '${widget.data!.phone}': "",
+                         widget.data?.phone != null? '${widget.data!.phone}': "",
                         style: FlutterFlowTheme.bodyText1
                             .override(
                           fontFamily: 'Poppins',

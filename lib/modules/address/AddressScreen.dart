@@ -156,7 +156,7 @@ class _AddressScreenState extends State<AddressScreen> {
       var response = await _addressRepository.addAddress(token, _addressName.value.text, address, addressLat, addressLng, 15, nameProvince, 15, nameCity);
 
       if(response.message == "Berhasil"){
-        Navigator.of(context).pop();
+        Navigator.of(context).pop({'res': 'Berhasil'});
       }
     } catch(ex) {
       logger.e(ex);

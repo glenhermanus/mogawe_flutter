@@ -95,7 +95,8 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
                     MaterialPageRoute(
                       builder: (context) => AddressScreen(),
                     ));
-                if (result == "Berhasil") {
+                print('aa ${result['res]']}');
+                if (result['res'] == "Berhasil") {
                   bloc.add(GetAddressEvent());
                 }
               },
@@ -124,7 +125,7 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
 
   Widget _buildItemAddress(AddressPickup address, int index) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+      padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 2),
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
@@ -229,6 +230,7 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
             MaterialPageRoute(
               builder: (context) => AddressScreenEdit(addressPickup),
             ));
+        print('nn $result');
         if (result == "Berhasil") {
           bloc.add(GetAddressEvent());
         }

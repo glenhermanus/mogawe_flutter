@@ -45,7 +45,7 @@ class _MerchantTabState extends State<MerchantTab> {
   bool valueswitchKurir = false;
   bool valuesShipment = false;
   double slidervalue = 1;
-  double valueAwal=1;
+  double valueAwal= 1;
   String rangeSlide ='1';
   int totalvalueAwal=1;
   int valueSlideAwal =1;
@@ -216,12 +216,21 @@ class _MerchantTabState extends State<MerchantTab> {
     // TODO: implement initState
     super.initState();
 
-    widget.dataMerchant?.selfPickupRadius != null ? valueSlideAwal = widget.dataMerchant?.selfPickupRadius as int
-        : 0;
+    if(widget.dataMerchant?.selfPickupRadius != null){
+      valueSlideAwal = widget.dataMerchant?.selfPickupRadius as int;
+    }
+     else{
+      valueSlideAwal =1000;
+    }
     valueAwal = valueSlideAwal / 1000;
     totalvalueAwal = (valueSlideAwal / 1000).round();
     rangeSlide = totalvalueAwal.toString();
-    widget.supplierProduct?.objectDatas?[0].name == null ? loading = true : loading = false;
+    if(widget.supplierProduct?.objectDatas == null ){
+      loading = false;
+    }else{
+      loading = true;
+    }
+
     getcekAntar().then((value) {
       valueswitchDiantar = value;
       if(valueswitchDiantar == true) {

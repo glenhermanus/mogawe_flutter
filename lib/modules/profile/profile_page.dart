@@ -115,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       pinned: false,
       delegate: _SliverAppBarDelegate(
         minHeight: 60.0,
-        maxHeight: 140.0,
+        maxHeight: 150.0,
         child: Container(
           width: double.infinity,
           height: 160,
@@ -155,22 +155,26 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.data != null? widget.data!.fullName!: "",
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: FlutterFlowTheme.secondaryColor,
-                          fontWeight: FontWeight.w600,
+                      Flexible(
+                        child: Text(
+                          widget.data != null? widget.data!.fullName!: "",
+                          style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                            color: FlutterFlowTheme.secondaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                        child: Text(
-                          widget.data != null? widget.data!.email!: "",
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: FlutterFlowTheme.secondaryColor,
-                            fontSize: 12,
+                        child: Flexible(
+                          child: Text(
+                            widget.data != null? widget.data!.email!: "",
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              color: FlutterFlowTheme.secondaryColor,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       )
