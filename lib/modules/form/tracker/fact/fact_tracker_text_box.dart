@@ -3,8 +3,8 @@ import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactTextField extends StatefulWidget {
-  const FactTextField({required this.incrementCounterCallback,
+class FactTrackerTextField extends StatefulWidget {
+  const FactTrackerTextField({required this.incrementCounterCallback,
     required this.decrementCounterCallback,
     required this.sendChangedFact,
     required this.textInputType,
@@ -18,45 +18,48 @@ class FactTextField extends StatefulWidget {
   final Fact fact;
 
   @override
-  _FactTextFieldState createState() => _FactTextFieldState();
+  _FactTrackerTextFieldState createState() => _FactTrackerTextFieldState();
 }
 
-class _FactTextFieldState extends State<FactTextField> {
+class _FactTrackerTextFieldState extends State<FactTrackerTextField> {
   bool isInputNull = true;
-  bool isAlreadyNotify = true;
+  bool _isAlreadyNotify = true;
   late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.fact.input ?? "");
-    isInputNull = widget.fact.input?.isEmpty?? true;
-    // if(widget.fact.input?.isEmpty ?? true) {
-    //   isAlreadyNotify = true;
-    // } else {
-    //   isAlreadyNotify = false;
-    // }
+    setState(() {
+      if(widget.fact.input?.isEmpty ?? true){
+        isInputNull = true;
+        _isAlreadyNotify = false;
+      } else {
+        isInputNull = false;
+        _isAlreadyNotify = true;
+      }
+    });
     _controller.addListener(_listenTextFieldValue);
   }
 
   void _listenTextFieldValue() {
     if (_controller.text.isEmpty) {
-      if(isAlreadyNotify){
-        print("isAlreadyNotify is True");
+      if(_isAlreadyNotify){
+        print("_isAlreadyNotify is True");
         setState(() {
           print("Decrementing");
           isInputNull = true;
-          isAlreadyNotify = false;
+          _isAlreadyNotify = false;
           widget.decrementCounterCallback();
         });
       }
     } else {
-      if (!isAlreadyNotify) {
-        print("isAlreadyNotify is False");
+      if (!_isAlreadyNotify) {
+        print("_isAlreadyNotify is False");
         setState(() {
           print("Incrementing");
           isInputNull = false;
-          isAlreadyNotify = true;
+          _isAlreadyNotify = true;
           widget.incrementCounterCallback();
         });
       }

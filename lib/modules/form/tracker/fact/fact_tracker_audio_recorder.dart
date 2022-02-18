@@ -1,17 +1,18 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 
-class FactScreenRecorder extends StatefulWidget {
-  const FactScreenRecorder({required this.fact});
+class FactTrackerAudioRecorder extends StatefulWidget {
+  const FactTrackerAudioRecorder({required this.fact});
 
   final Fact fact;
 
   @override
-  _FactScreenRecorderState createState() => _FactScreenRecorderState();
+  _FactTrackerAudioRecorderState createState() => _FactTrackerAudioRecorderState();
 }
 
-class _FactScreenRecorderState extends State<FactScreenRecorder> {
+class _FactTrackerAudioRecorderState extends State<FactTrackerAudioRecorder> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -47,18 +48,17 @@ class _FactScreenRecorderState extends State<FactScreenRecorder> {
   Widget _buildDottedPlaceHolder() {
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(width: 1, color: Colors.grey),
-          shape: BoxShape.circle
+        border: Border.all(width: 1, color: Colors.grey),
+        shape: BoxShape.circle
       ),
       child: Padding(
         padding: const EdgeInsets.all(32.0),
         child: Icon(
-          Icons.videocam_outlined,
+          Icons.mic_none_outlined,
           size: 48,
           color: Colors.grey,
         ),
       ),
     );
   }
-
 }

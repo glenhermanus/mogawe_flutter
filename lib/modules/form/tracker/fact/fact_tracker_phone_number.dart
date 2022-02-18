@@ -3,8 +3,8 @@ import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactPhoneNumber extends StatefulWidget {
-  const FactPhoneNumber(
+class FactTrackerPhoneNumber extends StatefulWidget {
+  const FactTrackerPhoneNumber(
       {required this.textInputType, required this.fact,
         required this.incrementCounterCallback,
         required this.decrementCounterCallback,
@@ -19,36 +19,45 @@ class FactPhoneNumber extends StatefulWidget {
 
 
   @override
-  _FactPhoneNumberState createState() => _FactPhoneNumberState();
+  _FactTrackerPhoneNumberState createState() => _FactTrackerPhoneNumberState();
 }
 
-class _FactPhoneNumberState extends State<FactPhoneNumber> {
+class _FactTrackerPhoneNumberState extends State<FactTrackerPhoneNumber> {
 
   bool isInputNull = true;
-  bool isAlreadyNotify = false;
+  bool _isAlreadyNotify = false;
   late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _controller = TextEditingController(text: widget.fact.input ?? "");
+    setState(() {
+      if(widget.fact.input?.isEmpty ?? true){
+        isInputNull = true;
+        _isAlreadyNotify = false;
+      } else {
+        isInputNull = false;
+        _isAlreadyNotify = true;
+      }
+    });
     _controller.addListener(_listenTextFieldValue);
   }
 
   void _listenTextFieldValue() {
     if (_controller.text.isEmpty) {
-      if(isAlreadyNotify){
+      if(_isAlreadyNotify){
         setState(() {
           isInputNull = true;
-          isAlreadyNotify = false;
+          _isAlreadyNotify = false;
           widget.decrementCounterCallback();
         });
       }
     } else {
-      if (!isAlreadyNotify) {
+      if (!_isAlreadyNotify) {
         setState(() {
           isInputNull = false;
-          isAlreadyNotify = true;
+          _isAlreadyNotify = true;
           widget.incrementCounterCallback();
         });
       }

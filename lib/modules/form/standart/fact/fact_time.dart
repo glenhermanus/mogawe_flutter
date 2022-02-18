@@ -21,6 +21,20 @@ class FactTime extends StatefulWidget {
 class _FactTimeState extends State<FactTime> {
 
   String _time = "";
+  bool _isAlreadyNotify = false;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _time = widget.fact.input ?? "";
+      if (_time == ""){
+        _isAlreadyNotify = false;
+      } else {
+        _isAlreadyNotify = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +81,9 @@ class _FactTimeState extends State<FactTime> {
                     setState(() {
                       _time = timeFormatter(pickedTime);
                     });
-                    widget.incrementCounterCallback();
-
+                    if (!_isAlreadyNotify){
+                      widget.incrementCounterCallback();
+                    }
                     widget.fact.input = _time;
                     widget.sendChangedFact(widget.fact);
                   }

@@ -5,8 +5,8 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/form/handler/form_handler.dart';
 
-class FactDate extends StatefulWidget {
-  const FactDate(
+class FactTrackerDate extends StatefulWidget {
+  const FactTrackerDate(
       {required this.fact,
       required this.incrementCounterCallback,
       required this.sendChangedFact});
@@ -16,12 +16,27 @@ class FactDate extends StatefulWidget {
   final SendChangedFact sendChangedFact;
 
   @override
-  _FactDateState createState() => _FactDateState();
+  _FactTrackerDateState createState() => _FactTrackerDateState();
 }
 
-class _FactDateState extends State<FactDate> {
+class _FactTrackerDateState extends State<FactTrackerDate> {
   String _date = "";
   DateTime selectedDate = DateTime.now();
+  bool _isAlreadyNotify = false;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _date = widget.fact.input ?? "";
+      if (_date == ""){
+        _isAlreadyNotify = false;
+      } else {
+        _isAlreadyNotify = true;
+      }
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +78,9 @@ class _FactDateState extends State<FactDate> {
                       selectedDate = pickedDate;
                       _date = dateFormatter(pickedDate);
                     });
-                    widget.incrementCounterCallback();
+                    if (!_isAlreadyNotify){
+                      widget.incrementCounterCallback();
+                    }
 
                     widget.fact.input = _date;
                     widget.sendChangedFact(widget.fact);

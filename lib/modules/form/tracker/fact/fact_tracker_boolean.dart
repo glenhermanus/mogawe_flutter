@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:mogawe/core/data/response/form/fact.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 
-class FactBoolean extends StatefulWidget {
-  const FactBoolean({required this.fact});
+class FactTrackerBoolean extends StatefulWidget {
+  const FactTrackerBoolean({required this.fact});
 
   final Fact fact;
 
   @override
-  _FactBooleanState createState() => _FactBooleanState();
+  _FactTrackerBooleanState createState() => _FactTrackerBooleanState();
 }
 
-class _FactBooleanState extends State<FactBoolean> {
+class _FactTrackerBooleanState extends State<FactTrackerBoolean> {
   int selectionValue = 100;
 
   @override

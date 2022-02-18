@@ -27,6 +27,7 @@ class FormActivityTrackerItem extends StatefulWidget {
 }
 
 class _FormActivityTrackerItemState extends State<FormActivityTrackerItem> {
+
   @override
   Widget build(BuildContext context) {
     FormBloc bloc = context.read<FormBloc>();
@@ -94,15 +95,33 @@ class _FormActivityTrackerItemState extends State<FormActivityTrackerItem> {
     );
   }
 
-  void _handleButtonClick(
-      String status, BuildContext context, FormBloc formBloc) {
+  Future<void> _handleButtonClick(
+      String status, BuildContext context, FormBloc formBloc) async {
     if (status == "started") {
-      Navigator.of(context).push(MaterialPageRoute<ActivityFormScreen>(
-          builder: (context) => BlocProvider.value(
-            value: formBloc,
-            child: ActivityFormScreen(
-                form: widget.forms[widget.activityTracker.sequence - 1]),
-          )));
+      // var result = await Navigator.of(context).push(MaterialPageRoute<ActivityFormScreen>(
+      //     builder: (context) => BlocProvider.value(
+      //       value: formBloc,
+      //       child: ActivityFormScreen(
+      //           form: widget.forms[widget.activityTracker.sequence - 1]),
+      //     )));
+
+      var result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => BlocProvider.value(
+                    value: formBloc,
+                    child: ActivityFormScreen(
+                        form:
+                            widget.forms[widget.activityTracker.sequence - 1]),
+                  )));
+
+      if ((result['result'] as String) == "done") {
+        setState(() {
+          widget.activityTracker.status = "done";
+        });
+        widget.changeTrackerStatus(widget.activityTracker);
+
+      }
     } else if (status == "ready") {
       widget.activityTracker.status = "started";
       String startTime = AppUtil.formatDateTime(
@@ -110,13 +129,21 @@ class _FormActivityTrackerItemState extends State<FormActivityTrackerItem> {
       widget.activityTracker.startTime = startTime;
       widget.changeTrackerStatus(widget.activityTracker);
 
-      Navigator.of(context).push(MaterialPageRoute<ActivityFormScreen>(
-          builder: (context) => BlocProvider.value(
-                value: formBloc,
-                child: ActivityFormScreen(
-                    form: widget.forms[widget.activityTracker.sequence - 1]),
-              )));
-
+      var result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => BlocProvider.value(
+                    value: formBloc,
+                    child: ActivityFormScreen(
+                        form:
+                            widget.forms[widget.activityTracker.sequence - 1]),
+                  )));
+      if ((result['result'] as String) == "done") {
+        setState(() {
+          widget.activityTracker.status = "done";
+        });
+        widget.changeTrackerStatus(widget.activityTracker);
+      }
     } else {
 
     }

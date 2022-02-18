@@ -17,6 +17,10 @@ class ActivityFormScreen extends StatefulWidget {
 }
 
 class _ActivityFormScreenState extends State<ActivityFormScreen> {
+  String _result = "";
+  String _dialogTitle = 'Keluar Dari Section ini?';
+  String _dialogText =
+      'Kamu akan kembali ke halaman tracker, yakin untuk keluar?';
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +29,14 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
     AppBar appBar = AppBar(
       title: Text(widget.form.name),
     );
-    return BlocBuilder(
-      bloc: bloc,
-      builder: (ctx, count) {
-        return Scaffold(
-          appBar: appBar,
-          body: WillPopScope(
-            onWillPop: () => _onWillPop(),
-            child: Column(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: BlocBuilder(
+        bloc: bloc,
+        builder: (ctx, count) {
+          return Scaffold(
+            appBar: appBar,
+            body: Column(
               children: [
                 _buildFormCounter(widget.form.facts.length, 50, bloc),
                 SizedBox(
@@ -40,14 +44,18 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
                 ),
                 Expanded(
                   child: FormActivityTrackerFactGenerator(
-                    facts: widget.form.facts,
-                  ),
+                      facts: widget.form.facts,
+                      finishTrackerSection: () {
+                        setState(() {
+                          _showConfirmFinishSectionDialog();
+                        });
+                      }),
                 ),
               ],
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -79,11 +87,34 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text(_dialogTitle),
+            content: new Text(_dialogText),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('Tidak'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: new Text('Iya'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
+
+  dynamic _showConfirmFinishSectionDialog() async {
+    return await showDialog(
       context: context,
       builder: (context) => new AlertDialog(
-        title: new Text('Keluar Dari Section ini?'),
+        title: new Text('Simpan Jawaban?'),
         content: new Text(
-            'Kamu akan kembali ke halaman tracker, yakin untuk keluar?'),
+            'Jawaban akan disimpan dan kamu akan dikembalikan ke halaman tracker, yakin untuk menyimpan jawaban?'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -91,14 +122,15 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(true);
+              print("iya pressed");
+              Navigator.of(context).pop({'result':'done'});
+              Navigator.of(context).pop({'result':'done'});
             },
             child: new Text('Iya'),
           ),
         ],
       ),
-    )) ??
-        false;
+    );
   }
 
   @override
