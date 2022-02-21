@@ -192,7 +192,7 @@ class _AddressScreenEditState extends State<AddressScreenEdit> {
           widget.addressModel.uuid as String, widget.addressModel.uuidSupplier as String, detailAddress.text == '' ? '' : detailAddress.text);
 
       if(response.message == "Berhasil"){
-        Navigator.of(context).pop();
+        Navigator.of(context).pop({'res': 'Berhasil'});
       }
     } catch(ex) {
       logger.e(ex);

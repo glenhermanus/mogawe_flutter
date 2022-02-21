@@ -45,7 +45,7 @@ class _MerchantTabState extends State<MerchantTab> {
   bool valueswitchKurir = false;
   bool valuesShipment = false;
   double slidervalue = 1;
-  double valueAwal=1;
+  double valueAwal= 1;
   String rangeSlide ='1';
   int totalvalueAwal=1;
   int valueSlideAwal =1;
@@ -216,12 +216,22 @@ class _MerchantTabState extends State<MerchantTab> {
     // TODO: implement initState
     super.initState();
 
-    widget.dataMerchant?.selfPickupRadius != null ? valueSlideAwal = widget.dataMerchant?.selfPickupRadius as int
-        : 0;
+    if(widget.dataMerchant?.selfPickupRadius != null){
+      valueSlideAwal = widget.dataMerchant?.selfPickupRadius as int;
+    }
+     else{
+      valueSlideAwal =1000;
+    }
     valueAwal = valueSlideAwal / 1000;
+     print('abcfdfdfdfdfd $valueSlideAwal');
     totalvalueAwal = (valueSlideAwal / 1000).round();
     rangeSlide = totalvalueAwal.toString();
-    widget.supplierProduct?.objectDatas?[0].name == null ? loading = true : loading = false;
+    if(widget.supplierProduct?.objectDatas == null ){
+      loading = false;
+    }else{
+      loading = true;
+    }
+
     getcekAntar().then((value) {
       valueswitchDiantar = value;
       if(valueswitchDiantar == true) {
@@ -375,7 +385,7 @@ class _MerchantTabState extends State<MerchantTab> {
                       ),
                       Expanded(
                         child: Text(
-                          widget.dataMerchant != null
+                          widget.dataMerchant?.storeAddress != null
                               ? ' ${widget.dataMerchant!.storeAddress}'
                               : "",
                           style: FlutterFlowTheme.bodyText1.override(
@@ -574,168 +584,167 @@ class _MerchantTabState extends State<MerchantTab> {
             ),
           ),
         ),
-        Container(
-          width: 300,
-          height: 200,
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(
-                16, 16, 16, 0),
-            child:
-            // loading ?
-            // Center(
-            //   child: Container(
-            //       width: 20,
-            //       height: 20,
-            //       child: CircularProgressIndicator()),
-            // )
-            widget.supplierProduct?.objectDatas == null ?   Center(
-              child: Column(
-                children: [
-                  Image.asset('assets/images/im_no_job.png'),
-                  SizedBox(height: 10,),
-                  Text('Kamu belum ada produk nih, yuk jualin\ndagangan mu disini', textAlign: TextAlign.center, style: FlutterFlowTheme.bodyText2,),
-                  SizedBox(height: 10,),
-                  FFButtonWidget(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddProductMerchant(),
-                        ),
-                      );
-                    },
-                    text: 'Mulai Jualan',
-                    options: FFButtonOptions(
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(
+              16, 16, 16, 0),
+          child:
+          // loading ?
+          // Center(
+          //   child: Container(
+          //       width: 20,
+          //       height: 20,
+          //       child: CircularProgressIndicator()),
+          // )
+          widget.supplierProduct!.objectDatas!.isEmpty ?   Center(
+            child: ListView(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                Image.asset('assets/images/im_no_job.png'),
+                SizedBox(height: 10,),
+                Text('Kamu belum ada produk nih, yuk jualin\ndagangan mu disini', textAlign: TextAlign.center, style: FlutterFlowTheme.bodyText2,),
+                SizedBox(height: 10,),
+                FFButtonWidget(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddProductMerchant(),
+                      ),
+                    );
+                  },
+                  text: 'Mulai Jualan',
+                  options: FFButtonOptions(
 
-                      height: 32,
-                      color: FlutterFlowTheme.secondaryColor,
-                      textStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                        color: FlutterFlowTheme.primaryColor,
-                        fontSize: 12,
-                      ),
-                      borderSide: BorderSide(
-                        color: FlutterFlowTheme.primaryColor,
-                        width: 1,
-                      ),
-                      borderRadius: 12,
+                    height: 32,
+                    color: FlutterFlowTheme.secondaryColor,
+                    textStyle: FlutterFlowTheme.bodyText1.override(
+                      fontFamily: 'Poppins',
+                      color: FlutterFlowTheme.primaryColor,
+                      fontSize: 12,
                     ),
-                    loading: _loadingButtonMulai,
-                  )
-                ],
+                    borderSide: BorderSide(
+                      color: FlutterFlowTheme.primaryColor,
+                      width: 1,
+                    ),
+                    borderRadius: 12,
+                  ),
+                  loading: _loadingButtonMulai,
+                )
+              ],
+            ),
+          ) :  GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              gridDelegate:
+              SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 1,
               ),
-            ) :  GridView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: widget.supplierProduct?.objectDatas?.length,
+              itemBuilder: (context, snap){
 
-                padding: EdgeInsets.zero,
-                gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1,
-                ),
-                scrollDirection: Axis.vertical,
-                itemCount: widget.supplierProduct?.objectDatas?.length,
-                itemBuilder: (context, snap){
+                final card = widget.supplierProduct?.objectDatas?[snap];
+                var currencyFormatter = NumberFormat.currency(locale: 'ID');
+                var price = currencyFormatter.format(card?.price);
+                var komisi = currencyFormatter.format(card?.commission);
 
-                  final card = widget.supplierProduct?.objectDatas?[snap];
-                  var currencyFormatter = NumberFormat.currency(locale: 'ID');
-                  var price = currencyFormatter.format(card?.price);
-                  var komisi = currencyFormatter.format(card?.commission);
+                return InkWell(
+                  onTap: (){
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) => EditProductMerchant(id: card?.uuid,)));
 
-                  return InkWell(
-                    onTap: (){
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) => EditProductMerchant(id: card?.uuid,)));
+                  },
+                  child: Card(
+                    clipBehavior:
+                    Clip.antiAliasWithSaveLayer,
+                    color: Color(0xFFF5F5F5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Stack(
+                          alignment:
+                          AlignmentDirectional(0, 1),
+                          children: [
+                            Image.network(
+                              '${card?.imageUrl}',
+                              width: double.infinity,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
 
-                    },
-                    child: Card(
-                      clipBehavior:
-                      Clip.antiAliasWithSaveLayer,
-                      color: Color(0xFFF5F5F5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Stack(
-                            alignment:
-                            AlignmentDirectional(0, 1),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional
+                              .fromSTEB(8, 8, 8, 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
                             children: [
-                              Image.network(
-                                '${card?.imageUrl}',
-                                width: double.infinity,
-                                height: 100,
-                                fit: BoxFit.cover,
+                              Text(
+                                '${card?.name}',
+                                style: FlutterFlowTheme
+                                    .bodyText1
+                                    .override(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 12,
+                                ),
                               ),
-
+                              Padding(
+                                padding:
+                                EdgeInsetsDirectional
+                                    .fromSTEB(
+                                    0, 4, 0, 0),
+                                child: Row(
+                                  mainAxisSize:
+                                  MainAxisSize.max,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Rp${price.replaceAll('IDR', '').replaceAll(',00', '')}',
+                                      style:
+                                      FlutterFlowTheme
+                                          .bodyText1
+                                          .override(
+                                        fontFamily:
+                                        'Poppins',
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Rp${komisi.replaceAll('IDR', '').replaceAll(',00', '')}',
+                                      style:
+                                      FlutterFlowTheme
+                                          .bodyText1
+                                          .override(
+                                        fontFamily:
+                                        'Poppins',
+                                        fontSize: 11,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                          Padding(
-                            padding: EdgeInsetsDirectional
-                                .fromSTEB(8, 8, 8, 0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${card?.name}',
-                                  style: FlutterFlowTheme
-                                      .bodyText1
-                                      .override(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                  EdgeInsetsDirectional
-                                      .fromSTEB(
-                                      0, 4, 0, 0),
-                                  child: Row(
-                                    mainAxisSize:
-                                    MainAxisSize.max,
-                                    mainAxisAlignment:
-                                    MainAxisAlignment
-                                        .spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Rp${price.replaceAll('IDR', '').replaceAll(',00', '')}',
-                                        style:
-                                        FlutterFlowTheme
-                                            .bodyText1
-                                            .override(
-                                          fontFamily:
-                                          'Poppins',
-                                          fontSize: 11,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Rp${komisi.replaceAll('IDR', '').replaceAll(',00', '')}',
-                                        style:
-                                        FlutterFlowTheme
-                                            .bodyText1
-                                            .override(
-                                          fontFamily:
-                                          'Poppins',
-                                          fontSize: 11,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                  );
-                }
-            ),
+                  ),
+                );
+              }
           ),
         ),
         SizedBox(height: 10,)

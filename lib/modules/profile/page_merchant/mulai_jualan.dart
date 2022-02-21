@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/mulai_merchant_repository.dart';
+import 'package:mogawe/modules/home/home_page.dart';
 import 'package:mogawe/modules/profile/page_merchant/address_new_merchant.dart';
 import 'package:mogawe/modules/profile/page_merchant/edit_new_address_merchant.dart';
 import 'package:mogawe/modules/profile/profile_screen.dart';
@@ -102,8 +104,176 @@ class _MulaiJualanState extends State<MulaiJualan> {
     );
   }
 
+  bottomSukses(){
+    showModalBottomSheet(
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      context: context,
+      backgroundColor: Colors.white,
+
+      shape : RoundedRectangleBorder(
+          borderRadius : BorderRadius.vertical( top: Radius.circular(30),)
+
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.90,
+        maxChildSize: 0.90,
+        minChildSize: 0.90,
+        builder: (context, scrollController) =>  StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+
+              return Container(
+
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(10),
+                  ),
+                  color: Colors.white,
+                ),
+                child: ListView(
+                  controller: scrollController,
+                  children: [
+
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(height: 68,),
+                          Center(child: Image.asset('assets/images/gambar_sukses.png', width: 250,)),
+                          Text('Selamat ya!', style: FlutterFlowTheme.title1.copyWith(color: Colors.black, fontSize: 36),),
+                          SizedBox(height: 8,),
+                          Text('Toko mu berhasil dibuat! Lengkapin informasi merchant lainnya, upload produkmu, dan\nmulai jualan yuk!',
+                            style: FlutterFlowTheme.bodyText1.copyWith(color: Color(0xff757575), fontSize: 16, fontFamily: 'Poppins'),),
+                          SizedBox(height: 25,),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          FFButtonWidget(
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileScreen(),
+                                  ));
+
+                            },
+                            text: 'Kembali ke Halaman Merchant',
+                            options: FFButtonOptions(
+                              width: double.infinity,
+                              height: 56,
+                              color: Color(0xffea2327),
+                              textStyle: FlutterFlowTheme.subtitle2.override(
+                                fontFamily: 'Poppins',
+                                color: Colors.white,
+                              ),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1,
+                              ),
+                              borderRadius: 50,
+                            ),
+                          ),
+                          SizedBox(height: 25,),
+                          FFButtonWidget(
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(),
+                                  ));
+
+
+                            },
+                            text: 'Kembali ke Home',
+                            options: FFButtonOptions(
+                              elevation: 0,
+                              width: double.infinity,
+                              height: 56,
+                              color: Colors.white,
+                              textStyle: FlutterFlowTheme.subtitle2.override(
+                                fontFamily: 'Poppins',
+                                color: Colors.red,
+                              ),
+
+                              borderRadius: 50,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+        ),
+      ),
+    );
+  }
+
   getToken()async{
     token = await AuthRepository().readSecureData('token');
+  }
+
+  loadingAlert(title, status, loading) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                contentPadding: EdgeInsets.only(top: 0.0, bottom: 20),
+                content: Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+
+                      Divider(
+                        color: Colors.grey,
+                        height: 1.0,
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(19.0),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            status != null ? status == true ? Icon(Icons.check, size: 30,) : Icon(Icons.clear, size: 30,) : Container(),
+                            SizedBox(height: 15,),
+                            Text('$title', style: FlutterFlowTheme.bodyText2,),
+                            SizedBox(height: 15,),
+                            loading == true ? CircularProgressIndicator(color: Colors.red,) : Container(),
+                            SizedBox(height: 10,),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }));
   }
 
   @override
@@ -137,15 +307,20 @@ class _MulaiJualanState extends State<MulaiJualan> {
               padding: const EdgeInsets.only(right: 16),
               child: BounceTap(
                 onTap: () async {
-                var res=   await MulaiMerchantRepository().registMerchant(
-                      token, nama_toko.text, address, addressLat, addressLng,
-                      idProv, nameProv, idCity, nameCity, widget.photoUrl, widget.uuid);
-                print(res);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileScreen(),
-                    ));
+
+                  try{
+                    loadingAlert('Mohon tunggu sebentar', null, true);
+                    var res=   await MulaiMerchantRepository().registMerchant(
+                        token, nama_toko.text, address, addressLat, addressLng,
+                        idProv, nameProv, idCity, nameCity, widget.photoUrl, widget.uuid);
+                    print(res);
+                    Navigator.of(context).pop();
+                    bottomSukses();
+
+                  }catch(e){
+                    loadingAlert('$e', false, false);
+                  }
+
                 },
                 child: Text(
                   "Simpan",
