@@ -231,7 +231,7 @@ class _AddressPickupScreenState extends State<AddressPickupScreen> {
               builder: (context) => AddressScreenEdit(addressPickup),
             ));
         print('nn $result');
-        if (result == "Berhasil") {
+        if (result['res'] == "Berhasil") {
           bloc.add(GetAddressEvent());
         }
         break;
