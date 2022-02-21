@@ -375,7 +375,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     supplierProduct: supplierProduct,
     updateShipment: (map) {
       Navigator.pop(context);
-      bloc.add(DoUpdateShippingExpeditionEvent(map));},
+      bloc.add(DoUpdateShippingExpeditionEvent(map));
+      bloc.add(GetMerchantEvent());},
     histories: histories,
     updateProfile: (map) => bloc.add(DoUpdateProfileEvent(map)),
     updateTarget: (map) => bloc.add(DoUpdateTargetRevenueEvent(map)),
@@ -410,6 +411,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       };
       Navigator.pop(context);
       bloc.add(DoUpdateSelfPickRadiusEvent(map));
+      bloc.add(GetMerchantEvent());
     },
 
     historyPageListen: (p, q) {
