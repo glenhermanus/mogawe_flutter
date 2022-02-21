@@ -223,6 +223,7 @@ class _MerchantTabState extends State<MerchantTab> {
       valueSlideAwal =1000;
     }
     valueAwal = valueSlideAwal / 1000;
+     print('abcfdfdfdfdfd $valueSlideAwal');
     totalvalueAwal = (valueSlideAwal / 1000).round();
     rangeSlide = totalvalueAwal.toString();
     if(widget.supplierProduct?.objectDatas == null ){
