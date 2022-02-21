@@ -34,7 +34,7 @@ class _AddressScreenState extends State<AddressScreen> {
   SalesDetailResponses? salesDetailResponses;
   final AddressRepository _addressRepository = AddressRepository.instance;
   TextEditingController _addressName = new TextEditingController();
-
+  TextEditingController detailAddress = new TextEditingController();
   Future getdata() async {
     setState(() {
       loading = true;
@@ -105,9 +105,7 @@ class _AddressScreenState extends State<AddressScreen> {
                       height: 10,
                     ),
                     _buildProvinceDropdown(),
-                    SizedBox(
-                      height: 10,
-                    ),
+
                     _buildCityDropdown(),
                     SizedBox(
                       height: 10,
@@ -128,6 +126,27 @@ class _AddressScreenState extends State<AddressScreen> {
                     ),
                     Text(
                       'Detail Lokasi (Optional)',
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    TextFormField(
+                      controller: detailAddress,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xff898888),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xff898888),
+                          ),
+                        ),
+                      ),
                       style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Poppins',
                       ),
@@ -394,20 +413,9 @@ class _AddressScreenState extends State<AddressScreen> {
               ],
             ),
           ),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(border: InputBorder.none),
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                ),
-              ],
-            ),
+          Icon(
+            Icons.arrow_forward_ios,
+            size: 14,
           ),
         ],
       ),
