@@ -120,7 +120,7 @@ class _FactTrackerCheckInState extends State<FactTrackerCheckIn> {
     }
 
 
-    if(_isAlreadyNotify){
+    if(!_isAlreadyNotify){
       widget.incrementCounterCallback();
     }
 
