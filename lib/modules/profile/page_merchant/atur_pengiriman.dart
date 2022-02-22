@@ -188,90 +188,89 @@ class _AturPengirimanState extends State<AturPengiriman> {
             ),
           ),
           SizedBox(height: 10,),
-          Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Metode Gratis Ongkir :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
-                      fontSize: 16),
-                  ),
-                  Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+          Flexible(
+            child: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Metode Gratis Ongkir :", style: FlutterFlowTheme.bodyText1.copyWith(fontWeight: FontWeight.w600,
+                        fontSize: 16),
+                    ),
+                    Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
 
-                        children: [
-                          Image.asset('assets/icon/ic_ambil_sendiri.png', width: 20,),
-                          SizedBox(width: 10,),
-                          Text('Diantar Mogawers', style: FlutterFlowTheme.bodyText1,),
-                        ],
-                      ),
-                      Switch(
-                          value: valueswitchDiantar,
-                          onChanged: (v){
-                            setState(() {
-                              valueswitchDiantar = v;
+                          children: [
+                            Image.asset('assets/icon/ic_ambil_sendiri.png', width: 20,),
+                            SizedBox(width: 10,),
+                            Text('Diantar Mogawers', style: FlutterFlowTheme.bodyText1,),
+                          ],
+                        ),
+                        Switch(
+                            value: valueswitchDiantar,
+                            onChanged: (v){
+                              setState(() {
+                                valueswitchDiantar = v;
 
-                            });
+                              });
 
-                          }
-                      ),
-                    ],
-                  ),
-                  Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                            }
+                        ),
+                      ],
+                    ),
+                    Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
 
-                        children: [
-                          Image.asset('assets/icon/ic_kurir_toko.png', width: 20,),
-                          SizedBox(width: 10,),
-                          Text('Kurir Toko', style: FlutterFlowTheme.bodyText1,),
-                        ],
-                      ),
-                      Switch(
-                          value: valueswitchKurir,
-                          onChanged: (v){
-                            setState(() {
-                              valueswitchKurir = v;
+                          children: [
+                            Image.asset('assets/icon/ic_kurir_toko.png', width: 20,),
+                            SizedBox(width: 10,),
+                            Text('Kurir Toko', style: FlutterFlowTheme.bodyText1,),
+                          ],
+                        ),
+                        Switch(
+                            value: valueswitchKurir,
+                            onChanged: (v){
+                              setState(() {
+                                valueswitchKurir = v;
 
-                            });
+                              });
 
-                          }
-                      ),
-                    ],
-                  ),
-                  Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-
-                        children: [
-                          Image.asset('assets/icon/ic_kurir_toko.png', width: 20,),
-                          SizedBox(width: 10,),
-                          Row(
+                            }
+                        ),
+                      ],
+                    ), 
+                    Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Image.asset('assets/icon/ic_kurir_toko.png', width: 20,),
+                        SizedBox(width: 10,),
+                        ClipRRect(
+                          child: Row(
                             children: [
                               Text('Ekspedisi', style: FlutterFlowTheme.bodyText1,),
                               SizedBox(width: 10,),
-                              Text('$textShipment', style: FlutterFlowTheme.bodyText1.copyWith(fontSize: 12, color: Colors.red),)
+                              ClipRRect(child: Flexible(child: Text('$textShipment', style: FlutterFlowTheme.bodyText1.copyWith(fontSize: 12, color: Colors.red), maxLines: 2,)))
                             ],
                           ),
-                        ],
-                      ),
-                      Switch(
-                          value: valueswitchEkspedisi,
-                          onChanged: (v){
-                            setState(() {
-                              valueswitchEkspedisi = v;
+                        ),
+                        Switch(
+                            value: valueswitchEkspedisi,
+                            onChanged: (v){
+                              setState(() {
+                                valueswitchEkspedisi = v;
 
-                            });
+                              });
 
-                          }
-                      ),
-                    ],
-                  ),
-                ],
+                            }
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
