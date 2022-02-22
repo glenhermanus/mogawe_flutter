@@ -105,7 +105,7 @@ class DetailPesonaResponses{
       uuidQueue : json['object']['uuidQueue '],
       uuidJob : json['object']['uuidJob '],
       statusTask: json['object']['statusTask'],
-      howto: json['object']['howTo'],
+      howto: json['object']['howTo'] == null ? '' : json['object']['howTo'],
       statusNotes: json['object']['statusNotes'],
       groupTask: json['object']['groupTask'],
       sequence: json['object']['sequence'],

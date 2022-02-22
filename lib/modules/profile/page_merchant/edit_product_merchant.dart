@@ -9,7 +9,6 @@ import 'package:mogawe/core/data/response/hire_me/category_list_response.dart';
 import 'package:mogawe/core/data/response/hire_me/seller_addres_response.dart';
 import 'package:mogawe/core/data/response/merchant/alamat_merchant_pickup.dart';
 import 'package:mogawe/core/data/response/merchant/category_response.dart';
-import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product_detail.dart';
 import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
