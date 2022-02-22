@@ -8,6 +8,7 @@ import 'package:mogawe/modules/home/bloc/home_bloc.dart';
 import 'package:mogawe/modules/home/bloc/home_event.dart';
 import 'package:mogawe/modules/home/bloc/home_state.dart';
 import 'package:mogawe/modules/pesona/pesona_page.dart';
+import 'package:mogawe/modules/pesona/pesona_screen.dart';
 import 'package:mogawe/utils/global/webview.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
@@ -150,7 +151,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PesonaPage(),
+            builder: (context) => PesonaScreenScreen(),
           ),
         );
         break;

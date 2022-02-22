@@ -8,8 +8,7 @@ class CertificateResponse {
   int pageCount;
   int offset;
   List<Object> object;
-  dynamic object2;
-  dynamic res;
+
 
   CertificateResponse.fromJson(Map<String, dynamic> json) :
     returnValue= json["returnValue"],
@@ -18,21 +17,8 @@ class CertificateResponse {
     rowCount= json["rowCount"],
     pageCount= json["pageCount"],
     offset= json["offset"],
-    object= List<Object>.from(json["object"].map((x) => Object.fromJson(x))),
-    object2= json["object2"],
-    res= json["res"];
+    object= json["object"] == null ? [] : List<Object>.from(json["object"].map((x) => Object.fromJson(x)));
 
-  Map<String, dynamic> toJson() => {
-    "returnValue": returnValue,
-    "message": message,
-    "uuid": uuid,
-    "rowCount": rowCount,
-    "pageCount": pageCount,
-    "offset": offset,
-    "object": List<dynamic>.from(object.map((x) => x.toJson())),
-    "object2": object2,
-    "res": res,
-  };
 }
 
 class Object {
@@ -53,7 +39,7 @@ class Object {
     iconUrl= json["iconUrl"],
     status= statusValues.map![json["status"]],
     finalScore= json["finalScore"],
-    averageScore= json["averageScore"] == null ? null : json["averageScore"],
+    averageScore= json["averageScore"] == null ? 0 : json["averageScore"],
     verifiedDate= json["verifiedDate"] == null ? null : DateTime.parse(json["verifiedDate"]);
 
   Map<String, dynamic> toJson() => {

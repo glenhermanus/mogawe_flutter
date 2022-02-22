@@ -1,4 +1,5 @@
 import 'package:mogawe/constant/api_path.dart';
+import 'package:mogawe/core/data/response/pesona/certificate_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response_object.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
@@ -21,6 +22,15 @@ class PesonaRepository extends NetworkService {
     return PesonaResponses.fromJson(map).object;
   }
 
+  Future<List<Object>> getCertificationList(
+      {required String realToken}) async {
+    var header = {
+      token: realToken
+    }; //Use realToken when implement get from original token
+    var map = await getMethod(
+        "${BASE_URL}api/fieldmogawers/certificate/get", header);
+    return CertificateResponse.fromJson(map).object;
+  }
 
 
 }

@@ -28,6 +28,18 @@ class PesonaBloc extends Bloc<PesonaEvent, PesonaState> {
         yield ShowErrorPesonaState("$ex");
       }
     }
+    if (event is GetPesonaCertificate) {
+      try {
+        var data = await _repo.getCertificationList(realToken: _userToken);
+        if(data.isEmpty){
+          yield ShowEmptyListCertificateState();
+        } else {
+          yield ShowListCertificateState(data);
+        }
+      } catch(ex) {
+        yield ShowErrorCertificateState("$ex");
+      }
+    }
 
   }
 
