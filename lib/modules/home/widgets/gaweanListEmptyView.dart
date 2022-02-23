@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
-import 'package:mogawe/modules/pesona/pesona_page.dart';
-import 'package:mogawe/modules/pesona/pesona_screen.dart';
+import 'package:mogawe/modules/pesona/page/pesona_page.dart';
+import 'package:mogawe/modules/pesona/screen/pesona_screen.dart';
 
 Widget gaweanListEmptyView({required BuildContext context}) {
   return Column(

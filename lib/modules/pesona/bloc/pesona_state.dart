@@ -24,24 +24,6 @@ class ShowListCertificateState extends PesonaState {
   ShowListCertificateState(this.data);
 }
 
-class ShowLoadingMerchantState extends PesonaState {}
-
-class SuccessUpdatePhotoTokoState extends PesonaState {
-  String message;
-
-  SuccessUpdatePhotoTokoState(this.message );
-}
-
-class ShowPhotoState extends PesonaState {
-  String photo;
-
-  ShowPhotoState(this.photo );
-}
-
-class SetPickupAddressAsDefaultState extends PesonaState {}
-
-class DeletePickupPesonaState extends PesonaState {}
-
 class ShowEmptyListPesonaState extends PesonaState {}
 
 class ShowEmptyListCertificateState extends PesonaState {}
@@ -57,13 +39,6 @@ class ShowErrorCertificateState extends PesonaState {
 
   ShowErrorCertificateState(this.message);
 }
-
-class ShowErrorUploadPhotoState extends PesonaState {
-  String message;
-
-  ShowErrorUploadPhotoState(this.message);
-}
-
 
 
 
