@@ -3,6 +3,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/modules/form/form_loading_screen.dart';
 
 class DetailPesonaPage extends StatefulWidget {
   DetailPesonaResponses? detailPesonaResponses;
@@ -16,6 +17,7 @@ class _DetailPesonaPageState extends State<DetailPesonaPage> {
   bool _loadingButton = false;
   @override
   Widget build(BuildContext context) {
+    print(widget.detailPesonaResponses?.uuidobj);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -64,7 +66,13 @@ class _DetailPesonaPageState extends State<DetailPesonaPage> {
               padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 28),
               child: FFButtonWidget(
                 onPressed: (){
-                 print('button');
+                  print(widget.detailPesonaResponses?.uuidJob);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FormLoadingScreen(idTask: widget.detailPesonaResponses?.uuidobj, currentTimeInMillis: 0),
+                    ),
+                  );
                 },
                 text: 'Mulai Verifikasi',
                 options: FFButtonOptions(

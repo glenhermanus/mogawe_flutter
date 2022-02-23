@@ -16,7 +16,7 @@ import 'bloc/form_bloc.dart';
 import 'widget/activity_tracker_item.dart';
 
 class FormLoadingScreen extends StatefulWidget {
-  final String idTask;
+  final String? idTask;
   final int currentTimeInMillis;
 
   const FormLoadingScreen(
@@ -40,6 +40,7 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
     super.initState();
     bloc = FormBloc();
     bloc.add(StartForm(widget.idTask, widget.currentTimeInMillis));
+    bloc.add(StartPesona(widget.idTask));
   }
 
   @override
@@ -65,6 +66,11 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
           print("State : $state");
           return _buildLoadingForm();
         }
+        if (state is ShowPesonaForm) {
+          print("State : $state");
+          return _buildContinuousForm(state.forms);
+        }
+
         if (state is ShowTrackerActivityForm) {
           logger.d("State : $state");
           if (_activityTrackers.length == 0) {

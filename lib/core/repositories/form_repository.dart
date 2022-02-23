@@ -25,15 +25,23 @@ class FormRepository extends NetworkService {
 
   Future<FormResponse> getFormResponse(
       {required String realToken,
-       required String idTask,}
+       required String? idTask,}
       ) async {
     var header = {token: realToken};
     var map = await getMethod("${BASE_URL}api/fieldfact/getByTask/?idTask=$idTask", header,);
     return FormResponse.fromJson(map);
   }
 
+  Future<FormResponse> startPesona({required String realToken,
+    required String? idJob
+  }) async {
+    var header = {token: realToken};
+    var map = await getMethod("${BASE_URL}api/fieldfact/applyAndGetSection/?idJob=$idJob", header,);
+    return FormResponse.fromJson(map);
+  }
+
   Future<StartEndFormResponse> startForm({required String realToken,
-        required String idTask, required int timeStampLong,
+        required String? idTask, required int timeStampLong,
   }) async {
     var header = {token: realToken};
     var map = await getMethod("${BASE_URL}api/fieldtask/start/?idTask=$idTask&timestamp=$timeStampLong", header,);
@@ -42,7 +50,7 @@ class FormRepository extends NetworkService {
 
   Future<FormSubmitResponse> submitResult(
       String? realToken,
-      String idTask,
+      String? idTask,
       String idResult,
       String uuidSession,
       double latitude,

@@ -4,6 +4,9 @@ import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/profile_repository.dart';
+import 'package:mogawe/modules/pesona/screen/pesona_screen.dart';
+import 'package:mogawe/modules/pesona/screen/scoring_screen.dart';
+import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:mogawe/utils/ui/widgets/app_util.dart';
 
 class PersonalTab extends StatefulWidget {
@@ -90,31 +93,41 @@ class _PersonalTabState extends State<PersonalTab> {
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(
                     0, 16, 0, 0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Akreditasi',
+                child: BounceTap(
+                  onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScoringScreen()
+                      ),
+                    );
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Akreditasi',
+                          style: FlutterFlowTheme.bodyText1
+                              .override(
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ),
+                      Text(
+                        ' ',
                         style: FlutterFlowTheme.bodyText1
                             .override(
                           fontFamily: 'Poppins',
                         ),
                       ),
-                    ),
-                    Text(
-                      ' ',
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.black,
-                      size: 24,
-                    )
-                  ],
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.black,
+                        size: 24,
+                      )
+                    ],
+                  ),
                 ),
               ),
               Padding(

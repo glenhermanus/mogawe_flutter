@@ -24,6 +24,7 @@ import 'package:mogawe/modules/pesona/page/detail_pesona_page.dart';
 import 'package:mogawe/modules/pesona/page/pesona_page.dart';
 import 'package:mogawe/modules/pesona/page/scoring_page.dart';
 import 'package:mogawe/modules/pesona/widget/build_loading_pesona.dart';
+import 'package:mogawe/modules/pesona/widget/build_loading_scoring.dart';
 import 'package:mogawe/modules/profile/widget/loading/build_pickup_address_loading.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 
@@ -77,7 +78,7 @@ class _ScoringScreenState extends State<ScoringScreen> {
       builder: (ctx, state) {
         if (state is ShowLoadingScoringsState) {
           print("State : $state");
-          return buildLoadingPesona();
+          return buildLoadingScoring();
         }
         if (state is ShowListScoringsState) {
           dataCertif = state.data;

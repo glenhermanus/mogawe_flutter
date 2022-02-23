@@ -144,7 +144,7 @@ class Fact {
     maxValue: json["maxValue"],
     selectionValidate: json["selectionValidate"],
     stepValue: json["stepValue"],
-    sequence: json["sequence"] == null ? null : json["sequence"],
+    sequence: json["sequence"] == null ? 0 : json["sequence"],
     videoUrl: json["videoUrl"],
     pictureUrl: json["pictureUrl"],
     stampPhoto: json["stampPhoto"],

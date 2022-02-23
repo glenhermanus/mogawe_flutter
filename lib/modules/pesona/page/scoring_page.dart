@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/pesona/certificate_response.dart';
 import 'package:mogawe/core/data/response/pesona/certificate_response.dart' as Stat;
@@ -15,6 +17,12 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/pesona/page/acreditation_page.dart';
 import 'package:mogawe/modules/pesona/page/detail_pesona_page.dart';
+import 'package:mogawe/modules/pesona/screen/pesona_screen.dart';
+import 'package:mogawe/modules/pesona/tab_widget/all_tab.dart';
+import 'package:mogawe/modules/pesona/tab_widget/completed_tab.dart';
+import 'package:mogawe/modules/pesona/tab_widget/expired_tab.dart';
+import 'package:mogawe/modules/pesona/tab_widget/pending_tab.dart';
+import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:mogawe/utils/ui/widgets/shimmering_skeleton.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -29,7 +37,7 @@ class ScoringPage extends StatefulWidget {
   _ScoringPageState createState() => _ScoringPageState();
 }
 
-class _ScoringPageState extends State<ScoringPage> {
+class _ScoringPageState extends State<ScoringPage> with SingleTickerProviderStateMixin{
   bool _loadingButton = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
@@ -40,6 +48,8 @@ class _ScoringPageState extends State<ScoringPage> {
   DetailPesonaResponses? detailPesonaResponses;
   bool loadingPage = false, loadingall = false;
   List<PesonaResponses> pesonaItem =[];
+  late TabController tabController;
+  int currTab = 0;
 
   Future getdata() async{
     setState(() {
@@ -56,13 +66,28 @@ class _ScoringPageState extends State<ScoringPage> {
   }
 
 
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     //getToken();
+    tabController = TabController(length: 4, vsync: this);
+    tabController.addListener(handleTabSelection);
     getdata();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    tabController.dispose();
+  }
+
+  void handleTabSelection() {
+    if (tabController.indexIsChanging ||
+        tabController.index != tabController.previousIndex) {
+      currTab = tabController.index;
+      setState(() {});
+    }
   }
 
   @override
@@ -84,12 +109,22 @@ class _ScoringPageState extends State<ScoringPage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              children: [
-                Icon(Icons.add, color: Colors.red, size: 18,),
-                SizedBox(width: 4,),
-                Text('Pesona', style: FlutterFlowTheme.title3.copyWith(color: Colors.red, fontSize: 14),)
-              ],
+            child: BounceTap(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PesonaScreenScreen()
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.add, color: Colors.red, size: 18,),
+                  SizedBox(width: 4,),
+                  Text('Pesona', style: FlutterFlowTheme.title3.copyWith(color: Colors.red, fontSize: 14),)
+                ],
+              ),
             ),
           )
         ],
@@ -98,12 +133,87 @@ class _ScoringPageState extends State<ScoringPage> {
       ),
       backgroundColor: FlutterFlowTheme.secondaryColor,
       body: SafeArea(
-        child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: widget.object.length,
-            itemBuilder: (context, index) {
-              return _buildItemPesona( widget.object[index], index);
-            }),
+        child: DefaultTabController(
+          length: 4,
+          initialIndex: currTab,
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 16, bottom: 16, right: 16),
+                decoration: BoxDecoration(
+                    color: FlutterFlowTheme.secondaryColor,
+                    borderRadius: BorderRadius.circular(24)
+                ),
+                child: TabBar(
+                  isScrollable: true,
+                  labelStyle: GoogleFonts.getFont(
+                    'Roboto',
+                  ),
+                  indicatorPadding: EdgeInsets.zero,
+                  labelPadding: EdgeInsets.symmetric(horizontal: 12),
+                  indicatorColor: Colors.transparent,
+                  controller: tabController,
+                  tabs: [
+                    tabItem(0, "All  (${widget.object.length})", ),
+                    tabItem(1, "Completed  (${widget.objectVerif.length})",  ),
+                    tabItem(2, "Pending  (${widget.objectPending.length})",  ),
+                    tabItem(3, "Expired  (${widget.objectExpired.length})",  )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: tabController,
+                  children: [
+                    AllTab(
+                      object: widget.object,
+                    ),
+                    CompletedTab(
+                      object: widget.objectVerif,
+                    ),
+                    PendingTab(
+                      object: widget.objectPending,
+                    ),
+                    ExpiredTab(
+                      object: widget.objectExpired,
+                    ),
+
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget tabItem(int index, String title,  ) {
+    Color colTab;
+    Color colText;
+    Color border;
+    if (index == currTab) {
+      colTab = FlutterFlowTheme.primaryColor;
+      colText = FlutterFlowTheme.secondaryColor;
+      border = Colors.transparent;
+    } else {
+      colTab = FlutterFlowTheme.secondaryColor;
+      colText = FlutterFlowTheme.blackColor;
+      border = Color(0xff979797);
+    }
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          color: colTab,
+          borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: border)
+      ),
+      child: Center(
+        child: Text(title, textAlign: TextAlign.center, style: TextStyle(
+            color: colText,
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+        )),
       ),
     );
   }

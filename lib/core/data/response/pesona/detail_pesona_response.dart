@@ -103,7 +103,7 @@ class DetailPesonaResponses{
       uuidobj : json['object']['uuid'],
       uuidMogawers : json['object']['uuidMogawers'],
       uuidQueue : json['object']['uuidQueue '],
-      uuidJob : json['object']['uuidJob '],
+      uuidJob : json['object']['uuidJob'],
       statusTask: json['object']['statusTask'],
       howto: json['object']['howTo'] == null ? '' : json['object']['howTo'],
       statusNotes: json['object']['statusNotes'],
