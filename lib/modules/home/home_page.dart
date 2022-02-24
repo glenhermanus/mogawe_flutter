@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +15,8 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/hire_me/sales/hire_me_sales_page.dart';
+import 'package:mogawe/modules/home/bloc/home_bloc.dart';
+import 'package:mogawe/modules/home/etalasa_product/all_product_screen.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
 import 'package:mogawe/modules/home/gawean/all/all_gawean_screen.dart';
 import 'package:mogawe/modules/home/widgets/build_banner_builder.dart';
@@ -30,6 +33,7 @@ import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 import 'package:mogawe/utils/ui/widgets/shimmering_skeleton.dart';
 import 'package:rxdart/rxdart.dart';
+
 import '../../../core/flutter_flow/flutter_flow_icon_button.dart';
 import 'gawean/bloc/gawean_bloc.dart';
 import 'gawean/bloc/gawean_event.dart';
@@ -42,6 +46,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late GaweanBloc bloc;
+  late HomeBloc homeBloc;
   bool loading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var token;
@@ -51,7 +56,8 @@ class _HomePageState extends State<HomePage> {
 
   var initsetting;
 
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   BehaviorSubject<ReceiveNotification> get didReceiveLocalNotificationSubject =>
       BehaviorSubject<ReceiveNotification>();
@@ -83,11 +89,17 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     getToken();
     bloc = GaweanBloc();
+    homeBloc = HomeBloc();
     bloc.add(GetGaweanListEvent());
     permission_forIOS();
-    FirebaseMessaging.onMessage.listen((event) { showNotification(event); });
-    FirebaseMessaging.onMessageOpenedApp.listen((event) { showNotification(event); });
-    FirebaseMessaging.onBackgroundMessage((message) => showNotification(message));
+    FirebaseMessaging.onMessage.listen((event) {
+      showNotification(event);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      showNotification(event);
+    });
+    FirebaseMessaging.onBackgroundMessage(
+        (message) => showNotification(message));
     FirebaseMessaging.instance
         .getInitialMessage()
         .then((RemoteMessage? message) {
@@ -106,6 +118,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     super.dispose();
     bloc.close();
+    homeBloc.close();
   }
 
   Future showNotification(RemoteMessage message) async{
@@ -273,167 +286,172 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     print(userProfileResponse?.full_name);
-    return Scaffold(
-      key: scaffoldKey,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: FlutterFlowTheme.primaryColor,
-        automaticallyImplyLeading: false,
-        titleSpacing: 0,
-        title: InkWell(
-          onTap: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WalletPage(),
-              ),
-            );
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: Icon(
-                  Icons.account_balance_wallet,
-                  color: FlutterFlowTheme.secondaryColor,
-                  size: 18,
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                  child: loading
-                      ? Text('Loading ...',
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                        color: FlutterFlowTheme.secondaryColor,
-                      ))
-                      : Text(
-                    'Rp ${balance.replaceAll('IDR', '').replaceAll(',00', '')}',
-                    style: FlutterFlowTheme.title2.override(
-                      fontFamily: 'Poppins',
-                      color: FlutterFlowTheme.secondaryColor,
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-        actions: [
-
-          FlutterFlowIconButton(
-            borderColor: Colors.transparent,
-            borderRadius: 30,
-            borderWidth: 1,
-            buttonSize: 44,
-            icon: Image.asset('assets/icon/ic_faq.png', width: 20,),
-            onPressed: () async {
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        key: scaffoldKey,
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: FlutterFlowTheme.primaryColor,
+          automaticallyImplyLeading: false,
+          titleSpacing: 0,
+          title: InkWell(
+            onTap: () async {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WebviewFAQ(),
+                  builder: (context) => WalletPage(),
                 ),
               );
             },
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Icon(
+                    Icons.account_balance_wallet,
+                    color: FlutterFlowTheme.secondaryColor,
+                    size: 18,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                    child: loading
+                        ? Text('Loading ...',
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Poppins',
+                              color: FlutterFlowTheme.secondaryColor,
+                            ))
+                        : Text(
+                            'Rp ${balance.replaceAll('IDR', '').replaceAll(',00', '')}',
+                            style: FlutterFlowTheme.title2.override(
+                              fontFamily: 'Poppins',
+                              color: FlutterFlowTheme.secondaryColor,
+                            ),
+                          ),
+                  ),
+                )
+              ],
+            ),
           ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
-            child: FlutterFlowIconButton(
+          actions: [
+            FlutterFlowIconButton(
               borderColor: Colors.transparent,
               borderRadius: 30,
               borderWidth: 1,
               buttonSize: 44,
-              icon: Icon(
-                Icons.notifications,
-                color: FlutterFlowTheme.secondaryColor,
-                size: 24,
+              icon: Image.asset(
+                'assets/icon/ic_faq.png',
+                width: 20,
               ),
               onPressed: () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NotificationListPage(),
+                    builder: (context) => WebviewFAQ(),
                   ),
                 );
               },
             ),
-          ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
-            child: InkWell(
-                onTap: () async {
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
+              child: FlutterFlowIconButton(
+                borderColor: Colors.transparent,
+                borderRadius: 30,
+                borderWidth: 1,
+                buttonSize: 44,
+                icon: Icon(
+                  Icons.notifications,
+                  color: FlutterFlowTheme.secondaryColor,
+                  size: 24,
+                ),
+                onPressed: () async {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileScreen(),
+                      builder: (context) => NotificationListPage(),
                     ),
                   );
                 },
-                child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    width: 40,
-                    height: 40,
-                    clipBehavior: Clip.antiAlias,
-                    child: mogaweImageHandler(url: this.userProfileResponse?.profil_picture, isProfile: true))
+              ),
             ),
-          ),
-        ],
-        centerTitle: true,
-        elevation: 0,
-      ),
-      backgroundColor: FlutterFlowTheme.secondaryColor,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: FlutterFlowTheme.primaryColor,
-                ),
-                padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Icon(
-                      Icons.copyright,
-                      color: FlutterFlowTheme.fieldColor,
-                      size: 16,
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                      child: loading
-                          ? Text('Loading ...',
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Poppins',
-                            color: FlutterFlowTheme.secondaryColor,
-                          ))
-                          : Text(
-                        '${point.replaceAll('IDR', '').replaceAll(',00', '')} pts',
-                        style: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                          color: FlutterFlowTheme.secondaryColor,
-                        ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
+              child: InkWell(
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(),
                       ),
-                    )
-                  ],
+                    );
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      width: 40,
+                      height: 40,
+                      clipBehavior: Clip.antiAlias,
+                      child: mogaweImageHandler(
+                          url: this.userProfileResponse?.profil_picture,
+                          isProfile: true))),
+            ),
+          ],
+          centerTitle: true,
+          elevation: 0,
+        ),
+        backgroundColor: FlutterFlowTheme.secondaryColor,
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.primaryColor,
+                  ),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Icon(
+                        Icons.copyright,
+                        color: FlutterFlowTheme.fieldColor,
+                        size: 16,
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                        child: loading
+                            ? Text('Loading ...',
+                                style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Poppins',
+                                  color: FlutterFlowTheme.secondaryColor,
+                                ))
+                            : Text(
+                                '${point.replaceAll('IDR', '').replaceAll(',00', '')} pts',
+                                style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Poppins',
+                                  color: FlutterFlowTheme.secondaryColor,
+                                ),
+                              ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child:
-                RefreshIndicator(
-                    onRefresh: () async {
-                      bloc.add(GetGaweanListEvent());
-                    },
-                    child: SingleChildScrollView(
-                        child: blocListener(blocBuilder(context)))),
-              ),
-            ],
-          )
-        ],
+                Expanded(
+                  child: RefreshIndicator(
+                      onRefresh: () async {
+                        bloc.add(GetGaweanListEvent());
+                      },
+                      child: SingleChildScrollView(
+                          child: blocListener(blocBuilder(context)))),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -532,7 +550,9 @@ class _HomePageState extends State<HomePage> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: BuildMogawersTarget(data: homeWidgets, context: context),
+          child: BlocProvider(
+              create: (context) => homeBloc,
+              child: BuildMogawersTarget(data: homeWidgets, context: context)),
         ),
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(18, 16, 0, 0),
@@ -712,10 +732,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildProductList(List<ProductModel> products, BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
-    final double itemWidth = size.width / 2;
-
     return products.length == 0
         ? productListEmptyView(
         onPressed: () {
@@ -733,24 +749,60 @@ class _HomePageState extends State<HomePage> {
                 ? 6
                 : products.length,
             shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisExtent: 230,
+              scrollDirection: Axis.vertical,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisExtent: 230,
+              ),
+              itemBuilder: (ctx, index) {
+                return BuildProductItem(productModel: products[index]);
+              },
             ),
-            itemBuilder: (ctx, index) {
-              return BuildProductItem(
-                  productModel: products[index]);
-            },
-          ),
-          SizedBox(height: 18),
-          BounceTap(
-            onTap: (){
+            SizedBox(height: 18),
+            BounceTap(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AllProductScreen(
+                      products: products,
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                "Lihat Semua",
+                style: TextStyle(
+                    color: FlutterFlowTheme.primaryColor,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ]);
+  }
 
-            },
-            child: Text("Lihat Semua",
-              style: TextStyle(color: FlutterFlowTheme.primaryColor, fontWeight: FontWeight.w600),),),
-        ]);
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Keluar Dari MoGawe?'),
+            content: new Text(
+                'Apakah kamu yakin untuk keluar dari aplikasi MoGawe?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('Tidak'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Terbaik untuk semua platform
+                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                },
+                child: new Text('Iya'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
   }
 }

@@ -10,12 +10,14 @@ class OtpEWalletScreen extends StatefulWidget {
   final EWalletModel eWalletModel;
   final String eWalletNominal;
   final String eWalletVoucherCode;
+  final String token;
 
   const OtpEWalletScreen(
       {Key? key,
       required this.eWalletModel,
       required this.eWalletNominal,
-      required this.eWalletVoucherCode})
+      required this.eWalletVoucherCode,
+      required this.token})
       : super(key: key);
 
   @override
@@ -146,16 +148,14 @@ class _OtpEWalletScreenState extends State<OtpEWalletScreen> {
     String amount,
     String otp,
   ) async {
-    var token =
-        "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJNTy04Rk1HOFAiLCJpYXQiOjE2MzkzODc0ODIsInN1YiI6Im1vZ2F3ZXJzIiwiaXNzIjoibW9nYXdlIn0.8_QeC-6Ui3RGG1CvM66rjuSZgidzcHVB2uSCDy4ZnfQ";
-    var body = {
+   var body = {
       "uuidTransferAccount": uuidEWalletAccount,
       "voucherCode": voucherCode,
       "amount": amount,
       "otp": otp
     };
     try {
-      var response = await _walletRepository.verifyOtpResponse(token, body);
+      var response = await _walletRepository.verifyOtpResponse(widget.token, body);
       if (response.returnValue == "000") {
         int count = 0;
         Navigator.of(context).popUntil((_) => count++ >= 3);

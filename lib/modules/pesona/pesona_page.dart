@@ -450,12 +450,11 @@ class _PesonaPageState extends State<PesonaPage> {
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 28),
                   child: FFButtonWidget(
-                    onPressed: ()async{
-                      detailPesonaResponses = await AuthRepository().detailpesonadata(token, list?.uuidJob);
+                    onPressed: (){
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DetailPesonaPage(detailPesonaResponses: detailPesonaResponses,),
+                          builder: (context) => DetailPesonaPage(uuidJob: list?.uuidJob ?? "",),
                         ),
                       );
                     },

@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/home/ads_model.dart';
-import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/home/bloc/home_bloc.dart';
@@ -143,7 +142,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
     }
   }
 
-  void _handleOpenActivity(String value, String param) async {
+  void _handleOpenActivity(String value, String param) {
     List<String> splitValue = value.split(".");
     String activityName = splitValue.last;
 
@@ -169,14 +168,11 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
         );
         break;
       case "CertificateInfoActivity":
-        DetailPesonaResponses detailPesonaResponses =
-            await AuthRepository().detailpesonadata(token, uuidParam);
-        print("detailresponse is ${detailPesonaResponses.uuid}");
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => DetailPesonaPage(
-              detailPesonaResponses: detailPesonaResponses,
+              uuidJob: uuidParam,
             ),
           ),
         );

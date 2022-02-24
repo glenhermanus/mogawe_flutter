@@ -36,10 +36,10 @@ class _InboxPageState extends State<InboxPage> {
   bool loading =false;
   ChatRoomList? chatRoomList;
   ChatRoomMessage? chatRoomMessage, chatRoomMessage2;
-  var room, loadroom1;
+  var room, loadRoom1;
   var pesan =[{}];
   List uuidValue = [];
-  List email_user = [];
+  List emailUser = [];
   ModelGetUuid? modelGetUuid;
   Timer? timer;
   ModelUnread? unreadCount;
@@ -146,9 +146,7 @@ class _InboxPageState extends State<InboxPage> {
         minChildSize: 0.75,
         builder: (context, scrollController) =>  StatefulBuilder(
             builder: (BuildContext context, StateSetter stateSetter) {
-
               return Container(
-
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.vertical(
@@ -270,13 +268,13 @@ class _InboxPageState extends State<InboxPage> {
                           participantsModel = await ChatQiscusRepo().getParticipants(res.results.room.roomId);
                           for(var i= 0; i< participantsModel!.results.participants.length; i++){
                             if(participantsModel!.results.participants[i].userId != widget.userProfileResponse?.email){
-                              email_user.add(participantsModel!.results.participants[i].userId);
+                              emailUser.add(participantsModel!.results.participants[i].userId);
                             }
 
                           }
 
-                          for(var j =0; j<email_user.length; j++){
-                            modelGetUuid = await ChatQiscusRepo().getUuiduser(email_user[j]);
+                          for(var j =0; j<emailUser.length; j++){
+                            modelGetUuid = await ChatQiscusRepo().getUuiduser(emailUser[j]);
                             if(modelGetUuid!.object.isNotEmpty){
                               uuidValue.add(modelGetUuid?.object.first.uuid);
                             }
@@ -335,10 +333,10 @@ class _InboxPageState extends State<InboxPage> {
               future: ChatQiscusRepo().getRoomList(widget.userProfileResponse?.email),
               builder: (context, snapshot){
 
-                loadroom1 = snapshot.data;
+                loadRoom1 = snapshot.data;
 
                 if(snapshot.hasData){
-                  return ListInbox(chatResponse: chat, chatRoomList: loadroom1, userProfileResponse: widget.userProfileResponse, view: view,);
+                  return ListInbox(chatResponse: chat, chatRoomList: loadRoom1, userProfileResponse: widget.userProfileResponse, view: view,);
 
                 }
                 return ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
@@ -397,10 +395,10 @@ class _InboxPageState extends State<InboxPage> {
         future: ChatQiscusRepo().getRoomList(widget.userProfileResponse?.email),
         builder: (context, snapshot){
 
-          loadroom1 = snapshot.data;
+          loadRoom1 = snapshot.data;
 
           if(snapshot.hasData){
-            return ListInbox(chatResponse: chat, chatRoomList: loadroom1, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
+            return ListInbox(chatResponse: chat, chatRoomList: loadRoom1, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);
 
           }
           return ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,);

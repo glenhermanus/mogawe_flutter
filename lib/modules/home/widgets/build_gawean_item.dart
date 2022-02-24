@@ -10,8 +10,9 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/gawean_repository.dart';
 import 'package:mogawe/modules/form/form_loading_screen.dart';
-import 'package:mogawe/modules/form/screen/form_screen.dart';
 import 'package:mogawe/modules/home/gawean/gawean_detail.dart';
+import 'package:mogawe/utils/extension/date_ext.dart';
+import 'package:mogawe/utils/extension/time_ext.dart';
 import 'package:mogawe/utils/services/currency_formatter.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 
@@ -120,7 +121,8 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                               padding:
                               EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
                               child: Text(
-                                'Sisa 2 Hari lagi',
+                                DateTime.now().getGaweanTimeLeft(
+                                    widget.gaweanModel.endDate ?? 0),
                                 style: FlutterFlowTheme.bodyText2.override(
                                   fontFamily: 'Poppins',
                                   color: Color(0xFF8C8C8C),
@@ -280,9 +282,15 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
             child: CupertinoDatePicker(
               mode: CupertinoDatePickerMode.dateAndTime,
               onDateTimeChanged: (value) {
-                _selectedDate = DateFormat("yyyy-MM-dd").format(value);
-                _selectedTime = "${value.hour}:${value.minute}:${value.second}";
-                _gaweanSchedulingTime = "$_selectedDate $_selectedTime";
+                String rawSelectedDate =
+                    DateFormat("yyyy-MM-dd HH:mm:ss").format(value);
+                setState(() {
+                  _selectedDate = _formatReminderDate(rawSelectedDate);
+                  _selectedTime =
+                      "${value.hour}:${value.minute}:${value.second}";
+                  _gaweanSchedulingTime = rawSelectedDate;
+                });
+
                 print(value);
               },
               use24hFormat: true,
@@ -339,27 +347,6 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
   //   }
   // }
 
-  void timePicker() async {
-    var time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      initialEntryMode: TimePickerEntryMode.dial,
-      builder: (context, childWidget) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: childWidget!,
-        );
-      },
-    );
-    setState(() {
-      _selectedTime = "${time?.hour}:${time?.minute}:00";
-      _gaweanSchedulingTime = "$_selectedDate $_selectedTime";
-
-      String formattedDate = _formatReminderDate(_gaweanSchedulingTime);
-
-      _handleUpdateGaweanReminder(token);
-    });
-  }
 
   void selectedMenuItem(int value, Gawean data) async {
     switch (value) {
@@ -396,9 +383,22 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
   }
 
   String _formatReminderDate(String date) {
+    final DateFormat formatterWithDate = DateFormat('yyyy-MM-dd');
+    final DateFormat formatterWithoutDate = DateFormat('HH:mm');
+    String formattedDate = "";
+
     DateTime parsedDate = DateTime.parse(date);
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    final String formattedDate = formatter.format(parsedDate);
+    DateTime currentDate = DateTime.now();
+
+    if (currentDate.isSameDate(parsedDate)) {
+      formattedDate = "Today, ${formatterWithoutDate.format(parsedDate)}";
+    } else if (currentDate.isTomorrowDate(parsedDate)) {
+      formattedDate = "Tomorrow, ${formatterWithoutDate.format(parsedDate)}";
+    } else {
+      formattedDate = formatterWithDate.format(parsedDate);
+    }
+
+    parsedDate.millisecondsSinceEpoch;
 
     return formattedDate;
   }

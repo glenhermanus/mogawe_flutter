@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/home_content/Certificate.dart';
 import 'package:mogawe/core/data/response/home_content/Revenue.dart';
@@ -10,13 +11,14 @@ import 'package:mogawe/core/data/response/home_content/gawean_row_model.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
+import 'package:mogawe/modules/home/bloc/home_bloc.dart';
+import 'package:mogawe/modules/home/bloc/home_event.dart';
 import 'package:mogawe/modules/pesona/pesona_page.dart';
 import 'package:mogawe/utils/services/currency_formatter.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BuildMogawersTarget extends StatefulWidget {
-
   final List<GaweanRowModel> data;
   final BuildContext context;
 
@@ -39,41 +41,21 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
   String get _currency =>
       NumberFormat.compactSimpleCurrency(locale: _locale).currencySymbol;
 
-  // Text Editing Controller list
   final TextEditingController _targetEditingController =
       TextEditingController();
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  void getDailyTarget() async {
-    setState(() {
-      loading = true;
-    });
-    final prefs = await SharedPreferences.getInstance();
-    final target = prefs.getInt('target');
-    log(target.toString());
-    _target = target ?? 200000;
-    setState(() {
-      loading = false;
-    });
-  }
-
-  void saveDailyTarget(int target) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setInt('target', target);
-  }
-
-  @override
   void initState() {
     super.initState();
-    getDailyTarget();
+    setState(() {
+      _target = widget.data[0].targetRevenue?.targetRevenue ?? 200000;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    HomeBloc bloc = context.read<HomeBloc>();
+
     return Card(
       clipBehavior: Clip.antiAliasWithSaveLayer,
       color: FlutterFlowTheme.fieldColor,
@@ -123,7 +105,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
                                 context: context,
                                 builder: (context) {
                                   return Center(
-                                    child: _showTargetHarianDialog(),
+                                    child: _showTargetHarianDialog(bloc),
                                   );
                                 },
                               );
@@ -348,9 +330,8 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
     return (percent / 100.0) * maxHeight;
   }
 
-  Widget _showTargetHarianDialog() {
+  Widget _showTargetHarianDialog(HomeBloc bloc) {
     return AlertDialog(
-
       content: Container(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -386,12 +367,13 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
         TextButton(
           child: Text("Simpan"),
           onPressed: () {
-            if(_targetEditingController.text.isNotEmpty){
-              saveDailyTarget(
-                  int.parse(_targetEditingController.text.replaceAll('.', '')));
+            if(_targetEditingController.text.isNotEmpty) {
+              int revenue =
+                  int.parse(_targetEditingController.text.replaceAll('.', ''));
+              bloc.add(DoUpdateTargetRevenueEvent(revenue));
               setState(() {
-                _target =
-                    int.parse(_targetEditingController.text.replaceAll('.', ''));
+                _target = int.parse(
+                    _targetEditingController.text.replaceAll('.', ''));
               });
               _targetEditingController.text = "";
               Navigator.pop(widget.context);
