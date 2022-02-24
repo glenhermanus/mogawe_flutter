@@ -5,10 +5,16 @@ import 'package:mogawe/modules/form/tracker/model/activity_tracker.dart';
 abstract class FormEvent {}
 
 class StartForm extends FormEvent {
-  final String idTask;
+  final String? idTask;
   final int currentTimeMillis;
 
   StartForm(this.idTask, this.currentTimeMillis);
+}
+
+class StartPesona extends FormEvent {
+  final String? idJob;
+
+  StartPesona(this.idJob);
 }
 
 class NotifyIncrementCounter extends FormEvent {}

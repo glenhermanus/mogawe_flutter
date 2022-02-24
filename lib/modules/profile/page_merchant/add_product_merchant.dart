@@ -517,6 +517,46 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
 
   }
 
+  backPressed(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Data akan hilang", style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600
+              )),
+              SizedBox(height: 12),
+              Text("Apakah Anda ingin membatalkan perubahan?", style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400
+              )),
+            ],
+          ),
+          actions:  [
+            TextButton(
+              child: Text("BATAL"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: Text("YA"),
+              onPressed: () {
+               Navigator.of(context).pop();
+               Navigator.of(context).pop();
+              },
+            ),
+          ]
+      ),
+
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -526,608 +566,613 @@ class _AddProductMerchantState extends State<AddProductMerchant> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: FlutterFlowTheme.secondaryColor,
-        iconTheme: IconThemeData(color: FlutterFlowTheme.tertiaryColor),
-        automaticallyImplyLeading: true,
-        title: Text(
-          'Tambah Produk',
-          style: FlutterFlowTheme.subtitle1.override(
-            fontFamily: 'Poppins',
-          ),
-        ),
-
-        centerTitle: false,
-        elevation: 0,
-      ),
-      body: ListView(
-        children: [
-          SizedBox(height: 5,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
+    return WillPopScope(
+      onWillPop: () async {
+        return await backPressed(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: FlutterFlowTheme.secondaryColor,
+          iconTheme: IconThemeData(color: FlutterFlowTheme.tertiaryColor),
+          automaticallyImplyLeading: true,
+          title: Text(
+            'Tambah Produk',
+            style: FlutterFlowTheme.subtitle1.override(
+              fontFamily: 'Poppins',
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Gambar Produk *'),
-                  SizedBox(height: 10,),
-                  InkWell(
-                    onTap: ()=> chooseImage(),
-                    child: Row(
-                      children: [
-                        photo != null ? DottedBorder(
-                          borderType: BorderType.RRect,
-                          strokeWidth: 1,
-                          color: Colors.black54,
-                          child: Container(
-                            width: 40,
-                            height: 50,
-                            child: munculingambar(context),
-                          ),
-                        ) : Container(),
-                        SizedBox(width: 10,),
-                        DottedBorder(
-                          borderType: BorderType.RRect,
-                          strokeWidth: 1,
-                          color: Colors.black54,
-                          child: Container(
-                            height: 50,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Icon(
-                                Icons.add, color: Colors.red,
+          ),
+
+          centerTitle: false,
+          elevation: 0,
+        ),
+        body: ListView(
+          children: [
+            SizedBox(height: 5,),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Gambar Produk *'),
+                    SizedBox(height: 10,),
+                    InkWell(
+                      onTap: ()=> chooseImage(),
+                      child: Row(
+                        children: [
+                          photo != null ? DottedBorder(
+                            borderType: BorderType.RRect,
+                            strokeWidth: 1,
+                            color: Colors.black54,
+                            child: Container(
+                              width: 40,
+                              height: 50,
+                              child: munculingambar(context),
+                            ),
+                          ) : Container(),
+                          SizedBox(width: 10,),
+                          DottedBorder(
+                            borderType: BorderType.RRect,
+                            strokeWidth: 1,
+                            color: Colors.black54,
+                            child: Container(
+                              height: 50,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Icon(
+                                  Icons.add, color: Colors.red,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Nama Produk *'),
-                  SizedBox(height: 10,),
-                  Container(
-                    decoration: BoxDecoration(),
-                    child: TextFormField(
-                      controller: namactrl,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: 'Nama Produk',
-                        hintStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 0,
-                          ),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        filled: true,
-                        fillColor: FlutterFlowTheme.fieldColor,
-
+                        ],
                       ),
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                      ),
-                      onChanged: (s)async{
-                        setState(() {
-
-                        });
-
-                        setState(() {
-
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Deskripsi *'),
-                  SizedBox(height: 10,),
-                  Container(
-                    decoration: BoxDecoration(),
-                    child: TextFormField(
-                      controller: deskripsictrl,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: 'Deskripsi',
-                        hintStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 0,
-                          ),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        filled: true,
-                        fillColor: FlutterFlowTheme.fieldColor,
-
-                      ),
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                      ),
-                      minLines: 2,
-                      maxLines: 4,
-                      onChanged: (s)async{
-                        setState(() {
-
-                        });
-
-                        setState(() {
-
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Youtube Url'),
-                  SizedBox(height: 10,),
-                  Container(
-                    decoration: BoxDecoration(),
-                    child: TextFormField(
-                      controller: youtubeUrlctrl,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: 'Youtube Url',
-                        hintStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 0,
-                          ),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        filled: true,
-                        fillColor: FlutterFlowTheme.fieldColor,
-
-                      ),
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                      ),
-                      onChanged: (s)async{
-                        setState(() {
-
-                        });
-
-                        setState(() {
-
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Brand *'),
-                  SizedBox(height: 10,),
-                  Container(
-                    decoration: BoxDecoration(),
-                    child: TextFormField(
-                      controller: brandctrl,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: 'Brand',
-                        hintStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Poppins',
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 0,
-                          ),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        filled: true,
-                        fillColor: FlutterFlowTheme.fieldColor,
-
-                      ),
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Poppins',
-                      ),
-                      onChanged: (s)async{
-                        setState(() {
-
-                        });
-
-                        setState(() {
-
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: ()=> openAlertBoxAlamat(),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.home_outlined),
-                            SizedBox(width: 10,),
-                            Text('Alamat PickUp*'),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              child: addresValue  == null ? Text('') : Text('${addresValue.name}'),
-                            ),
-                            SizedBox(width: 10,),
-                            Icon(Icons.arrow_forward_ios, size: 14,),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-                  InkWell(
-                    onTap: () {
-                      openAlertBoxKategori();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.list),
-                            SizedBox(width: 10,),
-                            Text('Kategori *'),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: categoryValue == null ? Text('') : Text('${categoryValue.name}'),
-                            ),
-                            SizedBox(width: 10,),
-                            Icon(Icons.arrow_forward_ios, size: 14,),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-                  InkWell(
-                    onTap: (){
-                      openAlertBoxProdukBerbahaya();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.info_outline),
-                            SizedBox(width: 10,),
-                            Text('Produk Berbahaya *'),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              child: dangerValue  == null ? Text('') : Text('${dangerValue['name'].split('(').first}'),
-                            ),
-                            SizedBox(width: 10,),
-                            Icon(Icons.arrow_forward_ios, size: 14,),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-                  InkWell(
-                    onTap: ()=> showEditDialog(
-                        context,
-                        title: "Rekomendasi Harga Produk ",
-                        type: TextInputType.numberWithOptions(),
-                        value: harga,
-                        field: "phone",
-                        ctrl: hargactrl,
-                        onChanged: (v) {
-                          // phone = v;
-                          // if (v.isEmpty) phone = null;
-                          setState(() {});
-                        }
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.attach_money_sharp),
-                            SizedBox(width: 10,),
-                            Text('Harga *'),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: harga != null ? Text('$harga') : Text(''),
-                            ),
-                            SizedBox(width: 10,),
-                            Icon(Icons.arrow_forward_ios, size: 14,),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-                  InkWell(
-                    onTap: ()=> showEditDialog(
-                        context,
-                        title: "Komisi Produk ",
-                        type: TextInputType.number,
-                        value: komisi,
-                        field: "phone",
-                        ctrl: komisictrl,
-                        onChanged: (v) {
-                          // phone = v;
-                          // if (v.isEmpty) phone = null;
-                          setState(() {});
-                        }
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.money_sharp),
-                            SizedBox(width: 10,),
-                            Text('Komisi *'),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: komisi != null ? Text('$komisi') : Text(''),
-                            ),
-                            SizedBox(width: 10,),
-                            Icon(Icons.arrow_forward_ios, size: 14,),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-                  InkWell(
-                    onTap: ()=> openAlertBoxStok(),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.category),
-                            SizedBox(width: 10,),
-                            Text('Stok *'),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: stokValue != null ? Text('${stokValue['name']}') : Text(''),
-                            ),
-                            SizedBox(width: 10,),
-                            Icon(Icons.arrow_forward_ios, size: 14,),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-                  InkWell(
-                    onTap: (){
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) => AturPengiriman()));
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.inbox),
-                            SizedBox(width: 10,),
-                            Text('Pengiriman *'),
-                          ],
-                        ),
-                        Icon(Icons.arrow_forward_ios, size: 14,)
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 16),
-            child: FFButtonWidget(
-              onPressed: ()async{
-                String shipping ='';
-                int? valueRadius;
-                bool? valueantar, valuekurir, freeongkir, valueeks;
-                setState(() {
-                  getShipmentValue().then((value) {
-                    setState(() {
-                      shipping = value;
-                    });
-                  });
-                  getcekDiantarAdd().then((value) {
-                    setState(() {
-                      valueantar = value;
-                    });
-                  });
-                  getcekKurirTokoAdd().then((value) {
-                    setState(() {
-                      valuekurir = value;
-                    });
-                  });
-                  getcekValueEkspAdd().then((value) {
-                    setState(() {
-                      valueeks = value;
-                    });
-                  });
-                  getcekRadius().then((value) {
-                    setState(() {
-                      valueRadius = value;
-                    });
-                  });
-                  freeongkir = valueantar == false ? valuekurir == false? false : true : true;
-                });
-                var berat = await AuthRepository().readSecureData('beratbarang');
-
-                try{
-                  await UserNetworkService().InputProduct(token, categoryValue.uuid, namactrl.text, deskripsictrl.text, brandctrl.text, dangerValue['isDangerous'],
-                      berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text), stokValue['stock'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
-                      true, ValueImage, false, freeongkir, valueantar, ValueImage[0]['value'],
-                      valuekurir, shipping != null ? true : false, shipping,
-                      addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].notes, valueRadius,
-                      addressPickupMerchant?.object[0].supplierName, addressPickupMerchant?.object[0].uuid, addressPickupMerchant?.object[0].latitude, addressPickupMerchant?.object[0].longitude,
-                      addressPickupMerchant?.object[0].shipmentCityId, addressPickupMerchant?.object[0].shipmentCityName, addressPickupMerchant?.object[0].shipmentProvinceId, addressPickupMerchant?.object[0].shipmentProvinceName
-                  );
-                  Fluttertoast.showToast(msg: "Berhasil");
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileScreen(),
-                    ),
-                  );
-                }catch(e){
-
-                  Fluttertoast.showToast(msg: "$e");
-                }
-
-
-
-
-              },
-              text: 'Simpan',
-              options: FFButtonOptions(
-                width: double.infinity,
-                height: 56,
-                color: FlutterFlowTheme.primaryColor,
-                textStyle: FlutterFlowTheme.subtitle2.override(
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
+                    )
+                  ],
                 ),
-                borderSide: BorderSide(
-                  color: Colors.transparent,
-                  width: 1,
-                ),
-                borderRadius: 20,
               ),
-              loading: _loadingButton,
             ),
-          )
-        ],
+            SizedBox(height: 10,),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Nama Produk *'),
+                    SizedBox(height: 10,),
+                    Container(
+                      decoration: BoxDecoration(),
+                      child: TextFormField(
+                        controller: namactrl,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          hintText: 'Nama Produk',
+                          hintStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x00000000),
+                              width: 0,
+                            ),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x00000000),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          filled: true,
+                          fillColor: FlutterFlowTheme.fieldColor,
+
+                        ),
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                        ),
+                        onChanged: (s)async{
+                          setState(() {
+
+                          });
+
+                          setState(() {
+
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Deskripsi *'),
+                    SizedBox(height: 10,),
+                    Container(
+                      decoration: BoxDecoration(),
+                      child: TextFormField(
+                        controller: deskripsictrl,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          hintText: 'Deskripsi',
+                          hintStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x00000000),
+                              width: 0,
+                            ),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x00000000),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          filled: true,
+                          fillColor: FlutterFlowTheme.fieldColor,
+
+                        ),
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                        ),
+                        minLines: 2,
+                        maxLines: 4,
+                        onChanged: (s)async{
+                          setState(() {
+
+                          });
+
+                          setState(() {
+
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Youtube Url'),
+                    SizedBox(height: 10,),
+                    Container(
+                      decoration: BoxDecoration(),
+                      child: TextFormField(
+                        controller: youtubeUrlctrl,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          hintText: 'Youtube Url',
+                          hintStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x00000000),
+                              width: 0,
+                            ),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x00000000),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          filled: true,
+                          fillColor: FlutterFlowTheme.fieldColor,
+
+                        ),
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                        ),
+                        onChanged: (s)async{
+                          setState(() {
+
+                          });
+
+                          setState(() {
+
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Brand *'),
+                    SizedBox(height: 10,),
+                    Container(
+                      decoration: BoxDecoration(),
+                      child: TextFormField(
+                        controller: brandctrl,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          hintText: 'Brand',
+                          hintStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Poppins',
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x00000000),
+                              width: 0,
+                            ),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x00000000),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          filled: true,
+                          fillColor: FlutterFlowTheme.fieldColor,
+
+                        ),
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                        ),
+                        onChanged: (s)async{
+                          setState(() {
+
+                          });
+
+                          setState(() {
+
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: ()=> openAlertBoxAlamat(),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.home_outlined),
+                              SizedBox(width: 10,),
+                              Text('Alamat PickUp*'),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                child: addresValue  == null ? Text('') : Text('${addresValue.name}'),
+                              ),
+                              SizedBox(width: 10,),
+                              Icon(Icons.arrow_forward_ios, size: 14,),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+                    InkWell(
+                      onTap: () {
+                        openAlertBoxKategori();
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.list),
+                              SizedBox(width: 10,),
+                              Text('Kategori *'),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: categoryValue == null ? Text('') : Text('${categoryValue.name}'),
+                              ),
+                              SizedBox(width: 10,),
+                              Icon(Icons.arrow_forward_ios, size: 14,),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+                    InkWell(
+                      onTap: (){
+                        openAlertBoxProdukBerbahaya();
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.info_outline),
+                              SizedBox(width: 10,),
+                              Text('Produk Berbahaya *'),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                child: dangerValue  == null ? Text('') : Text('${dangerValue['name'].split('(').first}'),
+                              ),
+                              SizedBox(width: 10,),
+                              Icon(Icons.arrow_forward_ios, size: 14,),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+                    InkWell(
+                      onTap: ()=> showEditDialog(
+                          context,
+                          title: "Rekomendasi Harga Produk ",
+                          type: TextInputType.numberWithOptions(),
+                          value: harga,
+                          field: "phone",
+                          ctrl: hargactrl,
+                          onChanged: (v) {
+                            // phone = v;
+                            // if (v.isEmpty) phone = null;
+                            setState(() {});
+                          }
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.attach_money_sharp),
+                              SizedBox(width: 10,),
+                              Text('Harga *'),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: harga != null ? Text('$harga') : Text(''),
+                              ),
+                              SizedBox(width: 10,),
+                              Icon(Icons.arrow_forward_ios, size: 14,),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+                    InkWell(
+                      onTap: ()=> showEditDialog(
+                          context,
+                          title: "Komisi Produk ",
+                          type: TextInputType.number,
+                          value: komisi,
+                          field: "phone",
+                          ctrl: komisictrl,
+                          onChanged: (v) {
+                            // phone = v;
+                            // if (v.isEmpty) phone = null;
+                            setState(() {});
+                          }
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.money_sharp),
+                              SizedBox(width: 10,),
+                              Text('Komisi *'),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: komisi != null ? Text('$komisi') : Text(''),
+                              ),
+                              SizedBox(width: 10,),
+                              Icon(Icons.arrow_forward_ios, size: 14,),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+                    InkWell(
+                      onTap: ()=> openAlertBoxStok(),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.category),
+                              SizedBox(width: 10,),
+                              Text('Stok *'),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: stokValue != null ? Text('${stokValue['name']}') : Text(''),
+                              ),
+                              SizedBox(width: 10,),
+                              Icon(Icons.arrow_forward_ios, size: 14,),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+                    InkWell(
+                      onTap: (){
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) => AturPengiriman()));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.inbox),
+                              SizedBox(width: 10,),
+                              Text('Pengiriman *'),
+                            ],
+                          ),
+                          Icon(Icons.arrow_forward_ios, size: 14,)
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 16),
+              child: FFButtonWidget(
+                onPressed: ()async{
+                  String shipping ='';
+                  int? valueRadius;
+                  bool? valueantar, valuekurir, freeongkir, valueeks;
+                  setState(() {
+                    getShipmentValue().then((value) {
+                      setState(() {
+                        shipping = value;
+                      });
+                    });
+                    getcekDiantarAdd().then((value) {
+                      setState(() {
+                        valueantar = value;
+                      });
+                    });
+                    getcekKurirTokoAdd().then((value) {
+                      setState(() {
+                        valuekurir = value;
+                      });
+                    });
+                    getcekValueEkspAdd().then((value) {
+                      setState(() {
+                        valueeks = value;
+                      });
+                    });
+                    getcekRadius().then((value) {
+                      setState(() {
+                        valueRadius = value;
+                      });
+                    });
+                    freeongkir = valueantar == false ? valuekurir == false? false : true : true;
+                  });
+                  var berat = await AuthRepository().readSecureData('beratbarang');
+
+                  try{
+                    await UserNetworkService().InputProduct(token, categoryValue.uuid, namactrl.text, deskripsictrl.text, brandctrl.text, dangerValue['isDangerous'],
+                        berat, 0.0, 0.0, 0.0, 'new', double.parse(hargactrl.text), double.parse(komisictrl.text), stokValue['stock'], youtubeUrlctrl.text == null ? youtubeUrlctrl.text = '' : youtubeUrlctrl.text,
+                        true, ValueImage, false, freeongkir, valueantar, ValueImage[0]['value'],
+                        valuekurir, shipping != null ? true : false, shipping,
+                        addressPickupMerchant?.object?[0].address, addressPickupMerchant?.object[0].name, addressPickupMerchant?.object[0].notes, valueRadius,
+                        addressPickupMerchant?.object[0].supplierName, addressPickupMerchant?.object[0].uuid, addressPickupMerchant?.object[0].latitude, addressPickupMerchant?.object[0].longitude,
+                        addressPickupMerchant?.object[0].shipmentCityId, addressPickupMerchant?.object[0].shipmentCityName, addressPickupMerchant?.object[0].shipmentProvinceId, addressPickupMerchant?.object[0].shipmentProvinceName
+                    );
+                    Fluttertoast.showToast(msg: "Berhasil");
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(),
+                      ),
+                    );
+                  }catch(e){
+
+                    Fluttertoast.showToast(msg: "$e");
+                  }
+
+
+
+
+                },
+                text: 'Simpan',
+                options: FFButtonOptions(
+                  width: double.infinity,
+                  height: 56,
+                  color: FlutterFlowTheme.primaryColor,
+                  textStyle: FlutterFlowTheme.subtitle2.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white,
+                  ),
+                  borderSide: BorderSide(
+                    color: Colors.transparent,
+                    width: 1,
+                  ),
+                  borderRadius: 20,
+                ),
+                loading: _loadingButton,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

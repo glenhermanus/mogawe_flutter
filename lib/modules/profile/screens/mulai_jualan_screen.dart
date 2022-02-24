@@ -96,7 +96,6 @@ class _MulaiJualanScreenState extends State<MulaiJualanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       backgroundColor: FlutterFlowTheme.secondaryColor,
       body: blocListener(blocBuilder()),
     );

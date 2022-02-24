@@ -447,7 +447,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> loginfb() async{
     final result = await  FacebookAuth.instance.login(
-        permissions: ["public_profile", "email"]
+        permissions: ["public_profile", "email"],
+      loginBehavior: LoginBehavior.webOnly
     );
     if(result.status == LoginStatus.success){
       final req = await FacebookAuth.instance.getUserData(fields: "email, id, name");

@@ -215,8 +215,20 @@ class _MerchantTabState extends State<MerchantTab> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if(widget.dataMerchant?.shippingExpeditionServices != null){
+      String service = widget.dataMerchant?.shippingExpeditionServices?.replaceAll(':', ',') as String;
+      List<String> result = service.split(',');
+      for(var i = 0; i < result.length; i++){
+        selectShipment.add(result[i]);
+      }
+    }
 
+    print(widget.dataMerchant?.shippingExpeditionServices);
+    print(selectShipment);
     if(widget.dataMerchant?.selfPickupRadius != null){
+      if(widget.dataMerchant?.selfPickupRadius == 1){
+        widget.dataMerchant?.selfPickupRadius = 1000;
+      }
       valueSlideAwal = widget.dataMerchant?.selfPickupRadius as int;
     }
      else{
@@ -926,7 +938,6 @@ class _MerchantTabState extends State<MerchantTab> {
             builder: (BuildContext context, StateSetter stateSetter) {
               return AlertDialog(
                 contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0),
-
                 content: Container(
                   height: MediaQuery.of(context).size.height * 0.7,
                   child: Padding(
@@ -948,7 +959,9 @@ class _MerchantTabState extends State<MerchantTab> {
                                 itemCount: widget.objectShipment?.length,
                                 itemBuilder: (context, snap){
                                   final listValue = widget.objectShipment?[snap];
+                                  print(listValue?.code);
                                   //valuesShipment = selectShipment.contains(listValue?.code);
+
                                   codeShipment = listValue?.code ?? '';
                                   return Container(
                                     width: 300,

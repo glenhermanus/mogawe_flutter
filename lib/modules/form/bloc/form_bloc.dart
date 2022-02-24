@@ -23,7 +23,7 @@ class FormBloc extends Bloc<FormEvent, FormState> {
   int _currentProgress = 0;
   String _submitText = "";
   String uuidSession = "";
-  String idTask = "";
+  String? idTask;
   List<Fact> facts = [];
   List<FormModel> listModel = [];
   List<FactResultRequest> factsResults = [];
@@ -65,6 +65,20 @@ class FormBloc extends Bloc<FormEvent, FormState> {
         yield ShowTrackerActivityForm(data.object);
       } else {
         yield ShowContinuousForm(data.object);
+      }
+    }
+
+    if (event is StartPesona) {
+      yield ShowLoadingForm();
+      var data = await _repo.startPesona(
+          realToken: _userToken,
+          idJob: event.idJob);
+
+      if (data.object.first.questionnaireTemplateName == "Activity Tracker") {
+        _convertSectionsToTrackers(data.object);
+        yield ShowTrackerActivityForm(data.object);
+      } else {
+        yield ShowPesonaForm(data.object);
       }
     }
 
