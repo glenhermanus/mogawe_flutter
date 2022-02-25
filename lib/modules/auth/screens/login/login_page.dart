@@ -490,7 +490,7 @@ class _LoginPageState extends State<LoginPage> {
     final twitterLogin = TwitterLogin(
         apiKey: 'bJdoHHY9aH8V2RoxLuffg0InR',
         apiSecretKey: 'u5HJcyYgD85d7UPYfrnRcZY4kgfbZBJg4I5ZWXW7NRR1xYyaF6',
-        redirectURI: 'twitter.com'
+        redirectURI: 'https://api.twitter.com'
     );
 
     final authResult = await twitterLogin.login(forceLogin: true);
