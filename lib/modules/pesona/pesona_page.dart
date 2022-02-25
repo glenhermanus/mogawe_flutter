@@ -6,8 +6,8 @@ import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
-import 'package:mogawe/modules/pesona/acreditation_page.dart';
-import 'package:mogawe/modules/pesona/detail_pesona_page.dart';
+import 'package:mogawe/modules/pesona/page/acreditation_page.dart';
+import 'package:mogawe/modules/pesona/page/detail_pesona_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PesonaPage extends StatefulWidget {

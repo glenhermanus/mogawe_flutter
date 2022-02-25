@@ -10,7 +10,7 @@ import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/home/bloc/home_bloc.dart';
 import 'package:mogawe/modules/home/bloc/home_event.dart';
 import 'package:mogawe/modules/home/bloc/home_state.dart';
-import 'package:mogawe/modules/pesona/detail_pesona_page.dart';
+import 'package:mogawe/modules/pesona/page/detail_pesona_page.dart';
 import 'package:mogawe/modules/pesona/pesona_page.dart';
 import 'package:mogawe/utils/global/webview.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';

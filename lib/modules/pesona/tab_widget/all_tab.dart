@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mogawe/core/data/response/pesona/certificate_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
-import 'package:mogawe/core/data/response/profile/profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/form/form_loading_screen.dart';
 import 'package:mogawe/modules/pesona/page/detail_pesona_page.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
-import 'package:mogawe/utils/ui/widgets/app_util.dart';
-import 'package:mogawe/core/data/response/pesona/certificate_response.dart';
-import 'package:mogawe/utils/ui/widgets/shimmering_skeleton.dart';
 
 class AllTab extends StatefulWidget {
   final List<Object> object;
@@ -74,7 +70,7 @@ class _AllTabState extends State<AllTab> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FormLoadingScreen(idTask: uuid, currentTimeInMillis: DateTime.now().millisecondsSinceEpoch),
+              builder: (context) => FormLoadingScreen(idTask: uuid, currentTimeInMillis: DateTime.now().millisecondsSinceEpoch, isPersona: true,),
             ),
           );
         }
@@ -92,11 +88,10 @@ class _AllTabState extends State<AllTab> {
 
   gotoForm(id)async{
     var token = await AuthRepository().readSecureData('token');
-    DetailPesonaResponses detailPesonaResponses = await AuthRepository().detailpesonadata(token, id);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailPesonaPage(detailPesonaResponses: detailPesonaResponses,),
+        builder: (context) => DetailPesonaPage(uuidJob: id,),
       ),
     );
   }

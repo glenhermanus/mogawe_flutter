@@ -200,13 +200,9 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => FormLoadingScreen(idTask: widget.gaweanModel.uuid ?? "", currentTimeInMillis: DateTime.now().millisecondsSinceEpoch)
+                                    builder: (context) => FormLoadingScreen(idTask: widget.gaweanModel.uuid ?? "", currentTimeInMillis: DateTime.now().millisecondsSinceEpoch, isPersona: false,)
                                 ),
                               );
-                              /* Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => FormScreen()),
-                              ); */
                             },
                             text: 'Mulai',
                             options: FFButtonOptions(

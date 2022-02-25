@@ -104,7 +104,9 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
         }
         if (state is ShowEWalletList) {
           eWalletDataList?.addAll(state.list);
-          mEWallet = state.list[eWalletSelectedIndex];
+          if(state.list.isNotEmpty){
+            mEWallet = state.list[eWalletSelectedIndex];
+          }
           print("Wallet size is ${state.list.length}");
           return _buildEWalletList(state.list);
         }

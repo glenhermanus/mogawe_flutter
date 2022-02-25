@@ -4,6 +4,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
+import 'package:mogawe/modules/form/form_loading_screen.dart';
 import 'package:mogawe/modules/pesona/bloc/PersonaBloc.dart';
 import 'package:mogawe/modules/pesona/bloc/PersonaEvent.dart';
 import 'package:mogawe/modules/pesona/bloc/PersonaState.dart';
@@ -61,7 +62,6 @@ class _DetailPesonaPageState extends State<DetailPesonaPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.detailPesonaResponses?.uuidobj);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -116,11 +116,10 @@ class _DetailPesonaPageState extends State<DetailPesonaPage> {
             child: Center(
               child: FFButtonWidget(
                 onPressed: (){
-                  print(widget.detailPesonaResponses?.uuidJob);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => FormLoadingScreen(idTask: widget.detailPesonaResponses?.uuidobj, currentTimeInMillis: 0),
+                      builder: (context) => FormLoadingScreen(idTask: widget.uuidJob, currentTimeInMillis: 0, isPersona: true,),
                     ),
                   );
                 },

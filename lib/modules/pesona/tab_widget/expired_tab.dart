@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/expired_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
@@ -70,7 +69,7 @@ class _ExpiredTabState extends State<ExpiredTab> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FormLoadingScreen(idTask: uuid, currentTimeInMillis: DateTime.now().millisecondsSinceEpoch),
+              builder: (context) => FormLoadingScreen(idTask: uuid, currentTimeInMillis: DateTime.now().millisecondsSinceEpoch, isPersona: true,),
             ),
           );
         }
@@ -88,11 +87,12 @@ class _ExpiredTabState extends State<ExpiredTab> {
 
   gotoForm(id)async{
     var token = await AuthRepository().readSecureData('token');
-    DetailPesonaResponses detailPesonaResponses = await AuthRepository().detailpesonadata(token, id);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailPesonaPage(detailPesonaResponses: detailPesonaResponses,),
+        builder: (context) => DetailPesonaPage(
+          uuidJob: id,
+        ),
       ),
     );
   }
