@@ -145,7 +145,7 @@ class Gawean {
     bool isAssigned;
     dynamic jobActions;
     dynamic jobTimes;
-    dynamic endDate;
+    int? endDate;
     dynamic uuidOrder;
     dynamic uuidTaskOrder;
     dynamic uuidTaskOrderJob;
@@ -218,7 +218,7 @@ class Gawean {
         isAssigned: json["isAssigned"] == null ? null : json["isAssigned"],
         jobActions: json["jobActions"],
         jobTimes: json["jobTimes"],
-        endDate: json["endDate"],
+        endDate: json["endDate"] == null ? null : json["endDate"],
         uuidOrder: json["uuidOrder"],
         uuidTaskOrder: json["uuidTaskOrder"],
         uuidTaskOrderJob: json["uuidTaskOrderJob"],
@@ -291,7 +291,7 @@ class Gawean {
         "isAssigned": isAssigned == null ? null : isAssigned,
         "jobActions": jobActions,
         "jobTimes": jobTimes,
-        "endDate": endDate,
+        "endDate": endDate == null ? null : endDate,
         "uuidOrder": uuidOrder,
         "uuidTaskOrder": uuidTaskOrder,
         "uuidTaskOrderJob": uuidTaskOrderJob,

@@ -48,10 +48,11 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   void getToken() async {
+    token = await AuthRepository().readSecureData('token');
+
     setState(() {
       loading = true;
     });
-    token = await AuthRepository().readSecureData('token');
 
     var res = await AuthRepository().getProfile(token);
     var listNominal =
@@ -103,7 +104,9 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
         }
         if (state is ShowEWalletList) {
           eWalletDataList?.addAll(state.list);
-          mEWallet = state.list[eWalletSelectedIndex];
+          if(state.list.isNotEmpty){
+            mEWallet = state.list[eWalletSelectedIndex];
+          }
           print("Wallet size is ${state.list.length}");
           return _buildEWalletList(state.list);
         }
@@ -361,7 +364,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
                     onPressed: () async {
                       setState(() => _loadingButton2 = true);
                       print(mEWallet.accountOwner);
-                      _handleSendOTPCode(mEWallet.uuid);
+                      await _handleSendOTPCode(mEWallet.uuid);
                       setState(() => _loadingButton2 = false);
                     },
                     text: 'Transfer',
@@ -496,9 +499,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
   }
 
   Future<void> _handleSendOTPCode(String eWalletUuid) async {
-    var token =
-        "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJNTy04Rk1HOFAiLCJpYXQiOjE2MzkzODc0ODIsInN1YiI6Im1vZ2F3ZXJzIiwiaXNzIjoibW9nYXdlIn0.8_QeC-6Ui3RGG1CvM66rjuSZgidzcHVB2uSCDy4ZnfQ";
-    var response = await _walletRepository.sendOtpCode(token);
+   var response = await _walletRepository.sendOtpCode(token);
     if (response.returnValue == "000") {
       print("Kode otp berhasil dikirim");
       try {
@@ -511,6 +512,7 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
                   eWalletNominalList![nominalSelectedIndex].pulsaNominal),
               eWalletVoucherCode:
                   eWalletNominalList![nominalSelectedIndex].pulsaCode,
+              token: token,
             ),
           ),
         );

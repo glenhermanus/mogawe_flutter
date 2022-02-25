@@ -1,12 +1,14 @@
 import 'package:mogawe/constant/api_path.dart';
 import 'package:mogawe/core/data/response/pesona/certificate_response.dart';
 import 'package:mogawe/core/data/response/pesona/count_status.dart';
+import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/expired_response.dart';
 import 'package:mogawe/core/data/response/pesona/pending_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response.dart';
 import 'package:mogawe/core/data/response/pesona/pesona_response_object.dart';
 import 'package:mogawe/core/data/response/pesona/verified_response.dart';
 import 'package:mogawe/core/data/sources/network/network_service.dart';
+import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 
 class PesonaRepository extends NetworkService {
   PesonaRepository();
@@ -15,6 +17,17 @@ class PesonaRepository extends NetworkService {
   PesonaRepository._privateConstructor();
   static final PesonaRepository _instance = PesonaRepository._privateConstructor();
   static PesonaRepository get instance => _instance;
+
+  final UserNetworkService _apiService = UserNetworkService();
+
+  Future<DetailPesonaResponses> getDetailPersona(String realToken, String uuidJob) async {
+    var header = {token: realToken};
+    var map = await getMethod(
+      "${BASE_URL}api/fieldtask/job/get/$uuidJob",
+      header,
+    );
+    return DetailPesonaResponses.fromJson(map);
+  }
 
   Future<List<PesonaResponsesObject>> getCertification(
       {required String realToken}) async {
@@ -79,7 +92,6 @@ class PesonaRepository extends NetworkService {
         "${BASE_URL}api/fieldmogawers/certificate/get?status=expired", header);
     print('ini yaaaaaaa ${map[0]}');
     return ExpiredStatus.fromJson(map).object;
-
   }
 
 }

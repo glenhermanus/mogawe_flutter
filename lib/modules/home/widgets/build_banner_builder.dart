@@ -1,16 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/home/ads_model.dart';
+import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/home/bloc/home_bloc.dart';
 import 'package:mogawe/modules/home/bloc/home_event.dart';
 import 'package:mogawe/modules/home/bloc/home_state.dart';
-import 'package:mogawe/modules/pesona/page/pesona_page.dart';
-import 'package:mogawe/modules/pesona/screen/pesona_screen.dart';
+import 'package:mogawe/modules/pesona/page/detail_pesona_page.dart';
+import 'package:mogawe/modules/pesona/pesona_page.dart';
 import 'package:mogawe/utils/global/webview.dart';
-import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:mogawe/utils/ui/widgets/MogaweImageHandler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,12 +26,18 @@ class BuildBannerBuilder extends StatefulWidget {
 class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
   late HomeBloc bloc;
   var logger = Logger(printer: PrettyPrinter());
+  var token;
 
   @override
   void initState() {
     super.initState();
     bloc = HomeBloc();
     bloc.add(GetAdsBanner());
+    getToken();
+  }
+
+  void getToken() async {
+    token = await AuthRepository().readSecureData('token');
   }
 
   @override
@@ -134,11 +142,15 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
     }
   }
 
-  void _handleOpenActivity(String value, String param){
+  void _handleOpenActivity(String value, String param) {
     List<String> splitValue = value.split(".");
     String activityName = splitValue.last;
 
-    switch (activityName){
+    final body = json.decode(param);
+    String uuidParam = body['uuidCertificate'];
+    print("Uuid Param is $uuidParam");
+
+    switch (activityName) {
       case "HireMeActivity":
         Navigator.push(
           context,
@@ -151,12 +163,19 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PesonaScreenScreen(),
+            builder: (context) => PesonaPage(),
           ),
         );
         break;
       case "CertificateInfoActivity":
-
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPesonaPage(
+              uuidJob: uuidParam,
+            ),
+          ),
+        );
         break;
     }
   }

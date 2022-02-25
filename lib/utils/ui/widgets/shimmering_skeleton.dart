@@ -29,6 +29,28 @@ class Skeleton extends StatelessWidget {
   }
 }
 
+class SkeletonNoRadius extends StatelessWidget {
+  const SkeletonNoRadius({Key? key, this.height, this.width}) : super(key: key);
+
+  final double? height, width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Color(0xffcbcbcb),
+      highlightColor: Color(0xffededed),
+      enabled: true,
+      child: Container(
+        height: height,
+        width: width,
+        padding: const EdgeInsets.all(defaultPadding / 2),
+        decoration: BoxDecoration(
+            color: grayColor),
+      ),
+    );
+  }
+}
+
 class CircleSkeleton extends StatelessWidget {
   const CircleSkeleton({Key? key, this.size = 24}) : super(key: key);
 

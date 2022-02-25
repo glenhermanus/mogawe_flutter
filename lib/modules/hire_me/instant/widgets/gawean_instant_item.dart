@@ -90,7 +90,7 @@ class _GaweanInstantItemState extends State<GaweanInstantItem> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => HireMeInstantDetailPage(
-                      taskInstant: _mockGawean(), timerSeconds: 5,
+                      taskInstant: _mockGawean(), timerSeconds: 59,
                     ),
                   ),
                 );

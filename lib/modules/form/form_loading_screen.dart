@@ -18,9 +18,10 @@ import 'widget/activity_tracker_item.dart';
 class FormLoadingScreen extends StatefulWidget {
   final String? idTask;
   final int currentTimeInMillis;
+  final bool isPersona;
 
   const FormLoadingScreen(
-      {Key? key, required this.idTask, required this.currentTimeInMillis})
+      {Key? key, required this.idTask, required this.currentTimeInMillis, required this.isPersona})
       : super(key: key);
 
   @override
@@ -39,8 +40,13 @@ class _FormLoadingScreenState extends State<FormLoadingScreen> {
   void initState() {
     super.initState();
     bloc = FormBloc();
-    bloc.add(StartForm(widget.idTask, widget.currentTimeInMillis));
-    bloc.add(StartPesona(widget.idTask));
+    if (widget.isPersona){
+      bloc.add(StartPesona(widget.idTask));
+
+    }else {
+      bloc.add(StartForm(widget.idTask, widget.currentTimeInMillis));
+
+    }
   }
 
   @override

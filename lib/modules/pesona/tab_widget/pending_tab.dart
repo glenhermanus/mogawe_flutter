@@ -71,7 +71,7 @@ class _PendingTabState extends State<PendingTab> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FormLoadingScreen(idTask: uuid, currentTimeInMillis: DateTime.now().millisecondsSinceEpoch),
+              builder: (context) => FormLoadingScreen(idTask: uuid, currentTimeInMillis: DateTime.now().millisecondsSinceEpoch, isPersona: true,),
             ),
           );
         }
@@ -89,11 +89,10 @@ class _PendingTabState extends State<PendingTab> {
 
   gotoForm(id)async{
     var token = await AuthRepository().readSecureData('token');
-    DetailPesonaResponses detailPesonaResponses = await AuthRepository().detailpesonadata(token, id);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailPesonaPage(detailPesonaResponses: detailPesonaResponses,),
+        builder: (context) => DetailPesonaPage(uuidJob: id,),
       ),
     );
   }

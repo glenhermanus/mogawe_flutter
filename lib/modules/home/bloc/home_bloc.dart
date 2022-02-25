@@ -4,16 +4,19 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/gawean_repository.dart';
 import 'package:mogawe/core/repositories/home_repository.dart';
 import 'package:mogawe/core/repositories/pesona_repository.dart';
+import 'package:mogawe/core/repositories/profile_repository.dart';
 import 'package:mogawe/modules/home/bloc/home_event.dart';
 import 'package:mogawe/modules/home/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   late HomeRepository _repo;
+  late ProfileRepository _profileRepository;
 
   late var _userToken;
 
   HomeBloc() : super(InitHomeState()) {
     _repo = HomeRepository.instance;
+    _profileRepository = ProfileRepository.instance;
   }
 
   @override
@@ -38,6 +41,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       } catch(ex) {
         yield ShowErrorCertificateState("$ex");
       }
+    }
+
+    if(event is DoUpdateTargetRevenueEvent) {
+      var body = {
+        'targetRevenue': event.revenue
+      };
+      var msg = await _profileRepository.updateTargetRevenue(body,realToken: _userToken);
     }
 
   }

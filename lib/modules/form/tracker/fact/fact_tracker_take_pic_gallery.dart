@@ -27,6 +27,7 @@ class _FactTrackerTakeGalleryPicState extends State<FactTrackerTakeGalleryPic> {
   late File photo;
   String path = "";
   List<Map<String, File>> files = [];
+  bool _isAlreadyNotify = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,10 @@ class _FactTrackerTakeGalleryPicState extends State<FactTrackerTakeGalleryPic> {
   }
 
   Widget _buildImageFromFile(File file){
-    return Image.file(file);
+    return SizedBox(
+        width: 200,
+        height: 200,
+        child: Image.file(file));
   }
 
   Widget _buildDottedPlaceHolder(){
@@ -98,7 +102,9 @@ class _FactTrackerTakeGalleryPicState extends State<FactTrackerTakeGalleryPic> {
         widget.fact.input = files.length.toString();
 
         widget.sendChangedFact(widget.fact);
+        _isAlreadyNotify = true;
       });
+
       widget.incrementCounterCallback();
     }
   }
