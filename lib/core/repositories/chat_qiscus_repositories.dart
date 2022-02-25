@@ -178,6 +178,31 @@ class ChatQiscusRepo {
     }
   }
 
+  Future createUserorLogin(email, password, nama, foto) async {
+    var body = {
+      "user_id": email,
+      "password": password,
+      "username": nama,
+      "avatar_url": foto
+    };
+    final response = await http.post(Uri.parse(
+        "$url/login_or_register"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
+          'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
+        },
+        body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+
+      print('berhasil');
+    } else {
+
+      throw Exception('Terjadi kegagalan');
+    }
+  }
+
   Future<ParticipantsModel> getParticipants(roomid) async {
 
     final response = await http.get(Uri.parse(

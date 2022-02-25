@@ -21,7 +21,7 @@ class Results {
 
   Results.fromJson(Map<String, dynamic> json) :
     meta= Meta.fromJson(json["meta"]),
-    rooms=List<Room>.from(json["rooms"].map((x) => Room.fromJson(x)));
+    rooms= json["rooms"] == null ? [] : List<Room>.from(json["rooms"].map((x) => Room.fromJson(x)));
 
   Map<String, dynamic> toJson() => {
     "meta": meta.toJson(),

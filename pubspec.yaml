@@ -84,6 +84,7 @@ dependencies:
   rxdart:
   lottie: ^1.2.1
   sqflite:
+  delayed_display: ^2.0.0
 
 dev_dependencies:
   flutter_test:

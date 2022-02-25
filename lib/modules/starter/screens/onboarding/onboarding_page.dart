@@ -68,7 +68,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  'Tunjukkan keahlianmu dan dapatkan hire_me dengan mudah',
+                                  'Tunjukkan keahlianmu dan dapatkan gawean dengan mudah',
                                   style: FlutterFlowTheme.title1.override(
                                     fontFamily: 'Poppins',
                                     color: FlutterFlowTheme.secondaryColor,
