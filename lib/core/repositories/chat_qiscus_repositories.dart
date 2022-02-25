@@ -21,7 +21,7 @@ class ChatQiscusRepo {
   Future<UploadFotoQiscus> uploadFileChat(Map<String, File?>? body, String? realToken, type) async {
     print(realToken);
     var header = { 'token': realToken! }; //Use realToken when implement get from original token
-    var map = await uploadFile("$BASE_URL/api/project/v2/iconUrl/upload/mogawers", type,
+    var map = await uploadFile("$BASE_URL/api/chatroom/upload/multipart", type,
         files: body, header: header);
     return UploadFotoQiscus.fromJson(map);
   }
@@ -322,7 +322,7 @@ class ChatQiscusRepo {
     }
   }
 
-  Future<ChatRoomList> getRoomList(user_id) async {
+  Future<ChatRoomList?> getRoomList(user_id) async {
 
     final requestUrl = '$url/get_user_rooms?user_id=$user_id';
     final response = await http.get(Uri.parse(requestUrl),
@@ -332,13 +332,17 @@ class ChatQiscusRepo {
         'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
       },
     );
-    final maps = json.decode(response.body);
-    if (maps.isNotEmpty) {
-      return ChatRoomList.fromJson(maps);
+    if(response.statusCode == 200){
+      final maps = json.decode(response.body);
+      if (maps.isNotEmpty) {
+        return ChatRoomList.fromJson(maps);
+      }
+      else {
+        throw Exception('not found');
+      }
     }
-    else {
-      throw Exception('not found');
-    }
+
+    return null;
   }
 
   Future<ChatRoomMessage> getMessageList(room_id) async {

@@ -15,6 +15,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/chat_page.dart';
+import 'package:mogawe/modules/inbox_notif/notification/widgets/build_loading_chat.dart';
 
 class InboxPage extends StatefulWidget {
   UserProfileResponse? userProfileResponse;
@@ -54,20 +55,24 @@ class _InboxPageState extends State<InboxPage> {
     print(token);
 
     chatRoomList = await ChatQiscusRepo().getRoomList(widget.userProfileResponse?.email);
-    for(var i = 0; i < chatRoomList!.results.rooms.length; i++){
-      room = chatRoomList?.results.rooms[i].roomId;
-      print(room);
-      unreadCount = await ChatQiscusRepo().getUnread(widget.userProfileResponse?.email, room);
-      chatRoomMessage = await ChatQiscusRepo().getMessageList(room);
+
+    if(chatRoomList?.status == 200){
+      for(var i = 0; i < chatRoomList!.results.rooms.length; i++){
+        room = chatRoomList?.results.rooms[i].roomId;
+        print(room);
+        unreadCount = await ChatQiscusRepo().getUnread(widget.userProfileResponse?.email, room);
+        chatRoomMessage = await ChatQiscusRepo().getMessageList(room);
 
 
-      //print(chatRoomMessage?.results.comments.length);
-      var pesanbaru = {
-        'pesan' : chatRoomMessage,
-        'unread' : unreadCount
-      };
-      pesan.add(pesanbaru);
+        //print(chatRoomMessage?.results.comments.length);
+        var pesanbaru = {
+          'pesan' : chatRoomMessage,
+          'unread' : unreadCount
+        };
+        pesan.add(pesanbaru);
+      }
     }
+
 
     setState(() {
       loading = false;
@@ -465,12 +470,7 @@ class _InboxPageState extends State<InboxPage> {
           },
           child: Stack(
             children: [
-              loading ? Align(
-                alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: CircularProgressIndicator(),
-                  )) : ListView(
+              loading ? buildLoadingChat()  : ListView(
                 children: [
                   // ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
                   // :
@@ -545,15 +545,18 @@ class _ListInboxState extends State<ListInbox> {
     setState(() {
       loading = true;
     });
-    for(var i = 0; i < widget.chatRoomList!.results.rooms.length; i++){
-     var room = widget.chatRoomList?.results.rooms[i].roomId;
-      print(room);
-      unreadCount = await ChatQiscusRepo().getUnread(widget.userProfileResponse?.email, room);
-      chatRoomMessage = await ChatQiscusRepo().getMessageList(room);
-      isichat.add(chatRoomMessage);
-      isiCount.add(unreadCount);
-      //print(chatRoomMessage?.results.comments.length);
+    if(widget.chatRoomList != null){
+      for(var i = 0; i < widget.chatRoomList!.results.rooms.length; i++){
+        var room = widget.chatRoomList?.results.rooms[i].roomId;
+        print(room);
+        unreadCount = await ChatQiscusRepo().getUnread(widget.userProfileResponse?.email, room);
+        chatRoomMessage = await ChatQiscusRepo().getMessageList(room);
+        isichat.add(chatRoomMessage);
+        isiCount.add(unreadCount);
+        //print(chatRoomMessage?.results.comments.length);
+      }
     }
+
 
     setState(() {
       loading = false;
@@ -599,8 +602,7 @@ class _ListInboxState extends State<ListInbox> {
 
   @override
   Widget build(BuildContext context) {
-    return loading? Align(alignment: Alignment.topCenter,
-    child: CircularProgressIndicator( color: Colors.red,),) :  Padding(
+    return loading? buildLoadingChat() : widget.chatRoomList != null ?  Padding(
       padding: const EdgeInsets.only(bottom: 35),
       child: ListView.builder(
         shrinkWrap: true,
@@ -788,6 +790,6 @@ class _ListInboxState extends State<ListInbox> {
           );
         },
       ),
-    );
+    ) : Container();
   }
 }

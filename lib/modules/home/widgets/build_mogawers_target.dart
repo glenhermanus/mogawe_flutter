@@ -14,6 +14,7 @@ import 'package:mogawe/modules/hire_me/hire_me_page.dart';
 import 'package:mogawe/modules/home/bloc/home_bloc.dart';
 import 'package:mogawe/modules/home/bloc/home_event.dart';
 import 'package:mogawe/modules/pesona/pesona_page.dart';
+import 'package:mogawe/modules/pesona/screen/pesona_screen.dart';
 import 'package:mogawe/utils/services/currency_formatter.dart';
 import 'package:mogawe/utils/ui/animation/bounce_tap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -206,7 +207,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
         Navigator.push(
           widget.context,
           MaterialPageRoute(
-            builder: (context) => PesonaPage(),
+            builder: (context) => PesonaScreenScreen(),
           ),
         );
       },
@@ -219,7 +220,7 @@ class _BuildMogawersTargetState extends State<BuildMogawersTarget> {
         Navigator.push(
           widget.context,
           MaterialPageRoute(
-            builder: (context) => PesonaPage(),
+            builder: (context) => PesonaScreenScreen(),
           ),
         );
       },
