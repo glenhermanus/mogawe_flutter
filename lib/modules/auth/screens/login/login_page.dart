@@ -490,15 +490,19 @@ class _LoginPageState extends State<LoginPage> {
     final twitterLogin = TwitterLogin(
         apiKey: 'bJdoHHY9aH8V2RoxLuffg0InR',
         apiSecretKey: 'u5HJcyYgD85d7UPYfrnRcZY4kgfbZBJg4I5ZWXW7NRR1xYyaF6',
-        redirectURI: 'twittersdk://'
+        redirectURI: 'twitter.com'
     );
 
     final authResult = await twitterLogin.login(forceLogin: true);
-    logger.d(authResult.status);
+
+
     switch (authResult.status) {
       case TwitterLoginStatus.loggedIn:
       // success
         print('====== Login success ======');
+        AuthCredential credential = TwitterAuthProvider.credential(accessToken: authResult.authToken??'', secret: authResult.authTokenSecret??'');
+        print(credential);
+        logger.d(credential);
         break;
       case TwitterLoginStatus.cancelledByUser:
       // cancel

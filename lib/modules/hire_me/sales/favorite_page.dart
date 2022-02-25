@@ -1,8 +1,15 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_object.dart';
 import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/hire_me/sales/bloc/sales_bloc.dart';
+import 'package:mogawe/modules/hire_me/sales/bloc/sales_event.dart';
+import 'package:mogawe/modules/hire_me/sales/bloc/sales_state.dart';
+import 'package:mogawe/modules/hire_me/sales/widgets/build_loading_sales.dart';
+import 'package:mogawe/modules/hire_me/sales/widgets/build_loading_sales_page.dart';
 
 class FavoriteHireMeSalesPage extends StatefulWidget {
   FavoriteHireMeSalesPage({Key? key}) : super(key: key);
@@ -18,6 +25,8 @@ class _FavoriteHireMeSalesPageState extends State<FavoriteHireMeSalesPage> {
   bool loading =false;
   var token;
   FavHireMeSalesResponses? favHireMeSalesResponses;
+  late SalesBloc bloc;
+  List<FavHireMeSalesResponsesObject> listObject =[];
 
 
   Future getdata() async{
@@ -38,7 +47,56 @@ class _FavoriteHireMeSalesPageState extends State<FavoriteHireMeSalesPage> {
   void initState() {
     super.initState();
     textController = TextEditingController();
+    bloc = SalesBloc();
+    bloc.add(GetSalesFavorite());
     getdata();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    bloc = SalesBloc();
+    bloc.add(GetSalesFavorite());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    bloc.close();
+  }
+
+
+  Widget blocListener(Widget child) {
+    return BlocListener(
+      bloc: bloc,
+      listener: (ctx, state) => print("State : $state"),
+      child: child,
+    );
+  }
+
+  Widget blocBuilder() {
+    return BlocBuilder(
+      bloc: bloc,
+      builder: (ctx, state) {
+
+        if (state is ShowLoadingFavoriteState) {
+          print("State : ${state}");
+          return buildLoadingSales();
+        }
+        if (state is ShowEmptyListFavoriteState) {
+          return Center(child: Text('Anda belum memilih produk favorite'));
+        }
+        if (state is ShowListFavoriteState) {
+          listObject = state.data;
+          return _buildFavPage(listObject);
+        }
+        if (state is ShowErrorFavoriteState) {
+          print("error list certif ${state.message}" );
+          return Container();
+        }
+        return Container();
+      },
+    );
   }
 
   @override
@@ -60,157 +118,159 @@ class _FavoriteHireMeSalesPageState extends State<FavoriteHireMeSalesPage> {
         elevation: 0,
       ),
       backgroundColor: FlutterFlowTheme.secondaryColor,
-      body: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            loading ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                  alignment: Alignment.topCenter,
-                  child: CircularProgressIndicator()),
-            ) : favHireMeSalesResponses?.object.length != 0 ? Expanded(
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                child: GridView.builder(
-                    itemCount: favHireMeSalesResponses?.object.length,
-                    padding: EdgeInsets.zero,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 0.55,
-                    ),
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (context, snap){
-                      final lista = favHireMeSalesResponses?.object[snap];
+      body:  blocListener(blocBuilder()),
+    );
+  }
 
-                      return Card(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        color: Color(0xFFF5F5F5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
-                              alignment: AlignmentDirectional(1, -1),
+  Widget _buildFavPage(List<FavHireMeSalesResponsesObject> object) {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+            Expanded(
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+              child: GridView.builder(
+                  itemCount: object.length,
+                  padding: EdgeInsets.zero,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.55,
+                  ),
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (context, snap){
+                    final lista = object[snap];
+
+                    return Card(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      color: Color(0xFFF5F5F5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Stack(
+                            alignment: AlignmentDirectional(1, -1),
+                            children: [
+                              Image.network(
+                                '${lista.imageUrl}',
+                                width: double.infinity,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
+                              Padding(
+                                padding:
+                                EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
+                                child: InkWell(
+                                  onTap: ()async{
+
+                                    if(lista.isFavorite != true){
+                                      var res = await AuthRepository().postfavhiremeSalesdata(lista.isFavorite, token, lista.uuidobj);
+                                      setState(() {
+                                        lista.isFavorite = true;
+                                      });
+                                    }else{
+                                      var del = await AuthRepository().deletefavhiremeSalesdata(lista.isFavorite, token, lista.uuidobj);
+                                      setState(() {
+
+                                        lista.isFavorite = false;
+                                        bloc.add(GetSalesFavoriteUpdate());
+                                      });
+                                    }
+
+                                  },
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.secondaryColor,
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                    child: lista.isFavorite != true ? Icon(
+                                      Icons.favorite,
+                                      color: Color(0xFF737373),
+                                      size: 24,
+                                    ) : Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Image.network(
-                                  '${lista?.imageUrl}',
-                                  width: double.infinity,
-                                  height: 120,
-                                  fit: BoxFit.cover,
+                                Text(
+                                  '${lista?.name}',
+                                  style: FlutterFlowTheme.bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 Padding(
-                                  padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
-                                  child: InkWell(
-                                    onTap: ()async{
-
-                                      if(lista?.isFavorite != true){
-                                        var res = await AuthRepository().postfavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
-                                        setState(() {
-                                          lista?.isFavorite = true;
-                                        });
-                                      }else{
-                                        var del = await AuthRepository().deletefavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
-                                        setState(() {
-                                          lista?.isFavorite = false;
-                                        });
-                                      }
-
-                                    },
-                                    child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.secondaryColor,
-                                        borderRadius: BorderRadius.circular(24),
-                                      ),
-                                      child: lista?.isFavorite != true ? Icon(
-                                        Icons.favorite,
-                                        color: Color(0xFF737373),
-                                        size: 24,
-                                      ) : Icon(
-                                        Icons.favorite,
-                                        color: Colors.red,
-                                        size: 24,
-                                      ),
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 8, 0, 0),
+                                  child: Text(
+                                    'Harga Produk',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.normal,
                                     ),
                                   ),
-                                )
+                                ),
+                                Text(
+                                  'Rp${lista!.price?.toString().replaceAll('.', '')}',
+                                  style: FlutterFlowTheme.bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 8, 0, 0),
+                                  child: Text(
+                                    'Komisi',
+                                    style: FlutterFlowTheme.bodyText1.override(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  'Rp${lista.commission?.toString().replaceAll('.', '')}',
+                                  style: FlutterFlowTheme.bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                    color: FlutterFlowTheme.moGaweGreen,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+
                               ],
                             ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${lista?.name}',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 8, 0, 0),
-                                    child: Text(
-                                      'Harga Produk',
-                                      style: FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    'Rp${lista!.price?.toString().replaceAll('.', '')}',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 8, 0, 0),
-                                    child: Text(
-                                      'Komisi',
-                                      style: FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    'Rp${lista.commission?.toString().replaceAll('.', '')}',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      color: FlutterFlowTheme.moGaweGreen,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    }),
-              ),
-            ) : Center(child: Text('Anda belum memilih produk favorite')),
-          ],
-        ),
+                          )
+                        ],
+                      ),
+                    );
+                  }),
+            ),
+          ),
+        ],
       ),
     );
   }
+
 }

@@ -33,6 +33,7 @@
                <category android:name="android.intent.category.BROWSABLE" />
 
                <data android:scheme="@string/fb_login_protocol_scheme" />
+               <data android:scheme="twitter-firebase-auth"/>
            </intent-filter>
        </activity>
         <activity
