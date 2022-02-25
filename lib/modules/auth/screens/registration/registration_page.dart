@@ -123,6 +123,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       TextFormField(
                         controller: textController2,
                         obscureText: false,
+                        keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Email wajib diisi";

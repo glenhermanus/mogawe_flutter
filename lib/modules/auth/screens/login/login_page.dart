@@ -80,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                       TextFormField(
                         controller: _emailInputController,
                         obscureText: false,
+                        keyboardType: TextInputType.emailAddress,
                         validator: (value) => value == null || value.isEmpty
                             ? "Masukkan email mu"
                             : null,
