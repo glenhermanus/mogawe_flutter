@@ -39,16 +39,43 @@ class _HireMeInstantPageState extends State<HireMeInstantPage> {
         elevation: 0,
       ),
       backgroundColor: FlutterFlowTheme.secondaryColor,
-      body: SafeArea(
-        child: PageView.builder(
-          scrollDirection: Axis.vertical,
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            return GaweanInstantItem(project: list[index]);
-          },
+      body: WillPopScope(
+        onWillPop: _onWillPop,
+        child: SafeArea(
+          child: PageView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              return GaweanInstantItem(project: list[index]);
+            },
+          ),
         ),
       ),
     );
+  }
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Keluar Dari Gawean'),
+        content: new Text(
+            'Yakin untuk keluar dari gawean?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Tidak'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: new Text('Iya'),
+          ),
+        ],
+      ),
+    )) ??
+        false;
   }
 
   List<Project> _mockProjects() {

@@ -51,6 +51,7 @@ class _GaweanDetailScreenState extends State<GaweanDetailScreen> {
     return _buildContent();
   }
 
+
   Widget _buildContent() {
     return SingleChildScrollView(
       child: Column(
