@@ -11,6 +11,7 @@ import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/hire_me/sales/widgets/build_loading_detail_page.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_address_page.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/servis%20ekspedisi.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/shipment_detail.dart';
@@ -133,7 +134,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
       ),
       backgroundColor: Color(0xFFF5F5F5),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: loading? buildLoadingDetailSales() : SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -162,9 +163,18 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                     child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Column(
+                          loading ? Shimmer.fromColors(
+                            baseColor: Color(0xffD8D8D8),
+                            highlightColor: Color(0xffEDEDED),
+                            enabled: true,
+                            child: Container(
+                              color: Colors.white,
+                              width: MediaQuery.of(context).size.width,
+                              height: 50,),
+                          ) :    Column(
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -290,7 +300,15 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                               mainAxisSize: MainAxisSize.max,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                loading ? Shimmer.fromColors(
+                                  baseColor: Color(0xffD8D8D8),
+                                  highlightColor: Color(0xffEDEDED),
+                                  enabled: true,
+                                  child: Container(
+                                    color: Colors.white,
+                                    width: 100,
+                                    height: 10,),
+                                ) : Text(
                                   'Alamat tujuan',
                                   style: FlutterFlowTheme.bodyText1.override(
                                     fontFamily: 'Poppins',
@@ -356,7 +374,15 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                               mainAxisSize: MainAxisSize.max,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                loading ? Shimmer.fromColors(
+                                  baseColor: Color(0xffD8D8D8),
+                                  highlightColor: Color(0xffEDEDED),
+                                  enabled: true,
+                                  child: Container(
+                                    color: Colors.white,
+                                    width: 100,
+                                    height: 10,),
+                                ) : Text(
                                   'Pesanan',
                                   style: FlutterFlowTheme.bodyText1.override(
                                     fontFamily: 'Poppins',
@@ -532,7 +558,7 @@ class _SalesShipmentPageState extends State<SalesShipmentPage> {
                       ),
                     ),
                   ),
-                  Padding(
+                     Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                     child: Container(
                       width: double.infinity,

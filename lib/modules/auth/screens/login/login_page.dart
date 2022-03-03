@@ -455,6 +455,7 @@ class _LoginPageState extends State<LoginPage> {
       final req = await FacebookAuth.instance.getUserData(fields: "email, id, name");
 
       fbcoba = req;
+      print('adu $fbcoba');
       var responses = await AuthRepository().LoginFacebook(fbcoba!['name'], fbcoba!['email'], fbcoba!['id']);
       if (responses.returnValue == "000") {
         logger.d("Success Login");
@@ -490,15 +491,18 @@ class _LoginPageState extends State<LoginPage> {
     final twitterLogin = TwitterLogin(
         apiKey: 'bJdoHHY9aH8V2RoxLuffg0InR',
         apiSecretKey: 'u5HJcyYgD85d7UPYfrnRcZY4kgfbZBJg4I5ZWXW7NRR1xYyaF6',
-        redirectURI: 'twittersdk://'
+        redirectURI: 'twittersdk://mogawe'
     );
 
-    final authResult = await twitterLogin.login(forceLogin: true);
-    logger.d(authResult.status);
+    final authResult = await twitterLogin.login();
+
+
     switch (authResult.status) {
       case TwitterLoginStatus.loggedIn:
       // success
         print('====== Login success ======');
+        print(authResult.user);
+        logger.d(authResult.user);
         break;
       case TwitterLoginStatus.cancelledByUser:
       // cancel

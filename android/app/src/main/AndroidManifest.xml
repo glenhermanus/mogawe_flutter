@@ -33,6 +33,8 @@
                <category android:name="android.intent.category.BROWSABLE" />
 
                <data android:scheme="@string/fb_login_protocol_scheme" />
+               <data android:scheme="MoGawe://"/>
+               <data android:host="com.mogawe.survei://"/>
            </intent-filter>
        </activity>
         <activity

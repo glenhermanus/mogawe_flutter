@@ -49,7 +49,7 @@ class UserNetworkService {
     return UserLoginResponse.fromJson(json.decode(response.body));
   }
 
-  Future<UserLoginResponse> loginUserFacebook(String email, String id, String nama) async {
+  Future<UserLoginResponse> loginUserFacebook(String nama, String email, String id) async {
     final response = await http.post(
       Uri.parse("$BASE_URL/api/mogawers/logInSocMed"),
       headers: <String, String>{

@@ -55,6 +55,16 @@ class _ChatPageState extends State<ChatPage> {
   ParticipantsModel? participantsModel;
   List email_user =[];
   ModelGetUuid? modelGetUuid;
+  final FileType pickingType = FileType.any;
+  var type;
+  bool view = false;
+  final FirebaseMessaging message = FirebaseMessaging.instance;
+  var initsetting;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  BehaviorSubject<ReceiveNotification> get didReceiveLocalNotificationSubject =>
+      BehaviorSubject<ReceiveNotification>();
+  List uuidValue = [];
+
   void chooseImage() {
     showDialog(
         context: context,
@@ -99,15 +109,7 @@ class _ChatPageState extends State<ChatPage> {
         )
     );
   }
-  final FileType pickingType = FileType.any;
-  var type;
-  bool view = false;
-  final FirebaseMessaging message = FirebaseMessaging.instance;
-  var initsetting;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  BehaviorSubject<ReceiveNotification> get didReceiveLocalNotificationSubject =>
-      BehaviorSubject<ReceiveNotification>();
-  List uuidValue = [];
+
 
   Future getImageGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
