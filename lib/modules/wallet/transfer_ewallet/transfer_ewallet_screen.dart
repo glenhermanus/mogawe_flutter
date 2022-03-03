@@ -526,7 +526,10 @@ class _TransferEWalletScreenState extends State<TransferEWalletScreen> {
 
   String splitNominalString(String nominal) {
     var parts = nominal.split(" ");
-    var prefix = parts[2].trim();
+    var prefix = "";
+    if(parts.isNotEmpty){
+      prefix = parts[2].trim();
+    }
     return prefix;
   }
 }

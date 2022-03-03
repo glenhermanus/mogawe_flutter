@@ -1,4 +1,5 @@
 import 'package:mogawe/constant/api_path.dart';
+import 'package:mogawe/core/data/response/GenericResponse.dart';
 import 'package:mogawe/core/data/response/gawean/get_task_response.dart';
 import 'package:mogawe/core/data/response/gawean/update_reminder_gawean_response.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_model.dart';
@@ -42,6 +43,17 @@ class GaweanRepository extends NetworkService {
         header
     );
     return GetTaskResponse.fromJson(map).object;
+  }
+
+  Future<GenericResponse> cancelGawean({
+    required String realToken,
+    required String idTask}) async {
+    var header = {token: realToken};
+    var map = await getMethod(
+      "${BASE_URL}api/fieldtask/cancel/$idTask",
+      header,
+    );
+    return GenericResponse.fromJson(map);
   }
 
   Future<UpdateReminderGaweanResponse> updateGaweanReminder(

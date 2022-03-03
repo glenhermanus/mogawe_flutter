@@ -383,7 +383,7 @@ class _PesonaPageState extends State<PesonaPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailPesonaPage(uuidJob: pesona.uuidJob ?? "",),
+                  builder: (context) => DetailPesonaPage(uuidJob: pesona.uuidJob ?? "", isFromBanner: false,),
                 ),
               );
             },

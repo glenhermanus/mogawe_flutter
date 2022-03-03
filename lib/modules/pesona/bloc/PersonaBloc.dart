@@ -21,8 +21,14 @@ class PersonaBloc extends Bloc<PersonaEvent, PersonaState> {
 
     if (event is GetPersonaDetail) {
       yield ShowLoadingPersona();
-      var data = await _repo.getDetailPersona(_userToken, event.uuidJob);
-      yield ShowPersonaDetail(data);
+      if (event.isFromBanner){
+        var dataCertificate = await _repo.getDetailCertificate(_userToken, event.uuidJob);
+        var data = await _repo.getDetailPersona(_userToken, dataCertificate.uuidJob ?? "");
+        yield ShowPersonaDetail(data);
+      } else {
+        var data = await _repo.getDetailPersona(_userToken, event.uuidJob);
+        yield ShowPersonaDetail(data);
+      }
     }
   }
 }

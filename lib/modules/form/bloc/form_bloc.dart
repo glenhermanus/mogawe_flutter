@@ -120,15 +120,16 @@ class FormBloc extends Bloc<FormEvent, FormState> {
     //submit Form
     if (event is SubmitResult) {
       yield(ShowDialogLoadingSubmitFacts());
-
       _submitText = "Mengirim form kamu...";
       _inTextController.add(_submitText);
       FormSubmitResponse response = await _requestSubmit();
       if(response.returnValue == "000"){
         FormSubmitResponse responseSubmitFacts = await _requestSubmitFacts(response.uuid);
-        _submitText = "done!";
+        _submitText = "Mengirim jawaban kamu...!";
         _inTextController.add(_submitText);
         if(responseSubmitFacts.returnValue == "000"){
+          _submitText = "done!";
+          _inTextController.add(_submitText);
           await _requestSubmitFiles(responseSubmitFacts.uuid);
         }
       }

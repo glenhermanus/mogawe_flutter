@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mogawe/core/data/response/home_content/gawean_model.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
+import 'package:mogawe/utils/extension/int_ext.dart';
+import 'package:share_plus/share_plus.dart';
 
 class GaweanDetailScreen extends StatefulWidget {
   const GaweanDetailScreen({required this.gaweanModel});
@@ -34,9 +36,12 @@ class _GaweanDetailScreenState extends State<GaweanDetailScreen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 8.0),
-            child: Icon(
-              Icons.share,
-              color: FlutterFlowTheme.primaryColor,
+            child: IconButton(
+              icon: Icon(
+                Icons.share,
+                color: FlutterFlowTheme.primaryColor,
+              ),
+              onPressed: () => _shareGawean(widget.gaweanModel),
             ),
           ),
         ],
@@ -271,5 +276,12 @@ class _GaweanDetailScreenState extends State<GaweanDetailScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _shareGawean(Gawean gawean) async {
+    String urlLink =
+        "https://play.google.com/store/apps/details?id=com.mogawe.mosurvei";
+    await Share.share(
+        'Hai, lagi ada gawean  di MoGawe, bayarannya ${gawean.fee?.toInt().toRupiah()}/tugas, yuk kerjain sekarang!\n\n$urlLink');
   }
 }

@@ -28,9 +28,9 @@ class GetTaskResponse {
         returnValue: json["returnValue"],
         message: json["message"],
         uuid: json["uuid"],
-        rowCount: json["rowCount"],
-        pageCount: json["pageCount"],
-        offset: json["offset"],
+        rowCount: json["rowCount"] == null ? 0 : json["rowCount"],
+        pageCount: json["pageCount"] == null ? 0 : json["pageCount"],
+        offset: json["offset"] == null ? 0 : json["offset"],
         object: List<Gawean>.from(
             json["object"].map((x) => Gawean.fromJson(x))),
         object2: json["object2"],

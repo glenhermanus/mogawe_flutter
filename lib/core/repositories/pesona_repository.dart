@@ -20,6 +20,15 @@ class PesonaRepository extends NetworkService {
 
   final UserNetworkService _apiService = UserNetworkService();
 
+  Future<DetailPesonaResponses> getDetailCertificate(String realToken, String uuid) async {
+    var header = {token: realToken};
+    var map = await getMethod(
+      "${BASE_URL}api/mogawers/certificate/mine/$uuid",
+      header,
+    );
+    return DetailPesonaResponses.fromJson(map);
+  }
+
   Future<DetailPesonaResponses> getDetailPersona(String realToken, String uuidJob) async {
     var header = {token: realToken};
     var map = await getMethod(

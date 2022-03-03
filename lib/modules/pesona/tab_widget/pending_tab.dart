@@ -92,7 +92,7 @@ class _PendingTabState extends State<PendingTab> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailPesonaPage(uuidJob: id,),
+        builder: (context) => DetailPesonaPage(uuidJob: id, isFromBanner: false,),
       ),
     );
   }

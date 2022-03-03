@@ -36,7 +36,6 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
 
   // Gawean scheduling time
   String _selectedDate = "";
-  String _selectedTime = TimeOfDay.now().toString();
   late String _gaweanSchedulingTime;
 
   var token;
@@ -282,8 +281,6 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
                     DateFormat("yyyy-MM-dd HH:mm:ss").format(value);
                 setState(() {
                   _selectedDate = _formatReminderDate(rawSelectedDate);
-                  _selectedTime =
-                      "${value.hour}:${value.minute}:${value.second}";
                   _gaweanSchedulingTime = rawSelectedDate;
                 });
 
@@ -329,20 +326,6 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
     );
   }
 
-  // void datePicker() async {
-  //   var datetime = await showDatePicker(
-  //       context: context,
-  //       firstDate: DateTime.now(),
-  //       lastDate: DateTime(2023),
-  //       initialDate: DateTime.now());
-  //   if (datetime != null) {
-  //     setState(() {
-  //       _selectedDate = DateFormat("yyyy-MM-dd").format(datetime);
-  //     });
-  //     timePicker();
-  //   }
-  // }
-
 
   void selectedMenuItem(int value, Gawean data) async {
     switch (value) {
@@ -363,6 +346,12 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
             return _schedulingTimePicker();
           },
         );
+        break;
+      case 3:
+        break;
+      case 4:
+        _showConfirmDialog(data.idTask  ?? "");
+        break;
     }
   }
 
@@ -397,6 +386,37 @@ class _BuildGaweanItemState extends State<BuildGaweanItem> {
     parsedDate.millisecondsSinceEpoch;
 
     return formattedDate;
+  }
+
+  Future<void> _handleCancelGawean(String idTask) async {
+    var response = await _gaweanRepository.cancelGawean(realToken: token, idTask: idTask);
+    if (response.returnValue == "000"){
+
+    }
+  }
+
+  void _showConfirmDialog(String idTask){
+    showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Cancel Gawean'),
+        content: new Text(
+            'Yakin untuk cancel gawean? Gawean ini akan hilang dari penugasan kamu'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Tidak'),
+          ),
+          TextButton(
+            onPressed: () {
+              _handleCancelGawean(idTask);
+              Navigator.of(context).pop(true);
+            },
+            child: new Text('Iya'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _handleUpdateGaweanReminder(String token) async {

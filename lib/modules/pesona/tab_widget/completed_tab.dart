@@ -91,7 +91,7 @@ class _CompletedTabState extends State<CompletedTab> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailPesonaPage(uuidJob: id),
+        builder: (context) => DetailPesonaPage(uuidJob: id, isFromBanner: false,),
       ),
     );
   }

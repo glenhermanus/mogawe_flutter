@@ -173,6 +173,7 @@ class _BuildBannerBuilderState extends State<BuildBannerBuilder> {
           MaterialPageRoute(
             builder: (context) => DetailPesonaPage(
               uuidJob: uuidParam,
+              isFromBanner: true,
             ),
           ),
         );

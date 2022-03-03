@@ -161,12 +161,28 @@ class _OtpEWalletScreenState extends State<OtpEWalletScreen> {
         Navigator.of(context).popUntil((_) => count++ >= 3);
         showSnackbar(context, response.message);
       } else if (response.returnValue == "001") {
-        showSnackbar(context, response.message);
+        _showUploadingFactsDialog("Gagal", response.message);
       }
     } catch (ex) {
-      showSnackbar(context, ex.toString());
+      _showUploadingFactsDialog("Gagal", "Saldo anda tidak mencukupi untuk melakukan penarikan");
     }
 
     print(body);
+  }
+
+  Future<void> _showUploadingFactsDialog(String title, String message) {
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text(title),
+        content: new Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Ok'),
+          ),
+        ],
+      ),
+    );
   }
 }

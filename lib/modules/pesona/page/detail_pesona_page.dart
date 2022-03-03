@@ -12,7 +12,8 @@ import 'package:mogawe/modules/pesona/widgets/loading/detail_persona_loading.dar
 
 class DetailPesonaPage extends StatefulWidget {
   final String uuidJob;
-  DetailPesonaPage({required this.uuidJob});
+  final bool isFromBanner;
+  DetailPesonaPage({required this.uuidJob, required this.isFromBanner});
 
   @override
   _DetailPesonaPageState createState() => _DetailPesonaPageState();
@@ -26,7 +27,7 @@ class _DetailPesonaPageState extends State<DetailPesonaPage> {
   void initState() {
     super.initState();
     bloc = PersonaBloc();
-    bloc.add(GetPersonaDetail(widget.uuidJob));
+    bloc.add(GetPersonaDetail(widget.uuidJob, widget.isFromBanner));
   }
 
   @override
