@@ -6,6 +6,7 @@ import 'package:mogawe/core/data/response/hire_me/shipment_city_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/modules/address/widgets/maps_location_picker.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_shipment_page.dart';
 
 class SalesAddress extends StatefulWidget {
@@ -225,7 +226,7 @@ class _SalesAddressState extends State<SalesAddress> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LocationShipment(uuid: widget.uuid,),
+                            builder: (context) => MapsLocationPicker(),
                           ),
                         );
                       },
