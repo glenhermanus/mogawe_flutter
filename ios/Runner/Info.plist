@@ -45,5 +45,10 @@
     <string>MoGawe needs to access your photos</string>
     <key>NSCameraUsageDescription</key>
     <string>MoGawe needs to access your camera</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
 </dict>
 </plist>

@@ -1,8 +1,8 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=E:\flutter
-FLUTTER_APPLICATION_PATH=E:\2. On Going Project\MoGawe\mogawe_flutter
+FLUTTER_ROOT=/Users/gellaps/SDK/SDK/flutter
+FLUTTER_APPLICATION_PATH=/Users/gellaps/Library/Mobile Documents/com~apple~CloudDocs/Workspaces/Duty/MoGawe/Android/Flutter/public/mogawe_flutter
 COCOAPODS_PARALLEL_CODE_SIGN=true
-FLUTTER_TARGET=lib\main.dart
+FLUTTER_TARGET=lib/main.dart
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0
 FLUTTER_BUILD_NUMBER=1
