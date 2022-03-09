@@ -15,6 +15,12 @@ class ShowListGaweanState extends GaweanState {
   ShowListGaweanState(this.list);
 }
 
+class ShowListTaskState extends GaweanState {
+  List<Gawean> list;
+
+  ShowListTaskState(this.list);
+}
+
 class ShowErrorGaweanListState extends GaweanState {
   String message;
 

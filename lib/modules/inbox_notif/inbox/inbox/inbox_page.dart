@@ -19,7 +19,7 @@ import 'package:mogawe/modules/inbox_notif/inbox/inbox/list_chat.dart';
 import 'package:mogawe/modules/inbox_notif/notification/widgets/build_loading_chat.dart';
 
 class InboxPage extends StatefulWidget {
-  UserProfileResponse? userProfileResponse;
+  final UserProfileResponse? userProfileResponse;
   InboxPage({this.userProfileResponse});
 
   @override
@@ -135,8 +135,6 @@ class _InboxPageState extends State<InboxPage> {
   }
 
   void bottomNew(){
-    final node = FocusScope.of(context);
-
     showModalBottomSheet(
       isScrollControlled: true,
 
@@ -272,7 +270,7 @@ class _InboxPageState extends State<InboxPage> {
 
                         try{
                           loadingAlert('Mohon tunggu sebentar', null, true);
-                          var res = await ChatQiscusRepo().createRoom(judul.text, widget.userProfileResponse?.email);
+                          var res = await ChatQiscusRepo().createRoom(judul.text, widget.userProfileResponse?.email, '');
                           participantsModel = await ChatQiscusRepo().getParticipants(res.results.room.roomId);
                           for(var i= 0; i< participantsModel!.results.participants.length; i++){
                             if(participantsModel!.results.participants[i].userId != widget.userProfileResponse?.email){
@@ -357,7 +355,7 @@ class _InboxPageState extends State<InboxPage> {
     }
   }
 
-  void SelectedItem(BuildContext context, item) {
+  void selectedItem(BuildContext context, item) {
     switch (item) {
       case 0:
         setState(() {
@@ -377,16 +375,15 @@ class _InboxPageState extends State<InboxPage> {
   Future<void> callMehtod() async {
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
 
-        setState(() {
-          getRoomList();
-        });
+      setState(() {
+        getRoomList();
+      });
 
     });
   }
-  
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getToken();
     callMehtod();
@@ -394,7 +391,6 @@ class _InboxPageState extends State<InboxPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     timer?.cancel();
   }
@@ -442,19 +438,19 @@ class _InboxPageState extends State<InboxPage> {
                   Text('Edit'),
                 ],
               )),
-             view == true? PopupMenuItem<int>(value: 1, child: Row(
+              view == true? PopupMenuItem<int>(value: 1, child: Row(
                 children: [
                   Icon(Icons.arrow_back, color: Colors.black,),
                   SizedBox(width: 20,),
                   Text('Cancel'),
                 ],
               )) : PopupMenuItem<int>(value: 1, child: Row(
-               children: [
-                 Container()
-               ],
-             )),
+                children: [
+                  Container()
+                ],
+              )),
             ],
-           onSelected: (item) => SelectedItem(context, item),
+            onSelected: (item) => selectedItem(context, item),
           )
         ],
         centerTitle: false,
@@ -480,7 +476,7 @@ class _InboxPageState extends State<InboxPage> {
                   // ListInbox(chatResponse: chat, chatRoomList: chatRoomList, chatRoomMessage: pesan, userProfileResponse: widget.userProfileResponse, view: view,),
                   // :
                   listRoom(context),
-                   SizedBox(height: 50,),
+                  SizedBox(height: 50,),
 
                 ],
               ),Align(
@@ -516,7 +512,4 @@ class _InboxPageState extends State<InboxPage> {
       ),
     );
   }
-
 }
-
-

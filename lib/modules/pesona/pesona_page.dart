@@ -64,7 +64,7 @@ class _PesonaPageState extends State<PesonaPage> {
         backgroundColor: FlutterFlowTheme.primaryColor,
         automaticallyImplyLeading: true,
         title: Text(
-          'Pesona',
+          'Persona',
           style: FlutterFlowTheme.subtitle1.override(
             fontFamily: 'Poppins',
             color: FlutterFlowTheme.secondaryColor,

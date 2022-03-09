@@ -8,6 +8,7 @@ import 'package:mogawe/core/data/response/merchant/shipment_courier.dart';
 import 'package:mogawe/core/data/response/merchant/supplier_product.dart';
 import 'package:mogawe/core/data/response/profile/profile_history_response.dart';
 import 'package:mogawe/core/data/response/profile/profile_response.dart';
+import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/auth/screens/login/login_page.dart';
@@ -46,10 +47,12 @@ class ProfilePage extends StatefulWidget {
   final String? birthday;
   final int? taskReminder;
   final SupplierProduct? supplierProduct;
+  final UserProfileResponse? userProfileResponse;
 
   ProfilePage({Key? key, required this.data, required this.dataMerchant, this.updateProfile,
-    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.supplierProduct, this.onFotoChangedMerchant, this.parseRadius, this.histories,
-  this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl, this.objectShipment, this.updateShipment,
+    this.updateTarget, this.updateSelfReminder, this.onFotoChanged, this.supplierProduct,
+    this.onFotoChangedMerchant, this.parseRadius, this.histories, this.userProfileResponse,
+    this.historyPageListen, this.filter, this.targetCtrl, this.namaCtrl, this.objectShipment, this.updateShipment,
     this.emailCtrl, this.phoneCtrl, this.searchListen, this.taskReminder, this.reminder, this.birthday, this.phone}) : super(key: key);
 
   @override
@@ -295,6 +298,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                         ),
                         SettingTab(logoutProfile: logoutProfile,
                           email: widget.data?.email??'',
+                          userProfileResponse: widget.userProfileResponse,
                         )
                       ],
                     ),
@@ -325,16 +329,16 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       width: 150,
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: colTab,
-        borderRadius: BorderRadius.circular(16)
+          color: colTab,
+          borderRadius: BorderRadius.circular(16)
       ),
       child: Row(children: [
         Icon(icon, size: 11, color: colText),
         SizedBox(width: 8),
         Text(title, style: TextStyle(
-          color: colText,
-          fontWeight: FontWeight.w600,
-          fontSize: 10
+            color: colText,
+            fontWeight: FontWeight.w600,
+            fontSize: 10
         ))
       ]),
     );
@@ -370,46 +374,46 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
   void chooseImage() {
     showDialog(
-      context: context,
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Material(
-            borderRadius: BorderRadius.circular(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InkWell(
-                  onTap: () => getImageCamera(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(children: [
-                      Icon(Icons.photo_camera, size: 24, color: Colors.black),
-                      SizedBox(width: 16),
-                      Text("Ambil Foto", style: TextStyle(
-                          fontSize: 16
-                      ))
-                    ]),
+        context: context,
+        builder: (ctx) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Material(
+              borderRadius: BorderRadius.circular(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () => getImageCamera(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(children: [
+                        Icon(Icons.photo_camera, size: 24, color: Colors.black),
+                        SizedBox(width: 16),
+                        Text("Ambil Foto", style: TextStyle(
+                            fontSize: 16
+                        ))
+                      ]),
+                    ),
                   ),
-                ),
-                InkWell(
-                  onTap: () => getImageGallery(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(children: [
-                      Icon(Icons.image, size: 24, color: Colors.black),
-                      SizedBox(width: 16),
-                      Text("Dari Galeri", style: TextStyle(
-                        fontSize: 16
-                      ))
-                    ]),
-                  ),
-                )
-              ],
+                  InkWell(
+                    onTap: () => getImageGallery(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(children: [
+                        Icon(Icons.image, size: 24, color: Colors.black),
+                        SizedBox(width: 16),
+                        Text("Dari Galeri", style: TextStyle(
+                            fontSize: 16
+                        ))
+                      ]),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      )
+        )
     );
   }
 

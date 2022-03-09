@@ -27,7 +27,6 @@ class GaweanBloc extends Bloc<GaweanEvent, GaweanState> {
 
   @override
   Stream<GaweanState> mapEventToState(GaweanEvent event) async* {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     _userToken = await AuthRepository().readSecureData('token') as String;
 
     if (event is GetGaweanListEvent) {
@@ -38,6 +37,17 @@ class GaweanBloc extends Bloc<GaweanEvent, GaweanState> {
       } else {
         yield ShowListGaweanState(data);
       }
+    }
+
+    if (event is GetTaskListEvent) {
+      yield ShowLoadingListGaweanState();
+      var data = await _gaweanRepository.getTaskList(realToken: _userToken);
+      yield ShowListTaskState(data);
+    }
+
+    if (event is UpdateGaweanSequence){
+      var data = await _gaweanRepository.updateGaweanSequence(_userToken, event.updateGaweanSequence);
+      print(data.message);
     }
 
     if(event is ChangeMenuToGawean){

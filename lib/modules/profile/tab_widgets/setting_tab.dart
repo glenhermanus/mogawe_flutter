@@ -5,6 +5,7 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/generator/webview_flutter.dart';
 import 'package:mogawe/modules/home/faq/faq_webview.dart';
 import 'package:mogawe/modules/home/widgets/update_password.dart';
+import 'package:mogawe/modules/inbox_notif/inbox/inbox/inbox_page.dart';
 import 'package:mogawe/modules/inbox_notif/notification/notification_list/notification_list_page.dart';
 import 'package:mogawe/modules/profile/screens/about_app.dart';
 import 'package:mogawe/modules/profile/widget/ajak_teman_scan.dart';
@@ -16,7 +17,8 @@ class SettingTab extends StatelessWidget {
 
   final Function() logoutProfile;
   final String email;
-  const SettingTab({Key? key, required this.logoutProfile, required this.email}) : super(key: key);
+  final UserProfileResponse? userProfileResponse;
+  const SettingTab({Key? key, required this.logoutProfile, required this.email, required this.userProfileResponse}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -156,27 +158,35 @@ class SettingTab extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(
-                  0, 16, 0, 0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Bantuan',
-                      style: FlutterFlowTheme.bodyText1
-                          .override(
-                        fontFamily: 'Poppins',
+            InkWell(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => InboxPage(userProfileResponse: userProfileResponse,)),
+                );
+              },
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(
+                    0, 16, 0, 0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Bantuan',
+                        style: FlutterFlowTheme.bodyText1
+                            .override(
+                          fontFamily: 'Poppins',
+                        ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.black,
-                    size: 24,
-                  )
-                ],
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black,
+                      size: 24,
+                    )
+                  ],
+                ),
               ),
             ),
             Padding(

@@ -36,12 +36,12 @@ class ChatQiscusRepo {
       var request = http.MultipartRequest("PUT", uri);
 
       if (files!.isNotEmpty) {
-      files.forEach((key, value) async {
-        print('aas $key bb $value');
-        request.files.add(await http.MultipartFile.fromPath(key, value?.path ??'',
-            contentType: MediaType('$type', '*')));
-      });
-    }
+        files.forEach((key, value) async {
+          print('aas $key bb $value');
+          request.files.add(await http.MultipartFile.fromPath(key, value?.path ??'',
+              contentType: MediaType('$type', '*')));
+        });
+      }
 
       if (header != null) request.headers.addAll(header);
       if (body != null)  request.fields.addAll(body);
@@ -144,20 +144,27 @@ class ChatQiscusRepo {
 
     if (response.statusCode == 200) {
 
-     return ModelGetUuid.fromJson(json.decode(response.body));
+      return ModelGetUuid.fromJson(json.decode(response.body));
     } else {
 
       throw Exception('Terjadi kegagalan');
     }
   }
 
-  Future<QiscusRoomResponse> createRoom(judul, user) async {
+  Future<QiscusRoomResponse> createRoom(judul, user, avatar) async {
+    var avatarUrl;
+    if(avatar !=''){
+      avatarUrl = avatar;
+    }
+    else{
+      avatarUrl = "http://placehold.it/20x20";
+    }
     var body = {
       "room_name": judul,
       "creator": user,
       "participants": ["$user", "azizahif99@gmail.com", "demo@mogawe.id"],
       //"participants": ["$user", "azizahif99@gmail.com" ,"ambar.sumapradja@mogawe.id", "glen.hermanus@mogawe.id"],
-      "room_avatar_url": "http://placehold.it/20x20",
+      "room_avatar_url": avatarUrl,
       "room_options": "{\"background\":\"green\"}"
     };
     final response = await http.post(Uri.parse(
@@ -207,11 +214,11 @@ class ChatQiscusRepo {
 
     final response = await http.get(Uri.parse(
         "$url/get_room_participants?room_id=$roomid"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
-          'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
-        },
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'QISCUS-SDK-APP-ID' : 'mogawe-i1y2t3fnz2jt32',
+        'QISCUS-SDK-SECRET' : '1166e34e4aa282b0f1185da3072790f6'
+      },
     );
 
     if (response.statusCode == 200) {

@@ -40,26 +40,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     }
   }
 
-  _showErrorDialog(String? desc) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return CupertinoAlertDialog(
-          title: Text('Error'),
-          content: Text(desc ?? ''),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +64,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           listener: (context, state) {
             if (state is ResetpasswordLoaded) {
               if (state.response.returnValue == '001') {
-                _showErrorDialog(state.response.message);
+                final snackBar = new SnackBar(content: new Text("${state.response.message}"),
+                    backgroundColor: Colors.red);
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               } else {
                 Navigator.push(
                   context,
@@ -276,7 +258,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                   suffixIcon: InkWell(
                     onTap: () => setState(
-                      () => passwordVisibility = !passwordVisibility!,
+                          () => passwordVisibility = !passwordVisibility!,
                     ),
                     child: Icon(
                       passwordVisibility!

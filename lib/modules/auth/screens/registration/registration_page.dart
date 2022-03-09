@@ -224,7 +224,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           ),
                           suffixIcon: InkWell(
                             onTap: () => setState(
-                              () => passwordVisibility = !passwordVisibility!,
+                                  () => passwordVisibility = !passwordVisibility!,
                             ),
                             child: Icon(
                               passwordVisibility!
@@ -372,30 +372,52 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   void showToCWebView() {
     showModalBottomSheet(context: context, builder: (_) =>
-    Container(
-      padding: EdgeInsets.all(16),
-      height: MediaQuery.of(context).size.height / 1.05,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(height: 3, width: 150, color: Color(0xff999999)),
-          SizedBox(height: 16),
-          Expanded(child: WebView(
-            javascriptMode: JavascriptMode.unrestricted,
-            initialUrl: "https://mogawe.id/partnership.html",
-            gestureRecognizers: Set()
-              ..add(
-                Factory<VerticalDragGestureRecognizer>(
-                      () => VerticalDragGestureRecognizer(),
-                ), // or null
-              ),
-          ))
-        ],
-      ),
-    ), isScrollControlled: true, shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(28),
-        topRight: Radius.circular(28))
+        Container(
+          padding: EdgeInsets.all(16),
+          height: MediaQuery.of(context).size.height / 1.05,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(height: 3, width: 150, color: Color(0xff999999)),
+              SizedBox(height: 16),
+              Expanded(child: WebView(
+                javascriptMode: JavascriptMode.unrestricted,
+                initialUrl: "https://mogawe.id/partnership.html",
+                gestureRecognizers: Set()
+                  ..add(
+                    Factory<VerticalDragGestureRecognizer>(
+                          () => VerticalDragGestureRecognizer(),
+                    ), // or null
+                  ),
+              )),
+              SizedBox(height: 16),
+              FFButtonWidget(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                text: 'Setuju',
+                options: FFButtonOptions(
+                  width: double.infinity,
+                  height: 48,
+                  color: FlutterFlowTheme.primaryColor,
+                  textStyle: FlutterFlowTheme.subtitle2.override(
+                    fontFamily: 'Poppins',
+                    color: Colors.white,
+                  ),
+                  borderSide: BorderSide(
+                    color: Colors.transparent,
+                    width: 1,
+                  ),
+                  borderRadius: 12,
+                ),
+                loading: widget.loadingButton,
+              )
+            ],
+          ),
+        ), isScrollControlled: true, shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(28),
+            topRight: Radius.circular(28))
     ));
   }
 }

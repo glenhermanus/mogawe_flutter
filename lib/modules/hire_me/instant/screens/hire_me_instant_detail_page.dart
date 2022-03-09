@@ -1,13 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
+import 'package:mogawe/constant/const.dart';
 import 'package:mogawe/core/data/response/hire_me/instant/task_instant.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
@@ -37,6 +41,8 @@ class _HireMeInstantDetailPageState extends State<HireMeInstantDetailPage> {
   List<LatLng> _boundsLocation = [];
   final Set<Polyline> _polylines = {};
 
+  PolylinePoints polylinePoints = PolylinePoints();
+  List<LatLng> polylineCoordinates = [];
 
   loc.Location location = loc.Location();
   loc.LocationData? _currentPosition;
@@ -286,6 +292,11 @@ class _HireMeInstantDetailPageState extends State<HireMeInstantDetailPage> {
                         ),
                       )
                     : GoogleMap(
+                        gestureRecognizers: {
+                          Factory<OneSequenceGestureRecognizer>(
+                            () => EagerGestureRecognizer(),
+                          ),
+                        },
                         onMapCreated: (GoogleMapController controller) {
                           Future.delayed(
                             Duration(milliseconds: 200),
@@ -295,6 +306,7 @@ class _HireMeInstantDetailPageState extends State<HireMeInstantDetailPage> {
                             ),
                           );
                           _controller.complete(controller);
+                          _setPolylines();
                         },
                         myLocationEnabled: true,
                         mapType: MapType.normal,
@@ -425,15 +437,33 @@ class _HireMeInstantDetailPageState extends State<HireMeInstantDetailPage> {
           double.parse(widget.taskInstant.longitude)));
     });
 
-    _polylines.add(Polyline(
-      polylineId: PolylineId(widget.taskInstant.uuid + "2233"),
-      visible: true,
-      //latlng is List<LatLng>
-      points: _boundsLocation,
-      color: Colors.blue,
-    ));
-
     return markers;
+  }
+
+  _setPolylines() async {
+    PointLatLng origin = PointLatLng(
+        _initialCameraPosition!.latitude, _initialCameraPosition!.longitude);
+    PointLatLng dest = PointLatLng(double.parse(widget.taskInstant.latitude),
+        double.parse(widget.taskInstant.longitude));
+
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        GOOGLE_MAP_API, origin, dest);
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+    print("Google map keys is $GOOGLE_MAP_API");
+
+    print("Dapat result ${result.errorMessage} with status ${result.status}");
+
+    setState(() {
+      Polyline polyline = Polyline(
+          polylineId: PolylineId("poly"),
+          color: Color.fromARGB(255, 40, 122, 198),
+          points: polylineCoordinates);
+      _polylines.add(polyline);
+    });
   }
 
   void _getUserCurrentLocation() async {

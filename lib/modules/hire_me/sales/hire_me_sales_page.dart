@@ -33,10 +33,10 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
   var value;
   CategoryListObject? categoryListObject;
   var listcategory_, valuelist =
-    {
-      'name' : 'Semua Kategori',
-      'uuid' : 'abc',
-    };
+  {
+    'name' : 'Semua Kategori',
+    'uuid' : 'abc',
+  };
   var name;
   String? search;
 
@@ -184,10 +184,10 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                           search = s;
                           loading = true;
                         });
-                          hireMeSalesResponses = await AuthRepository().SearchCategorydata(token, search);
-                          setState(() {
-                            loading = false;
-                          });
+                        hireMeSalesResponses = await AuthRepository().SearchCategorydata(token, search);
+                        setState(() {
+                          loading = false;
+                        });
                       },
                     ),
                   ),
@@ -197,12 +197,12 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                       width: 160,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: FlutterFlowTheme.fieldColor,
+                          color: FlutterFlowTheme.fieldColor,
                           borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color:  Color(0x00515151),
-                          width: 0
-                        )
+                          border: Border.all(
+                              color:  Color(0x00515151),
+                              width: 0
+                          )
                       ),
                       child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
@@ -251,157 +251,157 @@ class _HireMeSalesPageState extends State<HireMeSalesPage> {
                 ],
               ),
             ),
-           loading ? buildSalesPageLoading((width * 0.40)) : Expanded(
+            loading ? buildSalesPageLoading((width * 0.40)) : Expanded(
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                 child: GridView.builder(
-                  itemCount: hireMeSalesResponses?.object.length,
-                  padding: EdgeInsets.zero,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 0.55,
-                  ),
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (context, snap){
-                    final lista = hireMeSalesResponses?.object[snap];
-                    var currencyFormatter = NumberFormat.currency(locale: 'ID');
-                    var price = currencyFormatter.format(lista?.price);
-                    var komisi = currencyFormatter.format(lista?.commission);
-                    return InkWell(
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SalesDetailPage(uuid: lista?.uuidobj as String,),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        color: Color(0xFFF5F5F5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
-                              alignment: AlignmentDirectional(1, -1),
-                              children: [
-                                Image.network(
-                                  '${lista?.imageUrl}',
-                                  width: double.infinity,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                ),
-                                Padding(
-                                  padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
-                                  child: InkWell(
-                                    onTap:()async{
-
-                                      if(lista?.isFavorite != true){
-                                        var res = await AuthRepository().postfavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
-                                        setState(() {
-                                          lista?.isFavorite = true;
-                                        });
-                                      }else{
-                                        var del = await AuthRepository().deletefavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
-                                        setState(() {
-                                          lista?.isFavorite = false;
-                                        });
-                                      }
-
-                                    },
-                                    child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.secondaryColor,
-                                        borderRadius: BorderRadius.circular(24),
-                                      ),
-                                      child: lista?.isFavorite != true ? Icon(
-                                        Icons.favorite,
-                                        color: Color(0xFF737373),
-                                        size: 24,
-                                      ) : Icon(
-                                        Icons.favorite,
-                                        color: Colors.red,
-                                        size: 24,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
+                    itemCount: hireMeSalesResponses?.object.length,
+                    padding: EdgeInsets.zero,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 0.55,
+                    ),
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, snap){
+                      final lista = hireMeSalesResponses?.object[snap];
+                      var currencyFormatter = NumberFormat.currency(locale: 'ID');
+                      var price = currencyFormatter.format(lista?.price);
+                      var komisi = currencyFormatter.format(lista?.commission);
+                      return InkWell(
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SalesDetailPage(uuid: lista?.uuidobj as String,),
                             ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          );
+                        },
+                        child: Card(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Color(0xFFF5F5F5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
+                                alignment: AlignmentDirectional(1, -1),
                                 children: [
-                                  Text(
-                                    '${lista?.name}',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                  Image.network(
+                                    '${lista?.imageUrl}',
+                                    width: double.infinity,
+                                    height: 120,
+                                    fit: BoxFit.cover,
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 8, 0, 0),
-                                    child: Text(
-                                      'Harga Produk',
-                                      style: FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    'Rp${price.replaceAll('IDR', '').replaceAll(',00', '')}',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 8, 0, 0),
-                                    child: Text(
-                                      'Komisi',
-                                      style: FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    'Rp${komisi.replaceAll('IDR', '').replaceAll(',00', '')}',
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Poppins',
-                                      color: FlutterFlowTheme.moGaweGreen,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
+                                    padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
+                                    child: InkWell(
+                                      onTap:()async{
 
+                                        if(lista?.isFavorite != true){
+                                          var res = await AuthRepository().postfavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
+                                          setState(() {
+                                            lista?.isFavorite = true;
+                                          });
+                                        }else{
+                                          var del = await AuthRepository().deletefavhiremeSalesdata(lista?.isFavorite, token, lista?.uuidobj);
+                                          setState(() {
+                                            lista?.isFavorite = false;
+                                          });
+                                        }
+
+                                      },
+                                      child: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.secondaryColor,
+                                          borderRadius: BorderRadius.circular(24),
+                                        ),
+                                        child: lista?.isFavorite != true ? Icon(
+                                          Icons.favorite,
+                                          color: Color(0xFF737373),
+                                          size: 24,
+                                        ) : Icon(
+                                          Icons.favorite,
+                                          color: Colors.red,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
-                            )
-                          ],
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${lista?.name}',
+                                      style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 8, 0, 0),
+                                      child: Text(
+                                        'Harga Produk',
+                                        style: FlutterFlowTheme.bodyText1.override(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Rp${price.replaceAll('IDR', '').replaceAll(',00', '')}',
+                                      style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 8, 0, 0),
+                                      child: Text(
+                                        'Komisi',
+                                        style: FlutterFlowTheme.bodyText1.override(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Rp${komisi.replaceAll('IDR', '').replaceAll(',00', '')}',
+                                      style: FlutterFlowTheme.bodyText1.override(
+                                        fontFamily: 'Poppins',
+                                        color: FlutterFlowTheme.moGaweGreen,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  }),
-                ),
+                      );
+                    }),
               ),
+            ),
           ],
         ),
       ),

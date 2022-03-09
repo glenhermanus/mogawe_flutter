@@ -6,3 +6,7 @@ class Const {
     "Last 3 Months, 3-month"
   ];
 }
+
+// Test purpose not for release
+//!Secure later!!!!!!!!!!!!!!!!!!!!!!!
+const GOOGLE_MAP_API = "AIzaSyBikUyFbk4v9map2Gf2c-whbQAcXLUCfE0";

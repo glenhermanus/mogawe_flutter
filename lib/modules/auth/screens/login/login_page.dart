@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 import 'package:mogawe/core/data/response/user_login_response.dart';
-import 'package:mogawe/core/data/sources/network/user_network_service.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
@@ -24,7 +23,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final AuthRepository _authRepository = AuthRepository.instance;
-  final _formKey = new GlobalKey<FormState>();
   var logger = Logger(printer: PrettyPrinter());
 
   String _email = "", _password = "";
@@ -36,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _loadingButton2 = false;
   bool _loadingButton3 = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  Map? fbcoba;
+  Map? fbMap;
   UserLoginResponse? userLoginResponse;
 
   @override
@@ -398,19 +396,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleSubmitLogin(String email, String password, BuildContext ctx) async {
-    final FormState? form = _formKey.currentState;
-    // if (form!.validate()) {
-    //   form.save();
-    //
-    //
-    // } else {}
-
-    //! delete after done
-    // String staticEmail = "ibnubatutah002@gmail.com";
-    // String staticPassword = "123456789";
-    // String hashedPassword = PasswordHasher().convertToSha256(staticPassword ?? "");
-    // var response = await _authRepository.submitLogin(staticEmail ?? "", hashedPassword);
-
     // Real Function
     String? email = _emailInputController?.value.text;
     String? password = _passwordInputController?.value.text;
@@ -424,7 +409,6 @@ class _LoginPageState extends State<LoginPage> {
       logger.d("Success Login");
       setState(() => _loadingButton2 = true);
       try {
-        // String tokenn = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJNTy04Rk1HOFAiLCJpYXQiOjE2NDA2ODczODEsInN1YiI6Im1vZ2F3ZXJzIiwiaXNzIjoibW9nYXdlIn0._WeLYchQDHyWX5PM7kgIgwdcaYT8DV33B4v-2Dv4Yn0";
         AuthRepository().writeSecureData('token', response.token);
         AuthRepository().saveLoginStatus(true);
 
@@ -439,24 +423,21 @@ class _LoginPageState extends State<LoginPage> {
         setState(() => _loadingButton2 = false);
       }
     } else {
-      logger.d("Gagal Login");
-      final snackBar = new SnackBar(content: new Text(response.message),
-          backgroundColor: Colors.red);
-      ScaffoldMessenger.of(ctx).showSnackBar(snackBar);
+      _showErrorDialog("Gagal Login", response.message);
     }
   }
 
   Future<void> loginfb() async{
     final result = await  FacebookAuth.instance.login(
         permissions: ["public_profile", "email"],
-      loginBehavior: LoginBehavior.webOnly
+        loginBehavior: LoginBehavior.webOnly
     );
     if(result.status == LoginStatus.success){
       final req = await FacebookAuth.instance.getUserData(fields: "email, id, name");
 
-      fbcoba = req;
-      print('adu $fbcoba');
-      var responses = await AuthRepository().LoginFacebook(fbcoba!['name'], fbcoba!['email'], fbcoba!['id']);
+      fbMap = req;
+      print('adu $fbMap');
+      var responses = await AuthRepository().LoginFacebook(fbMap!['name'], fbMap!['email'], fbMap!['id']);
       if (responses.returnValue == "000") {
         logger.d("Success Login");
         userLoginResponse = responses;
@@ -477,14 +458,9 @@ class _LoginPageState extends State<LoginPage> {
       }
       print(responses.token);
 
-      print(fbcoba!['email']);
+      print(fbMap!['email']);
 
     }
-  }
-
-  Future<void> gettoken(token)async{
-    var responseses = await UserNetworkService().profileUser(token);
-
   }
 
   Future<void> loginTwitter() async{
@@ -495,8 +471,6 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     final authResult = await twitterLogin.login();
-
-
     switch (authResult.status) {
       case TwitterLoginStatus.loggedIn:
       // success
@@ -514,11 +488,9 @@ class _LoginPageState extends State<LoginPage> {
         print('====== Login error ======');
         break;
     }
-
   }
 
   Future<void> loginGoogle()async{
-    var id;
     final GoogleSignIn _googleSignIn = GoogleSignIn();
     final FirebaseAuth _auth = FirebaseAuth.instance;
     try {
@@ -535,6 +507,22 @@ class _LoginPageState extends State<LoginPage> {
       print(e.message);
       throw e;
     }
+  }
+
+  Future<void> _showErrorDialog(String title, String message) {
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text(title),
+        content: new Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Ok'),
+          ),
+        ],
+      ),
+    );
   }
 
 }

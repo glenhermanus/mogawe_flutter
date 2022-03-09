@@ -128,7 +128,7 @@ class _DetailPesonaPageState extends State<DetailPesonaPage> {
                 options: FFButtonOptions(
                   height: 48,
                   color: FlutterFlowTheme.primaryColor,
-                  textStyle: FlutterFlowTheme.title3.override(
+                  textStyle: FlutterFlowTheme.subtitle2.override(
                     fontFamily: 'Poppins',
                     color: Colors.white,
                   ),

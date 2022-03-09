@@ -1,4 +1,5 @@
 import 'package:mogawe/constant/api_path.dart';
+import 'package:mogawe/core/data/request/gawean/update_gawean_sequence.dart';
 import 'package:mogawe/core/data/response/GenericResponse.dart';
 import 'package:mogawe/core/data/response/gawean/get_task_response.dart';
 import 'package:mogawe/core/data/response/gawean/update_reminder_gawean_response.dart';
@@ -56,11 +57,11 @@ class GaweanRepository extends NetworkService {
     return GenericResponse.fromJson(map);
   }
 
-  Future<UpdateReminderGaweanResponse> updateGaweanReminder(
-      String realToken,
-      Map<String, String?> body
-      ) async {
+  Future<UpdateReminderGaweanResponse> updateGaweanReminder(String realToken, Map<String, String?> body) async {
     var header = {token: realToken, contentType: applicationJson};
+
+
+
     var map = await putMethod(
         "${BASE_URL}api/fieldtask/myTask/updateReminder",
         header: header,
@@ -68,4 +69,16 @@ class GaweanRepository extends NetworkService {
     );
     return UpdateReminderGaweanResponse.fromJson(map);
   }
+
+  Future<GenericResponse> updateGaweanSequence(String realToken, UpdateGaweanSequenceRequest listUuidGawean) async {
+    var body = listUuidGawean.toJson();
+    var header = {token: realToken, contentType: applicationJson};
+    var map = await putMethod(
+        "${BASE_URL}api/fieldtask/myTask/updateSequence",
+        header: header,
+        body: body
+    );
+    return GenericResponse.fromJson(map);
+  }
+
 }

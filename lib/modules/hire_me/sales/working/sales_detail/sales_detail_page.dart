@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
@@ -5,11 +6,18 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/hire_me/sales_detail_response.dart';
+import 'package:mogawe/core/data/response/qiscus/chat_message_list_response.dart';
+import 'package:mogawe/core/data/response/qiscus/chat_room_list_response.dart';
+import 'package:mogawe/core/data/response/qiscus/get_uuid_user.dart';
+import 'package:mogawe/core/data/response/qiscus/participants_response.dart';
+import 'package:mogawe/core/data/response/qiscus/unread_response.dart';
+import 'package:mogawe/core/data/response/user_profile_response.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
+import 'package:mogawe/core/repositories/chat_qiscus_repositories.dart';
 import 'package:mogawe/modules/hire_me/sales/working/sales_shipment/sales_shipment_page.dart';
 import 'package:mogawe/modules/inbox_notif/inbox/chat/chat_page.dart';
 import 'package:path_provider/path_provider.dart';
@@ -30,6 +38,7 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
   bool _loadingButton3 = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   SalesDetailResponses? salesDetailResponses;
+  UserProfileResponse? userProfileResponse;
   bool loading =false;
   var token;
   var price, komisi;
@@ -40,6 +49,66 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
   File? _imageFile;
   int _progress = 0;
   var image;
+  ParticipantsModel? participantsModel;
+  ChatRoomList? chatRoomList;
+  ChatRoomMessage? chatRoomMessage, chatRoomMessage2;
+  var room, loadRoom1;
+  var pesan =[{}];
+  var pesan2 =[{}];
+  List uuidValue = [];
+  List emailUser = [];
+  ModelGetUuid? modelGetUuid;
+  Timer? timer;
+  ModelUnread? unreadCount;
+
+  loadingAlert(title, status, loading) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                contentPadding: EdgeInsets.only(top: 0.0, bottom: 20),
+                content: Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+
+                      Divider(
+                        color: Colors.grey,
+                        height: 1.0,
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(19.0),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            status != null ? status == true ? Icon(Icons.check, size: 30,) : Icon(Icons.clear, size: 30,) : Container(),
+                            SizedBox(height: 15,),
+                            Text('$title', style: FlutterFlowTheme.bodyText2,),
+                            SizedBox(height: 15,),
+                            loading == true ? CircularProgressIndicator(color: Colors.red,) : Container(),
+                            SizedBox(height: 10,),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }));
+  }
 
   Future getData()async{
     setState(() {
@@ -48,6 +117,7 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
     });
 
     token = await AuthRepository().readSecureData('token');
+    userProfileResponse = await AuthRepository().getProfile(token);
     salesDetailResponses = await AuthRepository().getDetailsales(token, widget.uuid);
     var currencyFormatter = NumberFormat.currency(locale: 'ID');
     price = currencyFormatter.format(salesDetailResponses?.price);
@@ -145,6 +215,44 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
     });
   }
 
+  goToChat()async{
+    try{
+      loadingAlert('Mohon tunggu sebentar', null, true);
+      var res = await ChatQiscusRepo().createRoom(salesDetailResponses?.name, userProfileResponse?.email, salesDetailResponses?.images[0].value);
+      participantsModel = await ChatQiscusRepo().getParticipants(res.results.room.roomId);
+      for(var i= 0; i< participantsModel!.results.participants.length; i++){
+        if(participantsModel!.results.participants[i].userId != userProfileResponse?.email){
+          emailUser.add(participantsModel!.results.participants[i].userId);
+        }
+
+      }
+      print(emailUser);
+
+      for(var j =0; j<emailUser.length; j++){
+        modelGetUuid = await ChatQiscusRepo().getUuiduser(emailUser[j]);
+        if(modelGetUuid!.object.isNotEmpty){
+          uuidValue.add(modelGetUuid?.object.first.uuid);
+        }
+
+      }
+      print(uuidValue);
+      var chat = await ChatQiscusRepo().kirimPesan(res.results.room.roomId, 'Halo admin, saya ingin bertanya tentang barang ${salesDetailResponses?.name} dong!', userProfileResponse?.email);
+      await ChatQiscusRepo().notificationSend(chat.results.comment.message, chat.results.comment.user.username,
+          uuidValue, token);
+      var load = await ChatQiscusRepo().getMessageList(res.results.room.roomId);
+      Navigator.of(context).pop();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage( qiscusRoomResponse: res, pesan: load, userProfileResponse: userProfileResponse,),
+        ),
+      );
+    }catch(e){
+
+    }
+
+
+  }
 
   @override
   void initState() {
@@ -186,12 +294,7 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                 size: 24,
               ),
               onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatPage(),
-                  ),
-                );
+                goToChat();
               },
             ),
           )
@@ -220,96 +323,96 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
               width: MediaQuery.of(context).size.width,
               height: 240,
               child: ListView.builder(
-                scrollDirection: Axis.horizontal,
+                  scrollDirection: Axis.horizontal,
                   itemCount: salesDetailResponses?.images.length,
                   itemBuilder: (context, snap){
-                  final listImage = salesDetailResponses?.images[snap];
-                  image = salesDetailResponses?.images[0].value;
+                    final listImage = salesDetailResponses?.images[snap];
+                    image = salesDetailResponses?.images[0].value;
 
-                return Row(
-                  children: [
-                    Stack(
-                      alignment: AlignmentDirectional(1, 1),
+                    return Row(
                       children: [
-                        Image.network(
-                          '${listImage?.value}',
-                          width: MediaQuery.of(context).size.width,
-                          height: 240,
-                          fit: BoxFit.cover,
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 10, 16, 0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.54,
-                            height: 240,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: salesDetailResponses?.images.length,
-                              itemBuilder: (context, snaps){
-                                return Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Container(
-                                    width: 8.0,
-                                    height: 8.0,
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 5.0, horizontal: 2.0),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: snap == snaps
-                                            ? Colors.white
-                                            : Colors.black26
-                                    ),
+                        Stack(
+                          alignment: AlignmentDirectional(1, 1),
+                          children: [
+                            Image.network(
+                              '${listImage?.value}',
+                              width: MediaQuery.of(context).size.width,
+                              height: 240,
+                              fit: BoxFit.cover,
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(0, 10, 16, 0),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.54,
+                                height: 240,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: salesDetailResponses?.images.length,
+                                  itemBuilder: (context, snaps){
+                                    return Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
+                                        width: 8.0,
+                                        height: 8.0,
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 5.0, horizontal: 2.0),
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: snap == snaps
+                                                ? Colors.white
+                                                : Colors.black26
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 16),
+                              child: FFButtonWidget(
+                                onPressed: () {
+                                  Fluttertoast.showToast(
+                                      msg: "Saving Image...",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
+                                  _downloadImage(listImage?.value as String);
+                                },
+                                text: 'Download',
+                                icon: Icon(
+                                  Icons.download_sharp,
+                                  size: 15,
+                                ),
+                                options: FFButtonOptions(
+                                  width: 148,
+                                  height: 40,
+                                  color: FlutterFlowTheme.secondaryColor,
+                                  textStyle: FlutterFlowTheme.subtitle2.override(
+                                    fontFamily: 'Poppins',
+                                    color: FlutterFlowTheme.tertiaryColor,
                                   ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 16, 16),
-                          child: FFButtonWidget(
-                            onPressed: () {
-                              Fluttertoast.showToast(
-                                  msg: "Saving Image...",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.CENTER,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0
-                              );
-                              _downloadImage(listImage?.value as String);
-                            },
-                            text: 'Download',
-                            icon: Icon(
-                              Icons.download_sharp,
-                              size: 15,
-                            ),
-                            options: FFButtonOptions(
-                              width: 148,
-                              height: 40,
-                              color: FlutterFlowTheme.secondaryColor,
-                              textStyle: FlutterFlowTheme.subtitle2.override(
-                                fontFamily: 'Poppins',
-                                color: FlutterFlowTheme.tertiaryColor,
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 1,
+                                  ),
+                                  borderRadius: 12,
+                                ),
+                                loading: _loadingButton1,
                               ),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                                width: 1,
-                              ),
-                              borderRadius: 12,
                             ),
-                            loading: _loadingButton1,
-                          ),
-                        ),
 
 
+                          ],
+                        ),
+                        SizedBox(width: 10,)
                       ],
-                    ),
-                    SizedBox(width: 10,)
-                  ],
-                );
-              }),
+                    );
+                  }),
             ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
@@ -338,7 +441,7 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                                 fontFamily: 'Poppins',
                               ),
                             ),
-                          ), 
+                          ),
                           FFButtonWidget(
                             onPressed: () async{
                               print('Button pressed ...');
@@ -401,7 +504,7 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                            EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -550,14 +653,15 @@ class _SalesDetailPageState extends State<SalesDetailPage> {
                     ),
                   );
                 },
-                text: 'Checkout\n',
+                text: 'Checkout',
                 options: FFButtonOptions(
                   width: double.infinity,
                   height: 56,
                   color: FlutterFlowTheme.primaryColor,
-                  textStyle: FlutterFlowTheme.subtitle2.override(
-                    fontFamily: 'Poppins',
-                    color: Colors.white,
+                  textStyle: FlutterFlowTheme.subtitle1.override(
+                      fontFamily: 'Poppins',
+                      color: Colors.white,
+                      fontSize: 18
                   ),
                   borderSide: BorderSide(
                     color: Colors.transparent,

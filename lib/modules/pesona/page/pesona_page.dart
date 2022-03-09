@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mogawe/core/data/response/pesona/certificate_response.dart';
 import 'package:mogawe/core/data/response/pesona/detail_pesona_response.dart';
@@ -8,10 +7,8 @@ import 'package:mogawe/core/data/response/pesona/pesona_response_object.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_theme.dart';
 import 'package:mogawe/core/flutter_flow/flutter_flow_widgets.dart';
 import 'package:mogawe/core/repositories/auth_repository.dart';
-import 'package:mogawe/modules/pesona/page/acreditation_page.dart';
 import 'package:mogawe/modules/pesona/page/detail_pesona_page.dart';
 import 'package:mogawe/modules/pesona/screen/scoring_screen.dart';
-import 'package:shimmer/shimmer.dart';
 
 class PesonaPage extends StatefulWidget {
   List<Object> object;
@@ -66,7 +63,7 @@ class _PesonaPageState extends State<PesonaPage> {
         backgroundColor: FlutterFlowTheme.primaryColor,
         automaticallyImplyLeading: true,
         title: Text(
-          'Pesona',
+          'Persona',
           style: FlutterFlowTheme.subtitle1.override(
             fontFamily: 'Poppins',
             color: FlutterFlowTheme.secondaryColor,
@@ -263,18 +260,22 @@ class _PesonaPageState extends State<PesonaPage> {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                       children: [
-                                        Icon(
-                                          Icons.settings_outlined,
-                                          color: Colors.black,
-                                          size: 16,
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 8, top: 4),
+                                          child: Image.asset(
+                                            'assets/icon/ic_task.png',
+                                            width: 16,
+                                          ),
                                         ),
                                         Padding(
-                                          padding: EdgeInsetsDirectional
-                                              .fromSTEB(8, 0, 0, 0),
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  8, 0, 0, 0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Linked to',
@@ -286,7 +287,7 @@ class _PesonaPageState extends State<PesonaPage> {
                                                 ),
                                               ),
                                               Text(
-                                                '${pesona.potentialJob} potensial jobs',
+                                                '${pesona.potentialJob} Potential Jobs',
                                                 style: FlutterFlowTheme
                                                     .bodyText1
                                                     .override(
@@ -324,18 +325,22 @@ class _PesonaPageState extends State<PesonaPage> {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                       children: [
-                                        Icon(
-                                          Icons.settings_outlined,
-                                          color: Colors.black,
-                                          size: 16,
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 8, top: 4),
+                                          child: Image.asset(
+                                            'assets/icon/ic_coins.png',
+                                            width: 16,
+                                          ),
                                         ),
                                         Padding(
-                                          padding: EdgeInsetsDirectional
-                                              .fromSTEB(8, 0, 0, 0),
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  8, 0, 0, 0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Start from',

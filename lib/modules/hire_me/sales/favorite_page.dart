@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mogawe/core/data/response/hire_me/favorite_hire_me_sales_object.dart';
@@ -80,7 +79,6 @@ class _FavoriteHireMeSalesPageState extends State<FavoriteHireMeSalesPage> {
       builder: (ctx, state) {
 
         if (state is ShowLoadingFavoriteState) {
-          print("State : ${state}");
           return buildLoadingSales();
         }
         if (state is ShowEmptyListFavoriteState) {
@@ -110,8 +108,8 @@ class _FavoriteHireMeSalesPageState extends State<FavoriteHireMeSalesPage> {
         title: Text(
           'Favorite',
           style: FlutterFlowTheme.subtitle1.override(
-            fontFamily: 'Poppins',
-            color: Colors.black
+              fontFamily: 'Poppins',
+              color: Colors.black
           ),
         ),
         centerTitle: false,
@@ -127,7 +125,7 @@ class _FavoriteHireMeSalesPageState extends State<FavoriteHireMeSalesPage> {
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-            Expanded(
+          Expanded(
             child: Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
               child: GridView.builder(
@@ -167,7 +165,6 @@ class _FavoriteHireMeSalesPageState extends State<FavoriteHireMeSalesPage> {
                                 EdgeInsetsDirectional.fromSTEB(0, 8, 8, 0),
                                 child: InkWell(
                                   onTap: ()async{
-
                                     if(lista.isFavorite != true){
                                       var res = await AuthRepository().postfavhiremeSalesdata(lista.isFavorite, token, lista.uuidobj);
                                       setState(() {
@@ -272,5 +269,4 @@ class _FavoriteHireMeSalesPageState extends State<FavoriteHireMeSalesPage> {
       ),
     );
   }
-
 }

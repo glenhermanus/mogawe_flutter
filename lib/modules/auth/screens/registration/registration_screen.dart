@@ -51,8 +51,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         if (state is SuccessRegisterState) {
           checkLoading();
           WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) =>
-            EmailActivationScreen(email: state.email, isActivateEmail: true)));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
+                EmailActivationScreen(email: state.email, isActivateEmail: true)));
           });
           return layout();
         }
@@ -63,8 +63,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               content: Text(
                 state.message,
                 style: FlutterFlowTheme.bodyText1.override(
-                  fontFamily: 'Poppins',
-                  color: Colors.white
+                    fontFamily: 'Poppins',
+                    color: Colors.white
                 ),
               ),
               backgroundColor: Colors.red,
