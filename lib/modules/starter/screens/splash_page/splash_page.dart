@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mogawe/constant/app_const_value.dart';
@@ -9,6 +10,7 @@ import 'package:mogawe/core/repositories/auth_repository.dart';
 import 'package:mogawe/modules/home/home_page.dart';
 import 'package:mogawe/modules/starter/screens/onboarding/onboarding_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_player/video_player.dart';
 
 class SplashPage extends StatefulWidget {
   SplashPage({Key? key}) : super(key: key);
@@ -23,14 +25,58 @@ class _SplashPageState extends State<SplashPage> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final AuthRepository _authRepository = AuthRepository.instance;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
+
+  late ChewieController _chewieController;
 
   @override
   void initState() {
     super.initState();
+
+    _controller = VideoPlayerController.asset(
+      'assets/videos/splash_logo.mp4',
+    );
+    _initializeVideoPlayerFuture = _controller.initialize();
+
+    _chewieController = ChewieController(
+      videoPlayerController: _controller,
+      aspectRatio: 16 / 9,
+      // Prepare the video to be played and display the first frame
+      autoInitialize: true,
+      looping: false,
+      autoPlay: true,
+      showOptions: false,
+      showControls: false,
+      // Errors can occur for example when trying to play a video
+      // from a non-existent URL
+      errorBuilder: (context, errorMessage) {
+        return Center(
+          child: Text(
+            errorMessage,
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    // Ensure disposing of the VideoPlayerController to free up resources.
+    _controller.dispose();
+    _chewieController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_controller.value.isPlaying) {
+      setState(() {
+        _controller.play();
+      });
+    }
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
@@ -60,7 +106,7 @@ class _SplashPageState extends State<SplashPage> {
       );
     } else if (snapshot.hasData) {
       var data = snapshot.data as UserResponse;
-      Timer(Duration(seconds: 3), () {
+      Timer(Duration(seconds: 5), () {
         switch (data.message) {
           case DEPRECATED_VERSION:
             logger.d("Is deprecated");
@@ -93,30 +139,28 @@ class _SplashPageState extends State<SplashPage> {
   Widget _buildNewestVersionChecked() {
     return Align(
       alignment: AlignmentDirectional(0, -0.05),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
+      child: Stack(
         children: [
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/logo-light-horizontal.png',
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  fit: BoxFit.contain,
-                )
-              ],
-            ),
+          Chewie(
+            controller: _chewieController,
           ),
-          Text(
-            'Version 6.0.0 dev8',
-            style: FlutterFlowTheme.bodyText1.override(
-              fontFamily: 'Poppins',
-              color: FlutterFlowTheme.primaryColor,
-            ),
-          )
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: Column(),
+              ),
+              Center(
+                child: Text(
+                  'Version 6.0.0 dev8',
+                  style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: FlutterFlowTheme.primaryColor,
+                  ),
+                ),
+              )
+            ],
+          ),
         ],
       ),
     );
@@ -126,15 +170,15 @@ class _SplashPageState extends State<SplashPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var isLoggedIn = prefs.getBool("isLoggedIn");
-    if(isLoggedIn == null) isLoggedIn = false;
-    if(isLoggedIn == false){
+    if (isLoggedIn == null) isLoggedIn = false;
+    if (isLoggedIn == false) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => OnboardingPage(),
         ),
       );
-    }else {
+    } else {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -142,7 +186,6 @@ class _SplashPageState extends State<SplashPage> {
         ),
       );
     }
-
   }
 
   Future<void> _buildDialogForUpdateToNewestVersion() async {

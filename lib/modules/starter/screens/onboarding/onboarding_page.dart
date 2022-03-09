@@ -62,7 +62,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(32, 32, 32, 96),
+                            EdgeInsetsDirectional.fromSTEB(32, 32, 32, 96),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -106,7 +106,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(32, 32, 32, 96),
+                            EdgeInsetsDirectional.fromSTEB(32, 32, 32, 96),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -150,7 +150,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(32, 32, 32, 96),
+                            EdgeInsetsDirectional.fromSTEB(32, 32, 32, 96),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -194,7 +194,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(32, 32, 32, 96),
+                            EdgeInsetsDirectional.fromSTEB(32, 32, 32, 96),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -230,7 +230,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                       height: 48,
                                       color: FlutterFlowTheme.primaryColor,
                                       textStyle:
-                                          FlutterFlowTheme.subtitle2.override(
+                                      FlutterFlowTheme.subtitle2.override(
                                         fontFamily: 'Poppins',
                                         color: Colors.white,
                                       ),
@@ -267,7 +267,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                       height: 48,
                                       color: FlutterFlowTheme.secondaryColor,
                                       textStyle:
-                                          FlutterFlowTheme.subtitle2.override(
+                                      FlutterFlowTheme.subtitle2.override(
                                         fontFamily: 'Poppins',
                                         color: FlutterFlowTheme.primaryColor,
                                       ),
@@ -291,28 +291,52 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     alignment: AlignmentDirectional(0, 1),
                     child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 32),
-                      child: SmoothPageIndicator(
-                        controller: pageViewController ??=
-                            PageController(initialPage: 0),
-                        count: 4,
-                        axisDirection: Axis.horizontal,
-                        onDotClicked: (i) {
-                          pageViewController!.animateToPage(
-                            i,
-                            duration: Duration(milliseconds: 500),
-                            curve: Curves.ease,
-                          );
-                        },
-                        effect: ExpandingDotsEffect(
-                          expansionFactor: 2,
-                          spacing: 8,
-                          radius: 16,
-                          dotWidth: 16,
-                          dotHeight: 16,
-                          dotColor: Color(0x94FFFFFF),
-                          activeDotColor: FlutterFlowTheme.secondaryColor,
-                          paintStyle: PaintingStyle.fill,
-                        ),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: SizedBox(),
+                          ),
+                          SmoothPageIndicator(
+                            controller: pageViewController ??=
+                                PageController(initialPage: 0),
+                            count: 4,
+                            axisDirection: Axis.horizontal,
+                            onDotClicked: (i) {
+                              pageViewController!.animateToPage(
+                                i,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.ease,
+                              );
+                            },
+                            effect: ExpandingDotsEffect(
+                              expansionFactor: 2,
+                              spacing: 8,
+                              radius: 16,
+                              dotWidth: 16,
+                              dotHeight: 16,
+                              dotColor: Color(0x94FFFFFF),
+                              activeDotColor: FlutterFlowTheme.secondaryColor,
+                              paintStyle: PaintingStyle.fill,
+                            ),
+                          ),
+                          Expanded(
+                            child: TextButton(
+                                onPressed: () {
+                                  pageViewController!.animateToPage(
+                                    pageViewController!.page!.toInt() + 1,
+                                    duration: Duration(milliseconds: 500),
+                                    curve: Curves.ease,
+                                  );
+                                },
+                                child: Text(
+                                  'Lanjut',
+                                  style: FlutterFlowTheme.bodyText1.override(
+                                    fontFamily: 'Poppins',
+                                    color: FlutterFlowTheme.primaryColor,
+                                  ),
+                                )),
+                          ),
+                        ],
                       ),
                     ),
                   ),
