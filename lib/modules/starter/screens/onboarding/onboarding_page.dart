@@ -291,7 +291,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     alignment: AlignmentDirectional(0, 1),
                     child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 32),
-                      child: Column(
+                      child: Row(
                         children: [
                           Expanded(
                             child: SizedBox(),
@@ -332,7 +332,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                   'Lanjut',
                                   style: FlutterFlowTheme.bodyText1.override(
                                     fontFamily: 'Poppins',
-                                    color: FlutterFlowTheme.primaryColor,
+                                    color: FlutterFlowTheme.secondaryColor,
                                   ),
                                 )),
                           ),
